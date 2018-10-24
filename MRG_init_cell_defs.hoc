@@ -5,8 +5,6 @@
 //Desc = MRG axon model definition file, modified to include the following
 //1. GUI box to select axon diameter
 
-
-
 /*--------------------------------------------------------------------
 2/02
 Cameron C. McIntyre
@@ -24,47 +22,47 @@ stimulations were run on v4.3.1. NEURON v5.2 has corrected the
 limitations in v5.1 and can be used to run this model.
 ----------------------------------------------------------------------*/
 
-
 //***************************************************************
 //  variables
 //***************************************************************
-
-
 //topological parameters//
-	stinnum = 6  // number of STIN 		
-	axonnodes=101  			
-	paranodes1=2*(axonnodes-1)
-	paranodes2=2*(axonnodes-1)	
-	axoninter=stinnum*(axonnodes-1)
-	axontotal=axonnodes+paranodes1+paranodes2+axoninter			 
+stinnum = 6  // number of STIN 		
+axonnodes=101  			
+paranodes1=2*(axonnodes-1)
+paranodes2=2*(axonnodes-1)	
+axoninter=stinnum*(axonnodes-1)
+axontotal=axonnodes+paranodes1+paranodes2+axoninter			 
 	 
 //morphological parameters//	
-	fiberD=10.0	//choose from 7.3, 8.7, 10.0, 11.5, 12.8, 14.0, 15.0, 16.
+fiberD=10.0	//choose from 7.3, 8.7, 10.0, 11.5, 12.8, 14.0, 15.0, 16.
+			// These values were based on expirements conducted, and multiple other parameters are
+			// based on this. See change_morphological()
 
-	celsius=37			
-	v_init=-80 //mV//  		
-	dt=0.005 //ms//         	
-	tstop=10
-	paralength1=3  
-	nodelength=1.0
-	space_p1=0.002  
-	space_p2=0.004
-	space_i=0.004
+celsius=37			
+v_init=-80 //mV//  		
+dt=0.005 //ms//         	
+tstop=10
+paralength1=3  
+nodelength=1.0
+space_p1=0.002  
+space_p2=0.004
+space_i=0.004
 
 //electrical parameters//		
-	rhoa=0.7e6 //Ohm-um//
-	rhoe=5.0e6
-	mycm=0.1 //uF/cm2/lamella membrane//
-	mygm=0.001 //S/cm2/lamella membrane//
+rhoa=0.7e6 //Ohm-um//
+rhoe=5.0e6
+mycm=0.1 //uF/cm2/lamella membrane//
+mygm=0.001 //S/cm2/lamella membrane//
 
 
 //Calculate position of compartments in 2-D
-
+// the values are calculated in xypos()
 objref x
-
 x=new Vector(axontotal,0)
 
 create node[axonnodes], MYSA[paranodes1], FLUT[paranodes2], STIN[axoninter]
+
+// node[0] is set as the default section
 access node[0]	//APD
 
 
@@ -72,26 +70,9 @@ access node[0]	//APD
 //  procedures
 //***************************************************************
 
-proc xypos(){
-	x.x[0]=(-deltax*((axonnodes-1)/2))
-	for (i=0;i<=axontotal-2;i=i+stinnum+5) {
-		x.x[1+i]=x.x[0+i]+(nodelength/2)+(paralength1/2)
-		x.x[2+i]=x.x[1+i]+(paralength1/2)+(paralength2/2)
-		x.x[3+i]=x.x[2+i]+(paralength2/2)+(interlength/2)
-
-		for (j = 3; j<= stinnum+1; j = j+1) {
-			x.x[j+1+i]=x.x[j+i]+(interlength)
-		}
-
-		x.x[stinnum+3+i]=x.x[stinnum+2+i]+(interlength/2)+(paralength2/2)	
-		x.x[stinnum+4+i]=x.x[stinnum+3+i]+(paralength2/2)+(paralength1/2)
-		x.x[stinnum+5+i]=x.x[stinnum+4+i]+(paralength1/2)+(nodelength/2)
-		}
-}
-
 ///Defining morphological parameters
-
 proc change_morphological() { //initialize all of the variables that are dependent on the fiber diameter
+	// All of these values are based off of experimental data
 	if (fiberD==5.7) {g=0.605 axonD=3.4 nodeD=1.9 paraD1=1.9 paraD2=3.4 deltax=500 paralength2=35 nl=80}
 	if (fiberD==7.3) {g=0.630 axonD=4.6 nodeD=2.4 paraD1=2.4 paraD2=4.6 deltax=750 paralength2=38 nl=100}
 	if (fiberD==8.7) {g=0.661 axonD=5.8 nodeD=2.8 paraD1=2.8 paraD2=5.8 deltax=1000 paralength2=40 nl=110}
@@ -110,6 +91,24 @@ proc change_morphological() { //initialize all of the variables that are depende
 	xypos()
 }
 
+// Caculate the position for each axonnode
+proc xypos(){
+	x.x[0]=(-deltax*((axonnodes-1)/2))
+	for (i=0;i<=axontotal-2;i=i+stinnum+5) {
+		x.x[1+i]=x.x[0+i]+(nodelength/2)+(paralength1/2)
+		x.x[2+i]=x.x[1+i]+(paralength1/2)+(paralength2/2)
+		x.x[3+i]=x.x[2+i]+(paralength2/2)+(interlength/2)
+
+		for (j = 3; j<= stinnum+1; j = j+1) {
+			x.x[j+1+i]=x.x[j+i]+(interlength)
+		}
+
+		x.x[stinnum+3+i]=x.x[stinnum+2+i]+(interlength/2)+(paralength2/2)	
+		x.x[stinnum+4+i]=x.x[stinnum+3+i]+(paralength2/2)+(paralength1/2)
+		x.x[stinnum+5+i]=x.x[stinnum+4+i]+(paralength1/2)+(nodelength/2)
+	}
+}
+
 
 // $1 mechanism to add.  A value of 0 is no change of mechanism
 proc initialize(){  //initialize all sections of the model with relevant properties
@@ -120,8 +119,10 @@ proc initialize(){  //initialize all sections of the model with relevant propert
 			L=nodelength
 			Ra=rhoa/10000
 			cm=2
-			//insert extracellular xraxial=Rpn0 xg=1e10 xc=0
 		
+			// the selected mechanism is added to the node
+			// the selection is made from the select_mechanism.hoc file
+			// this print statement shows the parameter passed to intialize
 			print $1
 			if ($1 == 1){  
 				if (mechsel[0] == 1){
@@ -208,10 +209,9 @@ proc initialize(){  //initialize all sections of the model with relevant propert
 				}
 			}
 			insert extracellular xraxial=Rpn0 xg=1e10 xc=0
-
-
 		}
 	}
+
 	for i=0, paranodes1-1 {
 		MYSA[i]{
 			nseg=1
@@ -223,8 +223,9 @@ proc initialize(){  //initialize all sections of the model with relevant propert
 			g_pas=0.001*paraD1/fiberD		
 			e_pas=v_init
 			insert extracellular xraxial=Rpn1 xg=mygm/(nl*2) xc=mycm/(nl*2)
-			}
+		}
 	}
+	
 	for i=0, paranodes2-1 {
 		FLUT[i]{
 			nseg=1
@@ -236,7 +237,7 @@ proc initialize(){  //initialize all sections of the model with relevant propert
 			g_pas=0.0001*paraD2/fiberD		
 			e_pas=v_init
 			insert extracellular xraxial=Rpn2 xg=mygm/(nl*2) xc=mycm/(nl*2)
-			}
+		}
 	}
 	for i=0, axoninter-1 {
 		STIN[i]{
@@ -249,8 +250,9 @@ proc initialize(){  //initialize all sections of the model with relevant propert
 			g_pas=0.0001*axonD/fiberD
 			e_pas=v_init
 			insert extracellular xraxial=Rpx xg=mygm/(nl*2) xc=mycm/(nl*2)
-			}
+		}
 	}
+	
 	for i=0, axonnodes-2 {
 		connect MYSA[2*i](0), node[i](1)
 		connect FLUT[2*i](0), MYSA[2*i](1)
@@ -264,8 +266,9 @@ proc initialize(){  //initialize all sections of the model with relevant propert
 		connect FLUT[2*i+1](0), STIN[stinnum*i+stinnum-1](1)
 		connect MYSA[2*i+1](0), FLUT[2*i+1](1)
 		connect node[i+1](0), MYSA[2*i+1](1)	
-		}
+	}
 	
+	//calls finitialize to set the initial voltages in the section. the current default section is node[0]
 	finitialize(v_init)
 	fcurrent()
 }
@@ -274,9 +277,7 @@ proc initialize(){  //initialize all sections of the model with relevant propert
 //***************************************************************
 //  main
 //***************************************************************
-
 change_morphological()
-
 initialize(1)
 
 

@@ -3,8 +3,6 @@
 : Contact: dma18@case.edu
 : Description: This mod file defines a point process for a ramped sinusoidal stimulation segment
 
-
-
 NEURON {
 	POINT_PROCESS SineRamp		: Define point process for sinusoidal stim source 
 	RANGE DCAmp_vec   : DC offset parameters
@@ -25,13 +23,10 @@ UNITS {
 }
 
 PARAMETER {
-
 	f (Hz)				: starting frequency of stimulation (Hz)
-
 }
 
 ASSIGNED { 
-
 	i (nA) 
 	TimeStart (ms)
 	DCAmp (nA)
@@ -68,26 +63,20 @@ INITIAL {
 	TimeStop = Ramptime_vec[1]	: initial stop time is the time of the first Ramptime vector
 
 	if (TimeStop > 0) {
-
 		DCAmp = 0
 		HFACAmp = 0
 		freq = 0
-
 	} else {
-
 		DCAmp = DCAmp_vec[1]
 		HFACAmp = HFAC_vec[1]
 		freq = freq_vec[1]
 	}
-
-	
 	dDC = 0
 	dHFAC = 0
 	dfreq = 0
 
 	virtualt = 0
 	virtualfreq = 0
-
 }
 
 BREAKPOINT {
@@ -111,24 +100,18 @@ BREAKPOINT {
 			oldt = (oldfreq*virtualt)/freq
 			virtualt = oldt+dt/2
 		}
-
 	} else if (segment<num_of_pts) {	:  move onto next segment
 
 		DCAmp = DCAmp_vec[segment+1]
 
 		segment = segment +1
 		TimeStop = TimeStop + Ramptime_vec[segment+1]	
-
 	}
 	else {		: at the last segment, hold the values
 
 		DCAmp = DCAmp_vec[segment+1]
 
-
 		i = (HFACAmp*sin(2*PI*freq*(virtualt)/1000)) + DCAmp
-		virtualt = virtualt + dt/2
-		
+		virtualt = virtualt + dt/2		
 	}
-
-
 }
