@@ -1,0 +1,6 @@
+access node[50]
+objref apc
+apc = new APCount(0.5)
+objref apvec
+apvec = new Vector()
+apc.record(apvec)

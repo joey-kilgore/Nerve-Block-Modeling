@@ -1,0 +1,79 @@
+////////////Select Diameter with GUI box/////////////
+
+//Setup some variables for use with Diameter selector
+double Diameters[9]		//Define an array (hence the double), that stores the values of the various diameters in um
+double Diameter_SelectedYesOrNo[9]  //Define an array for storing whether or not a diameter has been selected (initialized to 0's by default)
+
+//Define each of the elements in the Diameters array as one of the possible diameters
+Diameters[0] = 5.7
+Diameters[1] = 7.3
+Diameters[2] = 8.7
+Diameters[3] = 10.0
+Diameters[4] = 11.5
+Diameters[5] = 12.8
+Diameters[6] = 14.0
+Diameters[7] = 15.0
+Diameters[8] = 16.0
+Diameter_SelectedYesOrNo[8] = 1  //Set the default diameter to 10um (in this case so it appears correctly in the GUI panel)
+
+objref DiamPanel		//define object reference pointer for Diameter panel
+DiamPanel = new VBox()  //create a new vertical box for the Diameter Panel (2=light grey bckgnd)
+
+
+//Procedure for changing the diameter of the fiber when a new one is selected from the GUI panel
+proc changeDiam(){  local i
+
+	for (i=0; i<9; i= i+1){ //iterate 9 times (once for each diameter size)
+		if (i != $1) {
+			Diameter_SelectedYesOrNo[i]=0   //ensure that the Diameter_SelectedYesOrNo is set properly	
+		} else {
+			Diameter_SelectedYesOrNo[i]=1   //ensure that the Diameter_SelectedYesOrNo is set properly
+		}	
+    	}
+
+	fiberD = Diameters[$1]				//set the diameter of the fiber based on the parameter passed to changeDiam()
+	change_morphological()   			//updates all of the dependent variables for the model
+
+	// update electrode
+	if (electsel[4] == 1) {
+		set_FEM_voltages()
+	} else {
+		change_pos()
+	}
+
+    	initialize(0)					//recall the initialize function to reset all of the section geometric props for the new fiberD
+}
+
+
+//Procedure for Drawing Diameter Selector Panel
+proc DrawDiamPanel(){
+	
+     	DiamPanel.intercept(1)  //enter intercept mode -- all following items go into vbox
+     	xpanel("Select Fiber Diameter")	//enter xpanel mode -- all following items go into this panel (w\n the vbox)
+     	xlabel("Please select fiber diameter, default = 10.0 um")  //Generates text within the panel
+	 
+     	//Generate buttons for Diameters 5.7, 7.3, 8.7, 10.0, 11.5, 12.8, 14.0, 15.0, 16.0
+     	xcheckbox("5.7 um", &Diameter_SelectedYesOrNo[0], "changeDiam(0)")
+     	xcheckbox("7.3 um", &Diameter_SelectedYesOrNo[1], "changeDiam(1)")
+     	xcheckbox("8.7 um", &Diameter_SelectedYesOrNo[2], "changeDiam(2)")
+     	xcheckbox("10.0 um", &Diameter_SelectedYesOrNo[3], "changeDiam(3)")
+     	xcheckbox("11.5 um", &Diameter_SelectedYesOrNo[4], "changeDiam(4)")
+     	xcheckbox("12.8 um", &Diameter_SelectedYesOrNo[5], "changeDiam(5)")
+     	xcheckbox("14.0 um", &Diameter_SelectedYesOrNo[6], "changeDiam(6)")
+     	xcheckbox("15.0 um", &Diameter_SelectedYesOrNo[7], "changeDiam(7)")
+     	xcheckbox("16.0 um", &Diameter_SelectedYesOrNo[8], "changeDiam(8)")
+     	xpvalue("Current diameter (um)", &fiberD)			//display the currently selected diameter
+     
+     	xlabel("Warning: Altering diameter re-initializes program variables.")
+     
+     	xpanel()			//exit xpanel mode
+     	DiamPanel.intercept(0)  //exit intercept mode
+     	DiamPanel.map("Choose a diameter", 33, 919, -1, -1)
+}
+DrawDiamPanel()
+
+xypos()
+
+
+
+

@@ -1,0 +1,63 @@
+//  Main startup file for DC_HFAC simulation environment
+
+//***************************************************************
+//  external files
+//***************************************************************
+// Currently there are no external files to load
+
+//**********************************************************
+// built in Neuron files
+//**********************************************************
+load_file("nrngui.hoc")			// open nrngui
+load_proc("nrnmainmenu")
+
+//**********************************************************
+// mechanisms and cell definitions
+//**********************************************************
+load_file("select_mechanism.hoc")	// select mechanism
+load_file("MRG_init_cell_defs.hoc")	// open cell definition file for MRG model
+
+
+//**********************************************************
+// electrode and waveform selection
+//**********************************************************
+objref selectbox		     // Main selection box
+selectbox = new VBox()
+
+load_file("electrode_selection.hoc")	// select electrode type
+load_file("waveform_selection.hoc")	// select waveform
+
+
+//**********************************************************
+// axon diameter handling 
+//**********************************************************
+load_file("diameter.hoc")			// diameter handling routines
+
+//**********************************************************
+// Creates the window for the multiple segment CNOW
+//**********************************************************
+load_file("SineRampControl.hoc")		// creates the trajectory electrode
+load_file("trajectory_control.ses")	// trajectory builder control routines
+
+//**********************************************************
+// Creates the windows the recordings and opens the run
+// control window
+//**********************************************************
+load_file("VoltAndSpaceGraphs.ses")	// open recording rig (node[11].v(0.5) & space plot of v)
+load_file("RunCtrl.ses")		// open run control window with appropriate settings
+
+
+//**********************************************************
+// Functions that are used to determine the block threshold
+// These were working awhile ago, but once the new waveforms
+// were created, these became less useful.  These tests are 
+// under construction
+//**********************************************************
+load_file("ThreshFinderHelper.hoc")		// load helper functions for determining block threshold
+load_file("ThreshFinderv1_2.hoc")		// load helper functions for determining block threshold
+load_file("APCount-40mvRecordto(vec).hoc") 	// records APCount data to a vector "apvec"
+
+load_file("run_tests.hoc")				// test function menu
+
+load_file("advanceproc.hoc")
+

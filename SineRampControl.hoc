@@ -1,0 +1,13 @@
+create trajelectrode
+
+objref traj
+traj = new SineRamp()
+
+trajelectrode {
+traj.loc(0.5)
+traj.f = 0
+}
+
+
+
+
