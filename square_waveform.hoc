@@ -1,0 +1,531 @@
+//***************************************************************
+//  variables
+//***************************************************************
+
+
+/*Create and initialize sections and point processes*/
+create electrode1, electrode2, electrode3
+objref exIClmp1,exIClmp2,exIClmp3
+
+exIClmp1 = new Bi_trainIClamp()
+exIClmp2 = new Bi_trainIClamp()
+exIClmp3 = new Bi_trainIClamp()
+
+objref Squarewave //One VBOX for squarewave selection
+Squarewave = new VBox()
+
+objref tiedbox,indebox2,indebox3 //one independent box each for the two and three electrode modes of operation
+tiedbox = new VBox()
+indebox2 = new VBox()
+indebox3 = new VBox()
+
+objref balancedbox1, balancedbox2,balancedbox3 //graphic boxes for balanced and unbalanced modes of operation
+balancedbox2 = new VBox()
+balancedbox3 = new VBox()
+balancedbox1 = new VBox()
+
+objref unbalbox1, unbalbox2,unbalbox3
+unbalbox2 = new VBox()
+unbalbox3 = new VBox()
+unbalbox1 = new VBox()
+
+//***************************************************************
+//  procedures
+//***************************************************************
+
+
+
+//*********************************************************************
+//  Tied and independent onset boxes and their handling routines
+//*********************************************************************
+
+
+proc tiedbox_Vbox() {
+
+		tiedbox.intercept(1)
+		xpanel("Tied onset")
+		xvalue("Pulse Train Onset(ms)","onset1",1,"tied_val()",1)
+		xvalue("Pulse Train Duration(ms)","dur1",1,"tied_val()",1)
+		xpanel()
+		tiedbox.intercept(0)
+}
+
+proc indebox2_Vbox() {
+
+		indebox2.intercept(1)
+		xpanel("Independent Onset")
+		xvalue("Pulse Train Onset1(ms)","onset1",1,"call_procstim()",1)
+		xvalue("Pulse Train Onset2(ms)","onset2",1,"call_procstim()",1)
+
+		xvalue("Pulse Train Duration1(ms)","dur1",1,"call_procstim()",1)
+		xvalue("Pulse Train Duration2(ms)","dur2",1,"call_procstim()",1)
+
+		xpanel()
+		indebox2.intercept(0)
+}
+
+proc indebox3_Vbox() {
+
+		indebox3.intercept(1)
+		xpanel("Independent Onset")
+		xvalue("Pulse Train Onset1(ms)","onset1",1,"call_procstim()",1)
+		xvalue("Pulse Train Onset2(ms)","onset2",1,"call_procstim()",1)
+		xvalue("Pulse Train Onset3(ms)","onset3",1,"call_procstim()",1)
+		xvalue("Pulse Train Duration1(ms)","dur1",1,"call_procstim()",1)
+		xvalue("Pulse Train Duration2(ms)","dur2",1,"call_procstim()",1)
+		xvalue("Pulse Train Duration3(ms)","dur3",1,"call_procstim()",1)
+		xpanel()
+		indebox3.intercept(0)
+}
+
+
+proc Tied_onset(){
+
+
+	// unmap and uncheck independent Vboxes
+	state_inde = 0
+	indebox2.unmap()
+	indebox3.unmap()
+
+	// map and check the used electrodes
+	state_tied = 1
+	if(tiedbox.ismapped()==0){
+		tiedbox.map("Tied Onset", 450, 450, -1, -1)
+	}
+}
+
+proc tied_val(){
+
+	onset2 = onset1
+	onset3 = onset1
+	dur2 = dur1
+	dur3 = dur1
+
+	squarestim()
+	sinestim()
+	tristim()
+}
+	
+proc Inde_onset(){
+
+	// unmap and uncheck tied Vboxes
+	state_tied = 0
+	tiedbox.unmap()
+
+	// unmap unused inde Vboxes
+	if (electsel[1]==0){
+		indebox2.unmap()
+	}
+	if (electsel[2]==0){
+		indebox3.unmap()
+	}
+
+	// map and check the used inde boxes
+	state_inde = 1
+	if (electsel[1]==1){
+		if (indebox2.ismapped() == 0) {
+			indebox2.map("Independent Onset", 450, 450, -1, -1)
+		}
+	}
+	if (electsel[2]==1){
+		if (indebox3.ismapped() == 0) {
+			indebox3.map("Independent Onset", 450, 450, -1, -1)
+		}
+	}
+
+}
+
+//*********************************************************************
+//  balenced and unbalenced boxes and their handling routines
+//*********************************************************************
+
+
+proc balancedbox1_Vbox() {
+
+	balancedbox1.intercept(1)
+	xpanel("Balanced")
+	xvalue("Cathodic Amplitude(nA)", "high_amp1",1,"bal_val1()",1)
+	xpanel()
+	balancedbox1.intercept(0)
+
+}
+
+proc balancedbox2_Vbox() {
+
+	balancedbox2.intercept(1)
+	xpanel("Balanced")
+	xvalue("Cathodic Amplitude of Elec1(nA)", "high_amp1",1,"bal_val2()",1)
+	xpanel()
+	balancedbox2.intercept(0)
+
+}
+
+proc balancedbox3_Vbox() {
+
+	balancedbox3.intercept(1)
+	xpanel("Balanced")
+	xvalue("Cathodic Amplitude of Elec2 (nA)", "high_amp2",1,"bal_val3()",1)
+	xpanel()
+	balancedbox3.intercept(0)
+
+}
+
+proc unbalbox1_Vbox() {
+
+	unbalbox1.intercept(1)
+	xpanel("Unbalanced")
+	xvalue("Cathodic Amplitude","high_amp1",1,"unbal_val1()",1)
+	xvalue("Anodic coefficient","coeff",1,"unbal_val1()",1)
+	xpanel()
+	unbalbox1.intercept(0)
+
+}
+
+proc unbalbox2_Vbox() {
+
+	unbalbox2.intercept(1)
+	xpanel("Unbalanced")
+	xvalue("Cathodic Amplitude of Elec1","high_amp1",1,"unbal_val2()",1)
+	xvalue("Anodic coefficient","coeff",1,"unbal_val2()",1)
+	xpanel()
+	unbalbox2.intercept(0)
+
+}
+
+proc unbalbox3_Vbox() {
+
+	unbalbox3.intercept(1)
+	xpanel("Unbalanced")
+	xvalue("Cathodic Amplitude of Elec2","high_amp2",1,"unbal_val3()",1)
+	xvalue("Anodic coefficient","coeff",1,"unbal_val3()",1)
+	xpanel()
+	unbalbox3.intercept(0)
+
+}
+
+
+proc balance_proc() {
+
+	// unmap and uncheck unbalanced Vboxes
+	state_unbal= 0
+	unbalbox1.unmap()
+	unbalbox2.unmap()
+	unbalbox3.unmap()
+
+	// unmap unused balance Vboxes
+	if (electsel[0]==0){
+		balancedbox1.unmap()
+	}
+	if (electsel[1]==0){
+		balancedbox2.unmap()
+	}
+	if (electsel[2]==0){
+		balancedbox3.unmap()
+	}
+
+	// map and check the used balanced boxes
+	state_bal = 1
+	if (electsel[0]==1){
+		if (balancedbox1.ismapped() == 0) {
+			balancedbox1.map("Balanced", 450, 746, -1, -1)
+		}
+	}
+	if (electsel[1]==1){
+		if (balancedbox2.ismapped() == 0) {
+			balancedbox2.map("Balanced", 450, 746, -1, -1)
+		}
+	}
+	if (electsel[2]==1){
+		if (balancedbox3.ismapped() == 0) {
+			balancedbox3.map("Balanced", 450, 746, -1, -1)
+		}
+	}
+}
+
+proc bal_val1(){
+     state_unbal=0
+     state_sin=0
+     state_tri=0
+     state_vec=0
+     state_bal=1
+	low_amp1 = (-1*high_amp1 * cathod_dur)/ anod_dur
+	high_amp2 = 0
+	low_amp2 = 0
+	high_amp3 = 0
+	low_amp3 = 0
+
+	squarestim()
+}
+
+proc bal_val2(){
+     state_unbal=0
+     state_sin=0
+     state_tri=0
+     state_vec=0
+     state_bal=1
+	low_amp1 = (-1*high_amp1 * cathod_dur)/ anod_dur
+	high_amp2 = -1*high_amp1
+	low_amp2 = -1*low_amp1
+	high_amp3 = 0
+	low_amp3 = 0
+
+	squarestim()
+}
+
+proc bal_val3(){
+     state_unbal=0
+     state_sin=0
+     state_tri=0
+     state_vec=0
+     state_bal=1
+	low_amp2 = (-1*high_amp2*cathod_dur)/ anod_dur
+	high_amp1 = -.5*high_amp2
+	low_amp1 = -.5*low_amp2
+	high_amp3 = high_amp1
+	low_amp3 = low_amp1
+
+	squarestim()
+}
+
+proc unbalance_proc() {
+
+	// unmap and uncheck unbalanced Vboxes
+	state_bal= 0
+	balancedbox1.unmap()
+	balancedbox2.unmap()
+	balancedbox3.unmap()
+
+	// unmap unused balance Vboxes
+	if (electsel[0]==0){
+		unbalbox1.unmap()
+	}
+	if (electsel[1]==0){
+		unbalbox2.unmap()
+	}
+	if (electsel[2]==0){
+		unbalbox3.unmap()
+	}
+
+	// map and check the used balanced boxes
+	state_unbal = 1
+	if (electsel[0]==1){
+		if (unbalbox1.ismapped() == 0) {
+			unbalbox1.map("Unbalanced", 450, 746, -1, -1)
+		}
+	}
+	if (electsel[1]==1){
+		if (unbalbox2.ismapped() == 0) {
+			unbalbox2.map("Unnbalanced", 450, 746, -1, -1)
+		}
+	}
+	if (electsel[2]==1){
+		if (unbalbox3.ismapped() == 0) {
+			unbalbox3.map("UnBalanced", 450, 746, -1, -1)
+		}
+	}
+}
+proc unbal_val1(){
+     state_unbal=1
+     state_sin=0
+     state_tri=0
+     state_vec=0
+     state_bal=0	
+	low_amp1 = (-1*coeff*high_amp1 * cathod_dur)/ anod_dur
+	high_amp2 = 0
+	low_amp2 = 0
+	high_amp3 = 0
+	low_amp3 = 0
+	
+
+	squarestim()
+}
+
+
+proc unbal_val2(){
+     state_unbal=1
+     state_sin=0
+     state_tri=0
+     state_vec=0
+     state_bal=0
+    low_amp1 = (-1*coeff*high_amp1 * cathod_dur)/ anod_dur
+	high_amp2 = -1*high_amp1
+	low_amp2 = -1*low_amp1
+	high_amp3 = 0
+	low_amp3 = 0
+
+	squarestim()	
+}
+
+proc unbal_val3(){
+     state_unbal=1
+     state_sin=0
+     state_tri=0
+     state_vec=0
+     state_bal=0     
+     low_amp2 = (-1*coeff*high_amp2 * cathod_dur)/ anod_dur
+	high_amp1 = -.5*high_amp2
+	low_amp1 = -.5*low_amp2
+	high_amp3 = high_amp1
+	low_amp3 = low_amp1
+
+ 	squarestim()
+}
+
+
+// Pop up window for square wave
+proc Squarewave_Vbox(){
+
+		Squarewave.intercept(1)
+		
+		xpanel("Wave Form Parameters")
+		xvalue("Cathodic Duration(ms)", "cathod_dur",1,"call_procs(1)",1)
+		xvalue("Post Cathodic Duration(ms)","postCathod_dur",1,"call_procs(1)",1)
+		xvalue("Anodic Duration(ms)", "anod_dur",1,"call_procs(1)",1)
+		xvalue("Post Anodic Duration(ms)","postAnod_dur",1,"call_procs(1)",1)
+		xpanel()
+
+		xpanel("")
+		xcheckbox("Tied Onset/Dur",&state_tied,"Tied_onset()")
+		xcheckbox("Independent Onset/Dur",&state_inde,"Inde_onset()")
+		xpanel()
+
+		xpanel("")
+		xcheckbox("Balanced", &state_bal, "balance_proc()", 1)
+		xcheckbox("Unbalanced",&state_unbal,"unbalance_proc()",1)
+		xpanel()
+
+		Squarewave.intercept(0)
+}
+
+proc Squarewave_proc(){
+
+	if(Squarewave.ismapped()==0){
+		Squarewave.map("Square Wave Form Parameters", 30, 465, -1, -1)
+	}
+
+}
+
+/*squarestim is responsible for updating the data members of the
+electrodes based on the values in the input windows.*/
+proc squarestim(){
+
+	electrode1 {
+		
+		exIClmp1.loc(0.5)
+		exIClmp1.del=onset1
+		exIClmp1.low_amp=low_amp1
+		exIClmp1.high_amp=high_amp1
+		exIClmp1.train=dur1
+		exIClmp1.cathod_dur = cathod_dur
+		exIClmp1.postcathod_dur = postCathod_dur
+		exIClmp1.anod_dur= anod_dur
+		exIClmp1.postanod_dur = postAnod_dur
+	}
+
+	electrode2 {
+			
+		exIClmp2.loc(0.5)
+		exIClmp2.del=onset2
+		exIClmp2.low_amp=low_amp2
+		exIClmp2.high_amp=high_amp2
+		exIClmp2.train=dur2
+		exIClmp2.cathod_dur = cathod_dur
+		exIClmp2.postcathod_dur = postCathod_dur
+		exIClmp2.anod_dur= anod_dur
+		exIClmp2.postanod_dur = postAnod_dur
+	}
+
+	electrode3 {
+		exIClmp3.loc(0.5)
+		exIClmp3.del=onset3
+		exIClmp3.low_amp=low_amp3
+		exIClmp3.high_amp=high_amp3
+		exIClmp3.train=dur3
+		exIClmp3.cathod_dur = cathod_dur
+		exIClmp3.postcathod_dur = postCathod_dur
+		exIClmp3.anod_dur= anod_dur
+		exIClmp3.postanod_dur = postAnod_dur
+	}
+
+}
+
+proc squareadvance() {
+
+		a=0 
+		for (i=0;i<=axontotal-1;i=i+stinnum+5) {
+		
+			node[a].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6)+ (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6) //mV//
+
+			a = a+1
+		}
+		b=0 
+		for (i=1;i<=axontotal-1;i=i+stinnum+5) {
+			MYSA[b].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6)+ (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6) //mV//
+		
+			b=b+2
+		}
+		c=0 
+		for (i=2;i<=axontotal-1;i=i+stinnum+5) {
+			FLUT[c].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6)+ (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6) //mV//
+					c=c+2
+		}
+
+		for (j = 0;j<=stinnum-1;j=j+1) {
+			d=j 
+			for (i=3;i<=axontotal-1;i=i+11) {
+				STIN[d].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6)+ (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6) //mV//
+
+				d=d+stinnum
+			}
+		}
+
+
+		k=1 
+		for (i=9;i<=axontotal-2;i=i+stinnum+5) {
+			FLUT[k].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6)+ (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6) //mV//
+		
+			k=k+2
+		}
+		l=1
+		for (i=10;i<=axontotal-2;i=i+stinnum+5) {
+			MYSA[l].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6) + (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6)
+		
+			l=l+2
+		}
+
+}
+
+//***************************************************************
+//  main
+//***************************************************************
+
+tiedbox_Vbox()
+indebox2_Vbox()
+indebox3_Vbox()
+
+balancedbox1_Vbox()
+balancedbox2_Vbox()
+balancedbox3_Vbox()
+
+unbalbox1_Vbox()
+unbalbox2_Vbox()
+unbalbox3_Vbox()
+
+Squarewave_Vbox()
+
+squarestim()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,241 @@
+//D. Michael Ackermann
+//7/3/08
+//Last Edit 7/6/08
+//Filename = ThreshFinderHelperv1_0.hoc
+//Version = 1.0
+//Desc = Contains helper functions for operating the threshfinder class
+//Much of the code taken from Alan Barnes' v1.6 HFAC model
+//Modifications to original code by D. Michael Ackermann
+
+
+
+
+//------------------------------------------------------------------
+//Declare and setup test stim pulse in the first axon node of the model
+//------------------------------------------------------------------
+
+objref stimclamp
+//node[0] stimclamp = new IClamp(.5)
+node[10] stimclamp = new IClamp(.5)
+
+//initiate test stim pulse parameters to defaults
+proc InitiateTestStim(){
+     stimclamp.amp=10
+     stimclamp.del=40
+     stimclamp.dur=.1
+     }
+InitiateTestStim()
+
+
+//setup a GUI window for manipulating the variables of the test stim pulse
+objref stimWnd
+stimWnd = new VBox()
+proc draw_StimWnd(){
+     stimWnd.intercept(1)
+     xpanel("Parameters for Threshold Test Stim Pulse")
+     xvalue("Test Pulse Amperage (nA)", "stimclamp.amp")
+     xvalue("Test Pulse Delay (ms)", "stimclamp.del")
+     xvalue("Test Pulse Duration (ms)", "stimclamp.dur")
+     xpanel()
+     stimWnd.intercept(0)
+     stimWnd.map("Threshold Test Pulse Parameters", 1057, 216, -1, -1)
+}
+
+draw_StimWnd()
+//------------------------------------------------------------------
+
+
+
+//------------------------------------------------------------------
+//Declare and setup AP Counters
+//------------------------------------------------------------------
+
+    numAPCs = 2			//number of AP counters
+	objref apc[numAPCs]		//create array to store AP counts
+	node[5] apc[0] = new APCount(.5)			//creates a new APCount object in node 5, which counts the # of times Vm crosses the threshold in the positive direction
+	node [axonnodes-2] apc[1] = new APCount(.5)   ////creates a new APCount object in second to last node
+
+//------------------------------------------------------------------
+
+
+
+
+
+//------------------------------------------------------------------
+//Define the helper functions for ThreshFinder
+//------------------------------------------------------------------
+
+/*Sets the parameters of the test stimulus.*/
+//Requires that an object reference called stimclamp of type IClamp has been declared and associated with an axon section
+//Is passed three parameters as shown below.
+proc setstim(){
+     stimclamp.amp=$1
+     stimclamp.del=$2
+     stimclamp.dur=$3
+     }
+
+
+//procedure for setting the parameters in the sinstim obj
+
+
+/*Returns the frequency of the blocking electrode in hz.*/
+//BEWARE, MODIFIED FROM ORIGINAL TO RELECT LACK OF MULTIPLE WAVEFORMS
+func getFreq(){
+     if (state_sin || state_tri) return freq
+     //return 1000*(1/(cathod_dur+postCathod_dur+anod_dur + postAnod_dur))
+	 return freq
+     }
+
+
+
+
+	 
+/*Sets blocking electrode amperages to proper levels, depending on waveform and
+configuration, based on two parameters.  Param 1 is the amplitude of the first
+electrode (other two are dependent on this value) and param 2 is the coefficient
+relating the anodic charge to the cathodic charge, only necessary for
+unbalanced waves.*/
+//this procedure has been modified from Alan Barnes' original to only
+
+
+proc setamps(){
+     if (state_sin==1){
+           amp1 = $1
+           sine_val()
+     } else {
+          if (state_bal==1){
+            if (electsel[0]==1 && electsel[1]==0 && electsel[2]==0){
+             high_amp1 = $1
+             bal_val1()
+             }
+            if (electsel[0]==0 && electsel[1]==1 && electsel[2]==0){
+             high_amp1 = $1
+             bal_val2()
+             }
+            if (electsel[0]==0 && electsel[1]==0 && electsel[2]==1){
+             high_amp2 = $1
+             bal_val3()
+             }
+           }else{
+                if (state_unbal == 1){
+                 if (electsel[0]==1 && electsel[1]==0 && electsel[2]==0){
+                    high_amp1 = $1
+                    low_amp1 = (-1*$2*$1 * cathod_dur)/ anod_dur
+                    unbal_val1()
+                 }
+                 if (electsel[0]==0 && electsel[1]==1 && electsel[2]==0){
+                    high_amp1 = $1
+                    low_amp1 =  (-1*$2*$1 * cathod_dur)/ anod_dur
+                    unbal_val2()
+                 }
+                 if (electsel[0]==0 && electsel[1]==0 && electsel[2]==1){
+                    high_amp2 = $1
+                    low_amp2 =  (-1*$2*$1 * cathod_dur)/ anod_dur
+                    unbal_val3()
+                 }
+                }else{
+                      if (state_tri==1){
+                         print "Tri"
+                         if (electsel[0]) triamp=$1
+                         if (electsel[1]) triamp=$1
+                         if (electsel[2]) triamp=$1
+                         tri_val()
+                      }else{ print "Error: No waveform specified.\n" }
+                }
+           }
+          }
+}
+
+
+
+
+
+/*Sets the threshold of the APCount object in the apc vector at the index
+specified by $1 to the value specified by $2*/
+proc APC_setThresh(){
+     if ($1 < numAPCs && $1 >= 0) apc[$1].thresh = $2
+     }
+
+
+/*Returns the time field (time of last AP crossing) of the APCount object at index $1 in the apc array,
+-1 if $1 is out of bounds.*/     
+func APC_getT(){
+     if ($1 < numAPCs && $1 >=0) return apc[$1].time
+     return -1
+}
+
+/*Sets the number of action potentials which have passed by the APCount object
+in the apc vector at the index specified by $1 to the value specified by $2*/
+//used to reset the AP counts to 0 
+
+proc APC_setN(){
+     if ($1 < numAPCs && $1 >= 0) apc[$1].n = $2
+     }
+
+/*Sets the time field
+in the apc vector at the index specified by $1 to the value specified by $2*/
+//used to reset the AP counts to 0 
+
+proc APC_setT(){
+     if ($1 < numAPCs && $1 >= 0) apc[$1].time = $2
+     }
+
+/*Returns the number of action potentials which have passed by the APCount object
+in the apc vector at the index specified by $1, returns -1 if $1 is out of bounds*/
+func APC_getN(){
+     if ($1 < numAPCs && $1 >= 0) return apc[$1].n
+     return -1
+}
+
+
+/*Links the APCount at index $1 in apc to the vector pointed to by $o2 ($o2 = object at index 2).
+Returns 1 on success.*/
+//is called by find_threshEXT and is only used when implementing the autorunner class
+
+func APC_appVec(){
+     if ($1>=numAPCs || $1<0) return 0
+     return apc[$1].record($o2)
+}
+
+
+/*Stops recording to the vector associated with the APCount at apc[$1].  Returns
+1 on success, or if there is no vector associated.*/
+func APC_closeVec(){
+     if ($1>=numAPCs || $1<0) return 0
+     return apc[$1].record()
+}
+
+
+//------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

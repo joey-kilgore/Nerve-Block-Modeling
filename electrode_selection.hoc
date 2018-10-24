@@ -1,0 +1,188 @@
+// *******************************************************************************************
+// Electrode selection box 
+// *******************************************************************************************
+
+
+
+//***************************************************************
+//  variables
+//***************************************************************
+
+double electsel[5]		// selection flag to pick either monopolar, bipolar, tripolar, 
+					// macro, or from file
+
+//Initialize state variables to monopolar
+electsel[0] = 1
+electsel[1] = 0
+electsel[2] = 0
+electsel[3] = 0
+electsel[4] = 0
+
+
+
+/*Create and initialize sections and point processes*/
+
+objref Elect1, Elect2, Elect3 //One VBOX for each electrode selection choice
+Elect1 = new VBox()
+Elect2 = new VBox()
+Elect3 = new VBox()
+
+double xelec[3]			// X position of each of the electrodes
+
+
+//***************************************************************
+//  external files
+//***************************************************************
+
+load_file("point_source_electrodes.hoc")		// monopolar, bipolar, tripolar point source electrodes
+
+load_file("set_FEM_voltages.hoc")   				// setup the FEM voltages
+
+
+//***************************************************************
+//  procedures
+//***************************************************************
+
+
+// These three procedures setup the electrode position selection Vboxes
+// Everytime new values are entered, change_pos() is called to update the position
+
+proc Elect1_Vbox() {
+
+		Elect1.intercept(1)
+	
+		xpanel("Choose Electrode Position")
+		xvalue("X1 pos(um)", "xelec[0]",1,"change_pos()",1)
+		xvalue("Y pos(um)", "yelec", 1,"change_pos()",1)
+
+		xpanel()
+
+		Elect1.intercept(0)
+
+}
+
+proc Elect2_Vbox() {
+
+		Elect2.intercept(1)
+	
+		xpanel("Choose Electrode Position")
+		xvalue("X1 pos(um)", "xelec[0]",1,"change_pos()",1)
+		xvalue("X2 pos(um)", "xelec[1]",1,"change_pos()",1)
+		xvalue("Y pos(um)", "yelec", 1,"change_pos()",1)
+
+		xpanel()
+
+		Elect2.intercept(0)
+
+}
+
+proc Elect3_Vbox() {
+
+		Elect3.intercept(1)
+	
+		xpanel("Choose Electrode Position")
+		xvalue("X1 pos(um)", "xelec[0]",1,"change_pos()",1)
+		xvalue("X2 pos(um)", "xelec[1]",1,"change_pos()",1)
+		xvalue("X3 pos(um)", "xelec[2]",1,"change_pos()",1)
+		xvalue("Y pos(um)", "yelec", 1,"change_pos()",1)
+
+		xpanel()
+
+		Elect3.intercept(0)
+
+}
+
+// elec_pos displays the appropriate electrode position windows depending on the number
+// of electrodes selected
+
+proc elec_pos(){
+
+	// unmap and uncheck the unused electrodes
+	if ($1!=0){
+		electsel[0] = 0
+		Elect1.unmap()
+	}
+	if ($1!=1){
+		electsel[1] = 0
+		Elect2.unmap()
+	}
+	if ($1!=2){
+		electsel[2] = 0
+		Elect3.unmap()
+	}
+	if ($1!=3){
+		electsel[3] = 0
+	}
+	if ($1!=4){
+		electsel[4] = 0
+//		ElectFile.unmap()
+	}
+
+	// map and check the used electrodes
+	if ($1==0){
+		electsel[0] = 1
+		if(Elect1.ismapped()==0){
+			Elect1.map("Choose Electrode Position", 283, 153, -1, -1)
+		}
+		change_pos()
+	}
+	if ($1==1){
+		electsel[1] = 1
+		if(Elect2.ismapped()==0){
+			Elect2.map("Choose Electrode Position", 283, 153, -1, -1)
+		}
+		change_pos()
+	}
+	if ($1==2){
+		electsel[2] = 1
+		if(Elect3.ismapped()==0){
+			Elect3.map("Choose Electrode Position", 283, 153, -1, -1)
+		}
+		change_pos()
+	}
+	if ($1==4){
+		electsel[4] = 1
+		if(ElectFile.ismapped()==0){
+			ElectFile.map("Choose Electrode Position", 283, 153, -1, -1)
+		}
+		FEM_file_selection()
+	}
+
+
+
+}
+
+
+
+
+// Selec_elec creates the window with the choice of electrode
+
+proc Selec_elec(){
+	selectbox.intercept(1)
+	xpanel("Choose Electrode Type")
+	
+	xcheckbox("One Electrode",&electsel[0], "elec_pos(0)")
+	xcheckbox("Two Electrode",&electsel[1], "elec_pos(1)")
+	xcheckbox("Three Electrode",&electsel[2], "elec_pos(2)")
+	xcheckbox("Macro Electrode",&electsel[3], "elec_pos(3)")
+	xcheckbox("Electrode from file (FEM)",&electsel[4], "elec_pos(4)")
+	xpanel()
+	selectbox.intercept(0)
+	selectbox.map("Choose Number of Electrodes",25, 156, -1, -1)
+}
+
+//***************************************************************
+//  main
+//***************************************************************
+
+// initialize boxes
+Elect1_Vbox()
+Elect2_Vbox()
+Elect3_Vbox()
+
+// start electrode selection window
+Selec_elec()
+
+//initilaize the electrode position
+elec_pos(0)
+

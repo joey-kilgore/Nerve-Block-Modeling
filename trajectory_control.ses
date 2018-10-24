@@ -1,0 +1,143 @@
+// initialize variables
+DC = 0
+HFAC = 0
+num_of_pts = 0
+
+objref traj_builder
+traj_builder = new VBox()
+
+MAX_PTS = 12
+
+objref DC_vec
+DC_vec = new Vector(MAX_PTS,0)
+
+objref HFAC_vec
+HFAC_vec = new Vector(MAX_PTS,0)
+
+objref freq_vec
+freq_vec = new Vector(MAX_PTS,0)
+
+objref Ramptime_vec
+Ramptime_vec = new Vector(MAX_PTS,0)
+
+proc more() {
+
+	if (num_of_pts < MAX_PTS-1) {
+		
+		num_of_pts +=1
+		traj_builder.unmap()
+		traj_builder.intercept(1)
+		xpanel("Trajectory Builder", 0)
+		xpvalue("DC offset",&DC_vec.x[num_of_pts],1,"runtraj()",1)
+		xpvalue("HFAC",&HFAC_vec.x[num_of_pts],1,"runtraj()",1)
+		xpvalue("Frequency (Hz)",&freq_vec.x[num_of_pts],1,"runtraj()",1)
+		xpvalue("Ramp Time (msec)",&Ramptime_vec.x[num_of_pts],1,"runtraj()",1)
+		xpanel(0)
+		traj_builder.intercept(0)
+		traj_builder.map("Trajectory Builder",125, 18,-1,-1)
+	}
+
+}
+
+proc runtraj() {
+
+	trajelectrode {
+		traj.loc(0.5)
+		traj.num_of_pts = num_of_pts
+		traj.f = 10000
+		traj.DCAmp_vec[0] = 0
+		traj.HFAC_vec[0] = 0
+		traj.freq_vec[0] = 0
+		traj.Ramptime_vec[0] = 0
+	
+		for (trajcnt = 0; trajcnt<=num_of_pts; trajcnt+=1) {
+			traj.DCAmp_vec[trajcnt+1] = DC_vec.x[trajcnt]
+			traj.HFAC_vec[trajcnt+1] = HFAC_vec.x[trajcnt]
+			traj.freq_vec[trajcnt+1] = freq_vec.x[trajcnt]
+			traj.Ramptime_vec[trajcnt+1] = Ramptime_vec.x[trajcnt]
+		}
+	}
+	state_traj = 1
+	state_sin = 0
+	electrode_velocity = 0
+
+}
+
+proc trajAdvance() {
+
+
+//		position_move()
+
+
+		a =0
+    		for (i=0;i<=axontotal-1;i=i+stinnum+5) {
+    		
+    			node[a].e_extracellular(0.5)=traj.i*ext1.x[i]*1e-6 //mV//
+    		
+    			a = a+1
+    		}
+    		b=0 
+    		for (i=1;i<=axontotal-1;i=i+stinnum+5) {
+    			MYSA[b].e_extracellular(0.5)=traj.i*ext1.x[i]*1e-6 //mV//
+    		
+    			b=b+2
+    		}
+    		c=0 
+    		for (i=2;i<=axontotal-1;i=i+stinnum+5) {
+    			FLUT[c].e_extracellular(0.5)= traj.i*ext1.x[i]*1e-6 //mV//
+    					c=c+2
+    		}
+
+		for (j = 0;j<=stinnum-1;j=j+1) {
+			d=j 
+			for (i=3;i<=axontotal-1;i=i+stinnum+5) {
+				STIN[d].e_extracellular(0.5) = traj.i*ext1.x[i]*1e-6 //mV//
+
+				d=d+stinnum
+			}
+		}
+
+    		k=1 
+    		for (i=9;i<=axontotal-2;i=i+stinnum+5) {
+    			FLUT[k].e_extracellular(0.5)= traj.i*ext1.x[i]*1e-6 //mV//
+    		
+    			k=k+2
+    		}
+    		l=1
+    		for (i=10;i<=axontotal-2;i=i+stinnum+5) {
+    			MYSA[l].e_extracellular(0.5)= traj.i*ext1.x[i]*1e-6 //mV//
+    		
+    			l=l+2
+    		}
+
+}
+
+
+proc traj_builder_Vbox() {
+	//setup panel
+	traj_builder.intercept(1)
+	xpanel("Trajectory Builder", 0)
+	xbutton("More","more()")
+
+	xpvalue("DC offset",&DC_vec.x[0],1,"runtraj()",1)
+	xpvalue("HFAC",&HFAC_vec.x[0],1,"runtraj()",1)
+	xpvalue("Frequency",&freq_vec.x[0],1,"runtraj()",1)
+	xpvalue("Ramp Time (msec)",&Ramptime_vec.x[0],1,"runtraj()",1)
+
+	xpanel()
+	traj_builder.intercept(0)
+}
+traj_builder_Vbox()
+
+proc traj_panel(){
+
+	load_file("SineRampRig.ses")   			// load the graph and control for the Sine Ramp
+
+	if (traj_builder.ismapped() == 0) {
+		traj_builder.map("Trajectory Builder",125, 18,-1,-1)
+	}
+
+	runtraj()
+	state_traj = 0
+
+}

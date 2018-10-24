@@ -1,0 +1,55 @@
+// This file provides a menu to run the various automated tests
+
+
+//***************************************************************
+//  variables
+//***************************************************************
+
+strdef mechlabel
+mechlabel = "Choose one of the mechanisms:"
+
+
+//Initialize mechanism selections
+double mechsel[12]			// selection flag for mechanisms
+
+mechsel[0] = 1
+mechsel[1] = 0
+mechsel[2] = 0
+mechsel[3] = 0
+mechsel[4] = 0
+mechsel[5] = 0
+mechsel[6] = 0
+mechsel[7] = 0
+mechsel[8] = 0
+mechsel[9] = 0
+mechsel[10] = 0
+mechsel[11] = 0
+
+//***************************************************************
+//  procedures
+//***************************************************************
+
+proc mechpanel() {
+	xpanel("Mechanism Selection")
+	xvarlabel(mechlabel)
+	xcheckbox("AXNODE", &mechsel[0], "initialize(1)")
+	xcheckbox("AXNODEKExt", &mechsel[1], "initialize(2)")
+	xcheckbox("KExtNodefh", &mechsel[2], "initialize(3)")
+	xcheckbox("KExtNodeNsh", &mechsel[3], "initialize(4)")
+	xcheckbox("KExtNodediff", &mechsel[4], "initialize(5)")
+	xcheckbox("KIntNode", &mechsel[5], "initialize(6)")
+	xcheckbox("KIntNodeND", &mechsel[6], "initialize(7)")
+	xcheckbox("NaExtNode", &mechsel[7], "initialize(8)")
+	xcheckbox("NaExtNodeND", &mechsel[8], "initialize(9)")
+	xcheckbox("NaIntNode", &mechsel[9], "initialize(10)")
+	xcheckbox("KExtNodeBell", &mechsel[10], "initialize(11)")
+	xcheckbox("Nakpump", &mechsel[11], "initialize(12)")
+	xpanel(516,916)
+}
+
+//***************************************************************
+//  main
+//***************************************************************
+
+mechpanel()
+
