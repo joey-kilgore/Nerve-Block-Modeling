@@ -6,10 +6,12 @@
 //Desc = Class for implementing the block Threshold Finder
 //Version Changes = solve the false "Stimulus insufficient to generate action potential" error
 //This error is generated due to asymmetrical onset AP production at the onset of block waveform
-//To fix this --REMOVED THE CONDITION THAT THE APC_getN(0)>hits -- THIS MEANS THAT THE SYSTEM WILL NO LONGER DETECT IF THERE IS INSUFFICIENT TEST STIM AMPLITUDE!!!
+//To fix this --REMOVED THE CONDITION THAT THE APC_getN(0)>hits -- THIS MEANS THAT THE SYSTEM WILL NO 
+//LONGER DETECT IF THERE IS INSUFFICIENT TEST STIM AMPLITUDE!!!
 //i.e be sure that the stim amplitude is properly set!
 //
-//Note=Testing has not been performed on find_threshEXT (all other functions and procedures have been tested to at least some degree)
+//Note=Testing has not been performed on find_threshEXT (all other functions and procedures have been 
+//tested to at least some degree)
 //
 //Known Bugs -
 //1.  Threshold detection is only currently stable for negative amplitude ranges
@@ -18,10 +20,6 @@
 //4.  THE SYSTEM WILL NO LONGER DETECT IF THERE IS INSUFFICIENT TEST STIM AMPLITUDE!!!
 //5.  The output file may contain the message "No steady state at frequency ######, amp #######.  If so, ignore it.  It just means that the last tested
 //block amplitude resulted in repetitive firing.  This has no effect on the function's ability to detect the threshold.
-
-
-
-
 
 //D. Michael Ackermann
 //7/3/08
@@ -35,12 +33,6 @@
 //1.  Threshold detection is only currently stable for negative amplitude ranges
 //2.  The block threshold will be slightly underestimated by something between 0 and the search resolution
 //3.  If amplitude range is too small, the block threshold will be logged as the highest binary search value below the upper threshold (i.e. a false threshold!)
-
-
-
-
-
-
 
 /*ThreshFinder.hoc
 Version 1.0
@@ -96,7 +88,6 @@ proc init() {
 }
 
 /**************************THRESHOLD PROCEDURES*******************************/
-
 /*count_spikes runs the blocking electrode(s) without the test potential
 electrode firing and returns the number of initial firings caused by the
 blocking electrodes.  It can be called with one or two parameters.  In the case
@@ -131,7 +122,7 @@ func count_spikes(){ localobj data
         APC_closeVec(1)
      }
      return APC_getN(1)
-     }
+}
 
 /*run_test runs a simulation with both the blocking and stimulating electrodes
 active and returns 1 if the action potential is blocked, 0 if it is not blocked
@@ -146,42 +137,42 @@ conjunction with the AutoRunner class, it is a ResObj which holds additional
 data about the run.*/
 func run_test(){ local i
 
-     if (stop_flag==1) return -2
+    if (stop_flag==1) return -2
      
-     if (numarg()==6) {hits = count_spikes($1, $5, $o6)
-						//print "num args 6, hits = ", hits   //debugging code
-						}
-     if (numarg()==5) {hits = count_spikes($1, $5)
-						//print "num args 5, hits = ", hits   //debugging code
-						}
+    if (numarg()==6) {
+        hits = count_spikes($1, $5, $o6)
+		//print "num args 6, hits = ", hits   //debugging code
+	}
+    if (numarg()==5) {
+        hits = count_spikes($1, $5)
+	    //print "num args 5, hits = ", hits   //debugging code
+	}
 
-     number_of_spikes = hits
+    number_of_spikes = hits
 
-     if (hits==-2) return -2
+    if (hits==-2) return -2
 
-     
-     
-     if (eff_state==0 && (APC_getT(0)+5) > $4){            //
+    if (eff_state==0 && (APC_getT(0)+5) > $4){            
         i = getFreq()
         sprint(warn, "No steady state at frequency %d, amp %d", i, $1)
         return -3
-     }
+    }
     
-     APC_setN(0, 0)
-     APC_setN(1, 0)
-     setstim($2, $4, $3)
+    APC_setN(0, 0)
+    APC_setN(1, 0)
+    setstim($2, $4, $3)
      
-     run()
+    run()
 
-     print "Proximal spikes = ", APC_getN(0)
-     print "Distal spikes = ", APC_getN(1)
+    print "Proximal spikes = ", APC_getN(0)
+    print "Distal spikes = ", APC_getN(1)
      
-     if (stop_flag==1) return -2
-     if (eff_state==1 && APC_getN(0)>APC_getN(1)) return 1   //if apcount of prox node is greater than distal, return 1 (blocked)
-     if (eff_state==1 && APC_getN(0)<=APC_getN(1)) return 0  //otherwise, return 0 for not blocked
-     if ((APC_getN(1) - hits)==0) return 1  //REMOVED THE CONDITION THAT THE APC_getN(0)>hits -- THIS MEANS THAT THE SYSTEM WILL NO LONGER DETECT IF THERE IS INSUFFICIENT TEST STIM AMPLITUDE!!!
-     if ((APC_getN(1) - hits) > 0) return 0   
-     return -1//The return for an insufficient test stim amplitude.  This function should really never reach this line/return a -1!  If so, there is an error.
+    if (stop_flag==1) return -2
+    if (eff_state==1 && APC_getN(0)>APC_getN(1)) return 1   //if apcount of prox node is greater than distal, return 1 (blocked)
+    if (eff_state==1 && APC_getN(0)<=APC_getN(1)) return 0  //otherwise, return 0 for not blocked
+    if ((APC_getN(1) - hits)==0) return 1  //REMOVED THE CONDITION THAT THE APC_getN(0)>hits -- THIS MEANS THAT THE SYSTEM WILL NO LONGER DETECT IF THERE IS INSUFFICIENT TEST STIM AMPLITUDE!!!
+    if ((APC_getN(1) - hits) > 0) return 0   
+    return -1//The return for an insufficient test stim amplitude.  This function should really never reach this line/return a -1!  If so, there is an error.
 }
 
 /*find_thresh is the top-level binary search procedure for the threshold finder
@@ -192,196 +183,190 @@ amplitude to the anodic amplitude, such that cathodic_amp*cathod_dur*coeff = -1*
 The coefficient should be a positive number.*/
 func find_thresh() {  local blocked
 
-     lower = $1
-     upper = $2
-     hasblocked = 0
-     haspassed = 0
-     warn = ""
-     setstim(0,0,0)
-     APC_setThresh(0, $6)
-     APC_setThresh(1, $6)
-     stop_flag=0
+    lower = $1
+    upper = $2
+    hasblocked = 0
+    haspassed = 0
+    warn = ""
+    setstim(0,0,0)
+    APC_setThresh(0, $6)
+    APC_setThresh(1, $6)
+    stop_flag=0
      
-     if (lower>=upper){ 
+    if (lower>=upper){ 
         continue_dialog("Error: Invalid range")
         return
-     }
-     if (lower<0 && upper>0){
+    }
+    if (lower<0 && upper>0){
         continue_dialog("Error: Range must be entirely positive or entirely negative")
         return
-     }
+    }
      
-     if (upper<=0 && lower<0){
-         while(abs(lower-upper) > res && stop_flag==0){
-               level = (lower+upper)/2
+    if (upper<=0 && lower<0){
+        while(abs(lower-upper) > res && stop_flag==0){
+            level = (lower+upper)/2
+            print "attempted threshold = ", level
+            blocked = run_test(level, $3, $4, $5, $7)
+	        print "blocked status = ", blocked
 
-	       print "attempted threshold = ", level
-               blocked = run_test(level, $3, $4, $5, $7)
-	       print "blocked status = ", blocked
-
-               if (blocked==1){
-                  hasblocked = 1
-                  lower = level
-                  min_val=level
-		  print "current block thresh = ",min_val
-                  }else{ 
-                         if (blocked==0 || blocked==-3){
-                            haspassed = 1
-                            upper = level
-                            min_val=lower
-                         }else{
-                               if (blocked==-1) print "Error: Stimulus insufficient to generate action potential.\n"
-                               if (blocked==-2) print "Simulation stopped.\n"
-                               break
-                         }
-                  }
-          }
-     }else{
-           while(abs(lower-upper) > res && stop_flag==0){
-               level = (lower+upper)/2
-               blocked = run_test(level, $3, $4, $5, $7)
-               if (blocked==1){
-                  hasblocked = 1
-                  upper = level
-                  min_val=level
-                  }else{ 
-                         if (blocked==0 || blocked==-3){
-                            haspassed = 1
-                            lower = level
-                            min_val=upper
-                         }else{
-                               if (blocked==-1) print "Error: Stimulus insufficient to generate action potential.\n"
-                               if (blocked==-2) print "Simulation stopped.\n"
-                               break
-                         }
-                  }
-          }
-     }
-	   
-	  
-	  setglobblockmsg(warn)  //set global warning string to default
+            if (blocked==1){
+                hasblocked = 1
+                lower = level
+                min_val=level
+		        print "current block thresh = ",min_val
+            }else{ 
+                if (blocked==0 || blocked==-3){
+                    haspassed = 1
+                    upper = level
+                    min_val=lower
+                }else{
+                    if (blocked==-1) print "Error: Stimulus insufficient to generate action potential.\n"
+                    if (blocked==-2) print "Simulation stopped.\n"
+                    break
+                }
+            }
+        }
+    }else{
+        while(abs(lower-upper) > res && stop_flag==0){
+            level = (lower+upper)/2
+            blocked = run_test(level, $3, $4, $5, $7)
+            if (blocked==1){
+                hasblocked = 1
+                upper = level
+                min_val=level
+            }else{ 
+                if (blocked==0 || blocked==-3){
+                    haspassed = 1
+                    lower = level
+                    min_val=upper
+                }else{
+                    if (blocked==-1) print "Error: Stimulus insufficient to generate action potential.\n"
+                    if (blocked==-2) print "Simulation stopped.\n"
+                    break
+                }
+            }
+        }
+    }  
+	
+    setglobblockmsg(warn)  //set global warning string to default
       
-	  if (blocked==1){ min_val=level
-      }else{ min_val = upper}
+	if (blocked==1){ 
+        min_val=level
+    }else{ 
+        min_val = upper
+    }
       
-	  print "Threshold = ",min_val
+	print "Threshold = ",min_val
 	  
-      if (blocked==-2 || stop_flag==1) { warn = "Simulation stopped.\n" }
-      if (hasblocked==0){ warn = "Range entirely below threshold.  No threshold found." }
-      if (haspassed==0){ warn = "Range entirely above threshold.  No threshold found." }
-      if (blocked==-1){ warn = "Error: Stimulus insufficient to generate action potential." }
+    if (blocked==-2 || stop_flag==1) { warn = "Simulation stopped.\n" }
+    if (hasblocked==0){ warn = "Range entirely below threshold.  No threshold found." }
+    if (haspassed==0){ warn = "Range entirely above threshold.  No threshold found." }
+    if (blocked==-1){ warn = "Error: Stimulus insufficient to generate action potential." }
       
-	  setglobblockmsg(warn)  //set global warning string to new warning message
-	  
-	  
-      return min_val
-      
-      }
+	setglobblockmsg(warn)  //set global warning string to new warning message
+	    
+    return min_val
+}
 
 /*Extended find_thresh method for use with AutoRunner class, takes an extra parameter
 pointing to a ResObj, into which it stores additional data about the run.*/   
-//find_thresh(lower bound (nA), upper bound (nA), stimulus amperage (nA), stimulus duration (ms), stimulus delay (ms), apcount threshold (mV), anodic coefficient)
-   
-   
-     
+//find_thresh(lower bound (nA), upper bound (nA), stimulus amperage (nA), stimulus duration (ms), stimulus delay (ms), apcount threshold (mV), anodic coefficient) 
 func find_threshEXT() {  local blocked localobj data
-     lower = $1
-     upper = $2
-     hasblocked = 0
-     haspassed = 0
-     warn = ""
+    lower = $1
+    upper = $2
+    hasblocked = 0
+    haspassed = 0
+    warn = ""
      
-     if (lower>=upper){ 
+    if (lower>=upper){ 
         continue_dialog("Error: Invalid range")
         return
-     }
-     if (lower<0 && upper>0){
+    }
+    if (lower<0 && upper>0){
         continue_dialog("Error: Range must be entirely positive or entirely negative")
         return
-     }
+    }
      
-     data =  $o8
-     setstim(0,0,0)
-     APC_setThresh(0, $6)
-     APC_setThresh(1, $6)
-     stop_flag=0
-     if (upper<=0 && lower<0){
-         while(abs(lower-upper) > res && stop_flag==0){
-               APC_appVec(1, data.time)
-               level = (lower+upper)/2
-               blocked = run_test(level, $3, $4, $5, $7, data)
-               if (blocked==1){
-                  hasblocked = 1
-                  lower = level
-                  min_val=level
-                  }else{ if (blocked==0 || blocked==-3){
-                  haspassed = 1
-                  upper = level
-                  min_val=lower
-                  }else{
-                        if (blocked==-1) print "Error: Stimulus insufficient to generate action potential.\n"
-                        if (blocked==-2) print "Simulation stopped.\n"
-                  break
-                  }
-               }
-          }
-     }else{
-           while(abs(lower-upper) > res && stop_flag==0){
-               APC_appVec(1, data.time)
-               level = (lower+upper)/2
-               blocked = run_test(level, $3, $4, $5, $7, data)
-               if (blocked==1){
-                  hasblocked = 1
-                  upper = level
-                  min_val=level
-                  }else{ if (blocked==0 || blocked==-3){
-                  haspassed = 1
-                  lower = level
-                  min_val=upper
-                  }else{
-                        if (blocked==-1) print "Error: Stimulus insufficient to generate action potential.\n"
-                        if (blocked==-2) print "Simulation stopped.\n"
-                  break
-                  }
-               }
-          }
-     }
+    data =  $o8
+    setstim(0,0,0)
+    APC_setThresh(0, $6)
+    APC_setThresh(1, $6)
+    stop_flag=0
+    if (upper<=0 && lower<0){
+        while(abs(lower-upper) > res && stop_flag==0){
+            APC_appVec(1, data.time)
+            level = (lower+upper)/2
+            blocked = run_test(level, $3, $4, $5, $7, data)
+            if (blocked==1){
+                hasblocked = 1
+                lower = level
+                min_val=level
+            }else{ 
+                if (blocked==0 || blocked==-3){
+                    haspassed = 1
+                    upper = level
+                    min_val=lower
+                }else{
+                    if (blocked==-1) print "Error: Stimulus insufficient to generate action potential.\n"
+                    if (blocked==-2) print "Simulation stopped.\n"
+                    break
+                }
+            }
+        }
+    }else{
+        while(abs(lower-upper) > res && stop_flag==0){
+            APC_appVec(1, data.time)
+            level = (lower+upper)/2
+            blocked = run_test(level, $3, $4, $5, $7, data)
+            if (blocked==1){
+                hasblocked = 1
+                upper = level
+                min_val=level
+            }else{ 
+                if (blocked==0 || blocked==-3){
+                    haspassed = 1
+                    lower = level
+                    min_val=upper
+                }else{
+                    if (blocked==-1) print "Error: Stimulus insufficient to generate action potential.\n"
+                    if (blocked==-2) print "Simulation stopped.\n"
+                    break
+                }
+            }
+        }
+    }
 
-      if (blocked==1){ min_val=level
-      }else{ min_val = upper}
-      data.thresh=min_val
-      data.block = hasblocked  
+    if (blocked==1){ 
+        min_val=level
+    }else{ 
+        min_val = upper
+    }
+    data.thresh=min_val
+    data.block = hasblocked  
       
-      if (blocked==-2 || stop_flag==1) { warn = "Simulation stopped.\n" }
-      if (hasblocked==0){ warn = "Range entirely below threshold.  No threshold found." }
-      if (haspassed==0){ warn = "Range entirely above threshold.  No threshold found." }
-      if (blocked==-1){ warn = "Error: Stimulus insufficient to generate action potential." }
-      data.warnings = warn
+    if (blocked==-2 || stop_flag==1) { warn = "Simulation stopped.\n" }
+    if (hasblocked==0){ warn = "Range entirely below threshold.  No threshold found." }
+    if (haspassed==0){ warn = "Range entirely above threshold.  No threshold found." }
+    if (blocked==-1){ warn = "Error: Stimulus insufficient to generate action potential." }
+    data.warnings = warn
       
-      return min_val
-      
-      }
+    return min_val
+}
 
-
-//////////////////////////////////////////////////////////
-	 //STOPPED HERE///////////////////
-	 //////////////////////////////////////
-	 
-	 
 /*Stops the simulation.*/      
 proc stop_run(){
-     stop_flag=1
-     stoprun=1
+    stop_flag=1
+    stoprun=1
 }
 
 func getRes(){
-     return res
+    return res
 }
 
 /*Draws threshold finder window*/
 proc draw_thresh(){
 	
-     if (threshbox.ismapped()==0){
+    if (threshbox.ismapped()==0){
         threshbox.intercept(1)
         xpanel("Search Parameters")
         xpvalue("Lower Bound (nA): ", &lowB)
@@ -420,17 +405,12 @@ proc draw_thresh(){
 
         threshbox.intercept(0)
         threshbox.map("Threshold detector", 28, 591, -1, -1)
-     }
+    }
 
-     if ($1 == 1) {
+    if ($1 == 1) {
 		threshbox.unmap()
-     }
-
+    }
 }
-
-
-
-
 
 endtemplate ThreshFinder
 

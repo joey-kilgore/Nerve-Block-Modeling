@@ -1,37 +1,41 @@
 // This file provides a menu to run the various automated tests
 
-
 //***************************************************************
 //  variables
 //***************************************************************
-
 strdef mechlabel
 mechlabel = "Choose one of the mechanisms:"
-
 
 //Initialize mechanism selections
 double mechsel[12]			// selection flag for mechanisms
 
-mechsel[0] = 1
-mechsel[1] = 0
-mechsel[2] = 0
-mechsel[3] = 0
-mechsel[4] = 0
-mechsel[5] = 0
-mechsel[6] = 0
-mechsel[7] = 0
-mechsel[8] = 0
-mechsel[9] = 0
-mechsel[10] = 0
-mechsel[11] = 0
+mechsel[0] = 1	//AXNODE
+mechsel[1] = 0	//AXNODEKExt
+mechsel[2] = 0	//KExtNodefh
+mechsel[3] = 0	//KExtNodeNsh
+mechsel[4] = 0 	//KExtNodediff
+mechsel[5] = 0	//KIntNode
+mechsel[6] = 0	//KIntNodeND
+mechsel[7] = 0	//NaExtNode
+mechsel[8] = 0	//NaExtNodeND
+mechsel[9] = 0	//NaIntNode
+mechsel[10] = 0	//KExtNodeBell
+mechsel[11] = 0	//Nakpump
 
 //***************************************************************
 //  procedures
 //***************************************************************
 
 proc mechpanel() {
+	// Create the panel
 	xpanel("Mechanism Selection")
+
+	// Create the label at the top "Choose one of the mechanisms:"
 	xvarlabel(mechlabel)
+
+	// Create all the check boxes and list what they are for
+	// xcheckbox documentation : https://www.neuron.yale.edu/neuron/static/docs/help/neuron/general/function/panel.html
+	// when the check box is clicked the initialize method is called (see MRG_init_cell_defs.hoc)
 	xcheckbox("AXNODE", &mechsel[0], "initialize(1)")
 	xcheckbox("AXNODEKExt", &mechsel[1], "initialize(2)")
 	xcheckbox("KExtNodefh", &mechsel[2], "initialize(3)")
@@ -44,12 +48,13 @@ proc mechpanel() {
 	xcheckbox("NaIntNode", &mechsel[9], "initialize(10)")
 	xcheckbox("KExtNodeBell", &mechsel[10], "initialize(11)")
 	xcheckbox("Nakpump", &mechsel[11], "initialize(12)")
+
+	// xpanel sets the initial screen position
 	xpanel(516,916)
 }
 
 //***************************************************************
 //  main
 //***************************************************************
-
 mechpanel()
 
