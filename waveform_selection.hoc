@@ -6,20 +6,17 @@
 //***************************************************************
 //  variables
 //***************************************************************
-
-
 double wavesel[4]			// selection flag to pick square, sine, triangle
 
 //Initialize state variables to sine wave
-wavesel[0] = 0
-wavesel[1] = 1
-wavesel[2] = 0
-wavesel[3] = 0
+wavesel[0] = 0	//square wave
+wavesel[1] = 1	//sine wave
+wavesel[2] = 0	//triangle wave
+wavesel[3] = 0	//sine ramp
 
 //***************************************************************
 //  external files
 //***************************************************************
-
 load_file("sine_waveform.hoc")					// select waveform
 load_file("triangle_waveform.hoc")					// select waveform
 load_file("square_waveform.hoc")					// select waveform
@@ -27,7 +24,18 @@ load_file("square_waveform.hoc")					// select waveform
 //***************************************************************
 //  procedures
 //***************************************************************
-
+proc Selec_waveform(){
+	selectbox.intercept(1)
+	xpanel("Choose Waveform Type")
+	
+	xcheckbox("Square",&wavesel[0], "waveform_sel(0)")
+	xcheckbox("Sine",&wavesel[1], "waveform_sel(1)")
+	xcheckbox("Triangle",&wavesel[2], "waveform_sel(2)")
+	xcheckbox("Sine Ramp",&wavesel[3], "waveform_sel(3)")
+	xpanel()
+	selectbox.intercept(0)
+	selectbox.map("Choose Waveform Type",24, 156, -1, -1)
+}
 
 proc waveform_sel(){
 
@@ -83,7 +91,7 @@ proc waveform_sel(){
 	}
 	if ($1==1){  // sine
 		wavesel[1] = 1
-     		state_sin=1
+     	state_sin = 1
 		sine_panel()
 	}
 	if ($1==2){  //triangle
@@ -103,24 +111,20 @@ proc waveform_sel(){
 
 /*Call_procstim and call_procs keep waveform variables consistent with values in input windows.*/
 proc call_procstim(){
-
 	squarestim()
 	sinestim()
 	tristim()
 }
 
 proc call_procs(){
-	
-
 	// one electrode
 	if($1 == 1){
 		
 		if (state_bal) bal_val1() 
 		if (state_unbal) unbal_val1()
-	      if (state_sin) sin_val1()
-            if (state_tri) tri_val()
+	    if (state_sin) sin_val1()
+        if (state_tri) tri_val()
 		
-	
 		frequency_readout = 1000*(1/(cathod_dur+postCathod_dur+anod_dur + postAnod_dur)) //1000=conversion from ms to 1/s
 						//I'm writing this code here so that it gets called everytime that waveform parameters change
 	}
@@ -130,8 +134,8 @@ proc call_procs(){
 		
 		if (state_bal) bal_val2() 
 		if (state_unbal) unbal_val2()
-	      if (state_sin) sin_val2()
-            if (state_tri) tri_val()
+	    if (state_sin) sin_val2()
+        if (state_tri) tri_val()
 
 		frequency_readout = 1000*(1/(cathod_dur+postCathod_dur+anod_dur + postAnod_dur)) //1000=conversion from ms to 1/s
 						//I'm writing this code here so that it gets called everytime that waveform parameters change
@@ -142,34 +146,17 @@ proc call_procs(){
 		
 		if (state_bal) bal_val3() 
 		if (state_unbal) unbal_val3()
-	      if (state_sin) sin_val3()
-            if (state_tri) tri_val()
+	    if (state_sin) sin_val3()
+        if (state_tri) tri_val()
 
 		frequency_readout = 1000*(1/(cathod_dur+postCathod_dur+anod_dur + postAnod_dur)) //1000=conversion from ms to 1/s
 						//I'm writing this code here so that it gets called everytime that waveform parameters change
 	}
 }
 
-
-proc Selec_waveform(){
-	selectbox.intercept(1)
-	xpanel("Choose Waveform Type")
-	
-	xcheckbox("Square",&wavesel[0], "waveform_sel(0)")
-	xcheckbox("Sine",&wavesel[1], "waveform_sel(1)")
-	xcheckbox("Triangle",&wavesel[2], "waveform_sel(2)")
-	xcheckbox("Sine Ramp",&wavesel[3], "waveform_sel(3)")
-	xpanel()
-	selectbox.intercept(0)
-	selectbox.map("Choose Waveform Type",24, 156, -1, -1)
-}
-
-
 //***************************************************************
 //  main
 //***************************************************************
-
-
 Selec_waveform()
 waveform_sel(1)
 
