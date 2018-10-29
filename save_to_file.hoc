@@ -1,0 +1,34 @@
+
+// appendVectorToFile takes in a vector and file path, and then
+// appends the current vector values to the file
+//proc appendVectorToFile(){
+    // Save the parameters to a more easy to use form
+    //vec = $1
+    //fil = $2
+
+    // open the file to append to
+    //fil.aopen()
+    // print the vectors contents to a file
+    //vec.printf(fil)
+//}
+
+// append the voltages of all nodes to file
+// note the the file object fil must already have been created
+// and it must be set to append by calling fil.aopen()
+proc appendNodeVoltageToFile(){
+    // create the file object
+    //objref fil
+    //fil = new File("C:/Users/joeya/Desktop/vector.txt")
+
+    // open the file to append to
+    //fil.aopen()
+
+    // loop through all nodes
+    for i=0,axonnodes-1 {
+        fil.printf("%f,",node[i].v)
+    }
+    fil.printf("\n")
+
+    // close the file
+    //fil.close()
+}
