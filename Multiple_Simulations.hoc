@@ -1,3 +1,8 @@
+// Create save file objects for the simulations
+objref fil
+fil = new File("L:/Work/data2.txt")
+fil.aopen()
+
 // First load the CNOW_run to load all other files
 load_file("CNOW_run.hoc")
 
@@ -11,6 +16,8 @@ proc sim1(){
     // Print how long the simulation took to run in real time
     print "Simulation 1 runtime (s): ", realtime
 }
+
+
 
 proc sim2(){
     // Initialize te next simulation
@@ -26,4 +33,11 @@ proc sim2(){
 
 // MAIN
 sim1()
+// close file from sim1 open new file for sim2
+fil.close()
+fil = new File("L:/Work/data3.txt")
+fil.aopen()
+
 sim2()
+// close file after sim2
+fil.close()
