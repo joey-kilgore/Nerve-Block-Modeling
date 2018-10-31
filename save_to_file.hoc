@@ -1,0 +1,62 @@
+// saveValuesToFile checks which values have been selected to save (save_to_file_UI.hoc)
+// then calls the respective append to file procs for each value
+proc saveValuesToFile(){
+    if(valueToSaveSelected[0] == 1){
+        appendNodeMGateToFile()
+    }
+    
+    if(valueToSaveSelected[1] == 1){
+        appendNodeHGateToFile()
+    }
+
+    if(valueToSaveSelected[2] == 1){
+        appendNodeVoltageToFile()
+    }
+}
+
+// append the voltages of all nodes to file
+// note that the file object fil must already have been created
+// and it must be set to append by calling fil.aopen()
+proc appendNodeVoltageToFile(){
+    // print the time
+    fileVoltage.printf("%f,", t)
+
+    // loop through all nodes
+    for i=0,axonnodes-1 {
+        // Print the value of each node voltage to file and using a comma as the seperator
+        fileVoltage.printf("%f,", node[i].v)
+    }
+    // put a new line at the end of the list of node voltages
+    fileVoltage.printf("\n")
+}
+
+// append the m gate values of all nodes to file
+// note that the file object fil must already have been created
+// and it must be set to append by calling fil.aopen()
+proc appendNodeMGateToFile(){
+    // print the time
+    fileMGate.printf("%f,", t)
+
+    // loop through all nodes
+    for i=0, axonnodes-1 {
+        // Print the node m gate value to file using a comma seperator
+        fileMGate.printf("%f,", node[i].m_axnode)
+    }
+    // put a new line at the end of the list of node voltages
+    fileMGate.printf("\n")
+}
+
+// append the h gate values of all nodes to file
+// note that the file object fil must already have been created 
+// and it must be set to append by calling fil.aopen()
+proc appendNodeHGateToFile(){
+    // print the time
+    fileHGate.printf("%f,", t)
+
+    for i=0, axonnodes-1 {
+        // Print the node h gate value to file using a comma seperator
+        fileHGate.printf("%f,", node[i].h_axnode)
+    }
+    // put a new line at the end of the list of node voltages
+    fileHGate.printf("\n")
+}

@@ -1,0 +1,102 @@
+// Select options for saving data to files with a GUI 
+
+// create the array to hold whether the checkboxes are selected
+double valueToSaveSelected[3] // initialized to 0 (False)
+strdef filePathMGate
+strdef filePathHGate
+strdef filePathVoltage
+
+// Creating the file objects for each selection
+objref fileMGate    // Checkbox 0
+objref fileHGate    // Checkbox 1
+objref fileVoltage  // Checkbox 2
+
+
+// Creating the VBox for all the components
+objref saveValueToFileVBox
+saveValueToFileVBox = new VBox()
+
+// Procedure for drawing the actual GUI
+proc DrawSaveFileVBox(){
+    saveValueToFileVBox.intercept(1)
+    xpanel("Save Data to File") //enter xpanel mode -- all following items go into this panel (w\n the vbox)
+    xlabel("Check what values to save")
+    xlabel("And input the file path to save it to")
+
+    // each check box will launch a dialog box to input the file path
+    xcheckbox("m gate", &valueToSaveSelected[0], "inputFilePath(0)")  // check box to save m gate values
+    xcheckbox("h gate", &valueToSaveSelected[1], "inputFilePath(1)")  // check box to save h gate values
+    xcheckbox("voltage", &valueToSaveSelected[2], "inputFilePath(2)")  // check box to save voltage values
+
+    xbutton("Commit Selection", "commitFileSelect()")   // commit selection actually creates the file objects  
+    xbutton("Close Files", "closeFiles()")  // allows the user to close the file at any point to open it and view
+
+    xpanel(100, 100)			//exit xpanel mode
+    saveValueToFileVBox.intercept(0)
+    saveValueToFileVBox.map("Save Data to File", 100, 100, -1, -1)
+}
+
+proc inputFilePath(){
+    selectedValue = $1
+    if(selectedValue == 0){
+        string_dialog("Enter path for m gate file: ", filePathMGate)
+    }
+    if(selectedValue == 1){
+        string_dialog("Enter path for h gate file: ", filePathHGate)
+    }
+    if(selectedValue == 2){
+        string_dialog("Enter path for voltage file: ", filePathVoltage)
+    }
+}
+
+
+// Procedure for creating file objects
+proc commitFileSelect(){
+    // The m gate was selected
+    if(valueToSaveSelected[0] == 1){
+        // Create the fileMGate file object
+        fileMGate = new File(filePathMGate)
+        // Open the file (set to append)
+        fileMGate.aopen()
+        print "m gate file opened"
+    }
+
+    // The h gate was selected
+    if(valueToSaveSelected[1] == 1){
+        // Create the fileHGate file object
+        fileHGate = new File(filePathHGate)
+        // Open the file (set to append)
+        fileHGate.aopen()
+    }
+
+    // Voltage was selected
+    if(valueToSaveSelected[2] == 1){
+        // Create the fileVoltage file object
+        fileHGate = new File(filePathVoltage)
+        // Open the file (set to append)
+        fileVoltage.aopen()
+    }
+}
+
+proc closeFiles(){ 
+    // The m gate was selected
+    if(valueToSaveSelected[0] == 1){
+        // close the m gate file
+        fileMGate.close()
+    }
+
+    // The h gate was selected
+    if(valueToSaveSelected[1] == 1){
+        // close the h gate file
+        fileHGate.close()
+    }
+
+    // Voltage was selected
+    if(valueToSaveSelected[2] == 1){
+        // close the voltage file
+        fileVoltage.close()
+    }
+}
+
+// MAIN
+DrawSaveFileVBox()

@@ -32,4 +32,7 @@ proc advance(){
 		apfreq.x[i-1] = 1000/(apvec.x[i] - apvec.x[i-1])  // AP frequency in Hz
 		apfreqstep = apfreq.x[i]
 	}
+
+    // Save data to file at each time step
+    saveValuesToFile()
 }
