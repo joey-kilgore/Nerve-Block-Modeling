@@ -41,10 +41,6 @@ load_file("trajectory_control.ses")	// trajectory builder control routines
 load_file("VoltAndSpaceGraphs.ses")	// open recording rig (node[11].v(0.5) & space plot of v)
 load_file("RunCtrl.ses")		// open run control window with appropriate settings
 
-//**********************************************************
-// Ability to save data to file 
-//**********************************************************
-load_file("save_to_file.hoc")
 
 //**********************************************************
 // Functions that are used to determine the block threshold
@@ -59,4 +55,10 @@ load_file("APCount-40mvRecordto(vec).hoc") 	// records APCount data to a vector 
 load_file("run_tests.hoc")				// test function menu
 
 load_file("advanceproc.hoc")
+
+//**********************************************************
+// Ability to save data to file 
+//**********************************************************
+load_file("save_to_file_UI.hoc")
+load_file("save_to_file.hoc")
 

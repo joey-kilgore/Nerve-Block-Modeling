@@ -33,5 +33,6 @@ proc advance(){
 		apfreqstep = apfreq.x[i]
 	}
 
-    appendNodeVoltageToFile()
+    // Save data to file at each time step
+    saveValuesToFile()
 }
