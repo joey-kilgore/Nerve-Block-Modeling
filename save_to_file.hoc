@@ -8,6 +8,12 @@ proc saveValuesToFile(){
     if(valueToSaveSelected[2] == 1) appendNodeVoltageToFile()
     
     if(valueToSaveSelected[3] == 1) appendNodeSGateToFile()
+
+    if(valueToSaveSelected[4] == 1) appendNodeINaToFile()
+
+    if(valueToSaveSelected[5] == 1) appendNodeIKToFile()
+
+    if(valueToSaveSelected[6] == 1) appendNodeILToFile()
 }
 
 // append the voltages of all nodes to file
@@ -68,4 +74,40 @@ proc appendNodeSGateToFile(){
     }
     // put a new line at the end of the list
     fileSGate.printf("\n")
+} 
+
+proc appendNodeINaToFile(){
+    // print the time
+    fileINa.printf("%f,", t)
+
+    for i=0, axonnodes-1 {
+        // Print the node ina value to file using a comma seperator
+        fileINa.printf("%f,", node[i].ina_axnode)
+    }
+    // put a new line at the end of the list
+    fileINa.printf("\n")
+} 
+
+proc appendNodeIKToFile(){
+    // print the time
+    fileIK.printf("%f,", t)
+
+    for i=0, axonnodes-1 {
+        // Print the node ik value to file using a comma seperator
+        fileIK.printf("%f,", node[i].ik_axnode)
+    }
+    // put a new line at the end of the list
+    fileIK.printf("\n")
+} 
+
+proc appendNodeILToFile(){
+    // print the time
+    fileIL.printf("%f,", t)
+
+    for i=0, axonnodes-1 {
+        // Print the node il value to file using a comma seperator
+        fileIL.printf("%f,", node[i].il_axnode)
+    }
+    // put a new line at the end of the list
+    fileIL.printf("\n")
 } 
