@@ -1,16 +1,23 @@
 // Select options for saving data to files with a GUI 
 
 // create the array to hold whether the checkboxes are selected
-double valueToSaveSelected[3] // initialized to 0 (False)
+double valueToSaveSelected[7] // initialized to 0 (False)
 strdef filePathMGate
 strdef filePathHGate
 strdef filePathVoltage
+strdef filePathSGate
+strdef filePathINa
+strdef filePathIK
+strdef filePathIL
 
 // Creating the file objects for each selection
 objref fileMGate    // Checkbox 0
 objref fileHGate    // Checkbox 1
 objref fileVoltage  // Checkbox 2
-
+objref fileSGate    // Checkbox 3
+objref fileINa      // Checkbox 4
+objref fileIK       // Checkbox 5
+objref fileIL       // Checkbox 6
 
 // Creating the VBox for all the components
 objref saveValueToFileVBox
@@ -22,11 +29,20 @@ proc DrawSaveFileVBox(){
     xpanel("Save Data to File") //enter xpanel mode -- all following items go into this panel (w\n the vbox)
     xlabel("Check what values to save")
     xlabel("And input the file path to save it to")
+    xlabel("You can enter the directory path, and then")
+    xlabel("just enter the file name and extension when")
+    xlabel("selecting your values.")
+
+    xbutton("Enter File Directory", "enterFileDirectory()") // enter directory for files to simplify the process
 
     // each check box will launch a dialog box to input the file path
-    xcheckbox("m gate", &valueToSaveSelected[0], "inputFilePath(0)")  // check box to save m gate values
-    xcheckbox("h gate", &valueToSaveSelected[1], "inputFilePath(1)")  // check box to save h gate values
-    xcheckbox("voltage", &valueToSaveSelected[2], "inputFilePath(2)")  // check box to save voltage values
+    xcheckbox("m gate", &valueToSaveSelected[0], "inputFilePath(0)")  // checkbox to save m gate values
+    xcheckbox("h gate", &valueToSaveSelected[1], "inputFilePath(1)")  // checkbox to save h gate values
+    xcheckbox("voltage", &valueToSaveSelected[2], "inputFilePath(2)")  // checkbox to save voltage values
+    xcheckbox("s gate", &valueToSaveSelected[3], "inputFilePath(3)")  // checkbox to save voltage values
+    xcheckbox("iNa", &valueToSaveSelected[4], "inputFilePath(4)")   // checkbox to save iNa
+    xcheckbox("iK", &valueToSaveSelected[5], "inputFilePath(5)")   // checkbox to save iK
+    xcheckbox("iL", &valueToSaveSelected[6], "inputFilePath(6)")   // checkbox to save iL
 
     xbutton("Commit Selection", "commitFileSelect()")   // commit selection actually creates the file objects  
     xbutton("Close Files", "closeFiles()")  // allows the user to close the file at any point to open it and view
@@ -36,17 +52,35 @@ proc DrawSaveFileVBox(){
     saveValueToFileVBox.map("Save Data to File", 100, 100, -1, -1)
 }
 
+proc enterFileDirectory(){
+    strdef direc    // direc will store the string the user enters as the file path
+    string_dialog("Enter Directory Path, should end with a '/'", direc)
+
+    filePathMGate = direc
+    filePathHGate = direc
+    filePathVoltage = direc
+    filePathSGate = direc
+    filePathINa = direc
+    filePathIK = direc
+    filePathIL = direc
+}
+
+// Gets the file path when a user selected a value to save
 proc inputFilePath(){
     selectedValue = $1
-    if(selectedValue == 0){
-        string_dialog("Enter path for m gate file: ", filePathMGate)
-    }
-    if(selectedValue == 1){
-        string_dialog("Enter path for h gate file: ", filePathHGate)
-    }
-    if(selectedValue == 2){
-        string_dialog("Enter path for voltage file: ", filePathVoltage)
-    }
+    if(selectedValue == 0) string_dialog("Enter path for m gate file: ", filePathMGate)
+    
+    if(selectedValue == 1) string_dialog("Enter path for h gate file: ", filePathHGate)
+    
+    if(selectedValue == 2) string_dialog("Enter path for voltage file: ", filePathVoltage)
+    
+    if(selectedValue == 3) string_dialog("Enter path for s gate file: ", filePathSGate)
+    
+    if(selectedValue == 4) string_dialog("Enter path for iNa file: ", filePathINa)
+    
+    if(selectedValue == 5) string_dialog("Enter path for iK file: ", filePathIK)
+    
+    if(selectedValue == 6) string_dialog("Enter path for iL file: ", filePathIL)
 }
 
 
@@ -58,7 +92,6 @@ proc commitFileSelect(){
         fileMGate = new File(filePathMGate)
         // Open the file (set to append)
         fileMGate.aopen()
-        print "m gate file opened"
     }
 
     // The h gate was selected
@@ -72,30 +105,58 @@ proc commitFileSelect(){
     // Voltage was selected
     if(valueToSaveSelected[2] == 1){
         // Create the fileVoltage file object
-        fileHGate = new File(filePathVoltage)
+        fileVoltage = new File(filePathVoltage)
         // Open the file (set to append)
         fileVoltage.aopen()
+    }
+
+    // the s gate was selected
+    if(valueToSaveSelected[3] == 1){
+        // Create the fileSGate file object
+        fileSGate = new File(filePathSGate)
+        // Open the file (set to append)
+        fileSGate.aopen()
+    }
+
+    // the iNa was selected
+    if(valueToSaveSelected[4] == 1){
+        // Create the fileINa file object
+        fileINa = new File(filePathINa)
+        // Open the file (set to append)
+        fileINa.aopen()
+    }
+
+    // the iK was selected
+    if(valueToSaveSelected[5] == 1){
+        // Create the fileIK file object
+        fileIK = new File(filePathIK)
+        // Open the file (set to append)
+        fileIK.aopen()
+    }
+
+    // the iL was selected
+    if(valueToSaveSelected[6] == 1){
+        // Create the fileIL file object
+        fileIL = new File(filePathIL)
+        // Open the file (set to append)
+        fileIL.aopen()
     }
 }
 
 proc closeFiles(){ 
-    // The m gate was selected
-    if(valueToSaveSelected[0] == 1){
-        // close the m gate file
-        fileMGate.close()
-    }
+    if(valueToSaveSelected[0] == 1) fileMGate.close()   // The m gate was selected
+    
+    if(valueToSaveSelected[1] == 1) fileHGate.close()   // The h gate was selected
+      
+    if(valueToSaveSelected[2] == 1) fileVoltage.close() // Voltage was selected
+    
+    if(valueToSaveSelected[3] == 1) fileSGate.close()   // the s gate was selected 
 
-    // The h gate was selected
-    if(valueToSaveSelected[1] == 1){
-        // close the h gate file
-        fileHGate.close()
-    }
+    if(valueToSaveSelected[4] == 1) fileINa.close()   // the iNa was selected   
 
-    // Voltage was selected
-    if(valueToSaveSelected[2] == 1){
-        // close the voltage file
-        fileVoltage.close()
-    }
+    if(valueToSaveSelected[5] == 1) fileIK.close()   // the iK was selected   
+
+    if(valueToSaveSelected[6] == 1) fileIL.close()   // the iL was selected   
 }
 
 // MAIN
