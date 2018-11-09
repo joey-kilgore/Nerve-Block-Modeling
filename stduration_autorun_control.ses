@@ -1,0 +1,20 @@
+// initialize variables
+max_amp = 2e6
+min_amp = 0
+step_amp = 1e5
+max_pw = 5
+min_pw = 0
+step_pw = 1e5
+
+//setup panel
+xpanel("Strength Duration Control Panel", 0)
+xbutton("Run Test","stduration_autorun_loop(max_amp,min_amp,step_amp,max_pw,min_pw,step_pw)")
+
+xvalue("Maximum Amplitude (nA)","max_amp",1,"",1)
+xvalue("Minimum Amplitude (nA)","min_amp",1,"",1)
+xvalue("Step size for Amplitude (nA)","step_amp",1,"",1)
+xvalue("Maximum PW (msec)","max_pw",1,"",1)
+xvalue("Minimum PW (msec)","min_pw",1,"",1)
+xvalue("Step size for PW (msec)","step_pw",1,"",1)
+
+xpanel(1014,926)
