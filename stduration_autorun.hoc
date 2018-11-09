@@ -1,0 +1,149 @@
+//Declare output file
+objref stdurationResultsFileObj        //declare output file object
+stdurationResultsFileObj = new File()
+
+// create vector to store the aptimes values
+objref storeapc[10]
+storeapc[0] = new Vector()
+
+objref SDapc	//create array to store AP counts
+node[5] SDapc = new APCount(.5)			//creates a new APCount object in node 5, which counts the # of times Vm crosses the threshold in the positive direction
+
+
+// $1 is max amplitude
+// $2 is min amplitude
+// $3 is step amplitude
+// $4 is max pw
+// $5 is min pw
+// $6 is step pw
+
+proc stduration_autorun_loop() {
+
+	//-------------------------------------------
+	//------Sim Output File Initialization
+	// bring up a dialog to select the log file
+
+	stdurationResultsFileObj.chooser("a", "Select Log File", "*.*", "Save", "Cancel", stdurationResultsFileObj.dir)
+	
+
+	// if no choice has been made, use SimDataResults.csv
+	if (stdurationResultsFileObj.chooser() == 0) {
+
+		strdef FileName		//declare a sting for the filename
+		sprint(FileName, "stdurationResults.csv")		//print the filename to the string
+		stdurationResultsFileObj.wopen(FileName)
+	}
+
+
+	// Bring up the trajectory panel builder
+	// The trajectory panel will be used to define the stimulus output
+	// using the electrode under test.  The electrode under test may
+	// be generated from the FEM model and therefore using the
+	// "Threshold Test Pulse" may be inadequate. (note:  need to check 
+	// if this is true)
+
+	traj_panel()
+	more()
+	more()
+	more()
+
+	// Update the model parameters
+	initialize(0)
+
+	// zero out the stimulation parameters
+	setstim(0,0,0)
+
+	// extract the parameters from the "Strength Duration Control Panel"
+	high_amp = $1
+	low_amp = $2
+	step_amp = $3
+	high_pw = $4
+	low_pw = $5
+	step_pw = $6
+
+
+	// Store the parameters to the log file
+	stdurationResultsFileObj.printf("%g,%g,%g,%g,%g,%g\n",high_amp, low_amp, step_amp, high_pw, low_pw, step_pw)
+
+	// Write header to file
+	stdurationResultsFileObj.printf("\n PW (msec), Amp (nA), AP time (msec) \n")
+
+
+	current_amp = low_amp
+	current_pw = high_pw
+
+	
+
+	// loop through all the requested duration levels	
+	for (PW = low_pw; PW <=high_pw; PW+=step_pw){
+
+		// initialize the first amplitude to the highest value
+		Amp = high_amp
+		// initialize the previous amplitude to the lowest value
+		prev_Amp = low_amp
+
+		// determine the difference between the current amplitude and the previous amplitude
+		amp_diff = abs(Amp-prev_Amp)
+
+		// perform a binary search to find the amplitude that fires for this pw
+		// check that the difference between the previously checked amplitude and the 
+		// current amplitude is more than the minimum specified amplitude step size
+
+		while ((amp_diff>step_amp) && (Amp<=high_amp)) {
+
+			// hold the current at 0 for 1 msec
+			DC_vec.x[0] = 0
+			Ramptime_vec.x[0] = 1
+
+			// set the current to the selected amplitude in 1 usec
+			DC_vec.x[1] = Amp
+			Ramptime_vec.x[1] = .001
+
+			// hold the current at the selected amplitude for the selected pw
+			DC_vec.x[2] = Amp
+			Ramptime_vec.x[2] = PW
+
+			// set the current back to 0 in 1 usec
+			DC_vec.x[3] = 0
+			Ramptime_vec.x[3] = .01
+
+			// setup trajectory
+			runtraj()
+
+			// setup the stop for the simulation
+			tstop = 7
+			tstop_changed()
+
+			//   initialize number and time of AP's
+   			SDapc.record(storeapc)
+			SDapc.thresh = 0
+			run()
+			
+			print "pw"
+			print PW
+			print "amplitude"
+			print Amp
+			print "number of AP's"
+			print SDapc.n
+
+			if (SDapc.n >0){
+				prev_Amp = Amp
+				Amp = Amp - amp_diff/2
+				amp_diff = abs(Amp - prev_Amp)
+
+			} else{
+				prev_Amp = Amp
+				Amp = Amp + amp_diff/2
+				amp_diff = abs(Amp - prev_Amp)
+			}
+	
+		}
+
+		stdurationResultsFileObj.printf("%g,%g,%g\n",PW,Amp,SDapc.time)
+	}
+
+	//Close File after simulation is complete
+	if (stdurationResultsFileObj.isopen()) {
+		stdurationResultsFileObj.close() 
+	}
+}
