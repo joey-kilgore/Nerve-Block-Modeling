@@ -144,6 +144,8 @@ func run_test(){ local i
 		//print "num args 6, hits = ", hits   //debugging code
 	}
     if (numarg()==5) {
+        //setamps($1, $2)
+
         hits = count_spikes($1, $5)
 	    //print "num args 5, hits = ", hits   //debugging code
 	}
@@ -161,11 +163,6 @@ func run_test(){ local i
     APC_setN(0, 0)
     APC_setN(1, 0)
     setstim($2, $4, $3)
-     
-    print stimclamp.amp
-    print stimclamp.del
-    print stimclamp.dur
-
     
     run()
 
@@ -418,4 +415,3 @@ proc draw_thresh(){
 }
 
 endtemplate ThreshFinder
-
