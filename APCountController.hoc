@@ -1,0 +1,64 @@
+// The APCountController is used in tandom with the ThreshFinder.hoc
+//  while testing various waveforms to check for blocking APs
+//  these procs, and funcs, will provide the ability to check
+//  the number of action potentials
+
+// Setup for the APCount objects (in the apc array)
+// number of AP counters
+numAPCs = 2	
+
+// create array to store AP counts
+objref apc[numAPCs]	
+
+// creates a new APCount object in node 5, which counts the # of 
+//  times Vm crosses the threshold in the positive direction
+node[5] apc[0] = new APCount(.5)
+
+// creates a new APCount object in second to last node
+node[axonnodes-2] apc[1] = new APCount(.5)  
+
+
+func APC_setThresh(){
+    // APC_setThresh(threshold (mV))
+    // Sets the threshold for all APCount objects in apc
+    apc[0].thresh = $1
+    apc[1].thresh = $1
+    return 0
+}
+
+func APC_reset(){
+    // Resets the count and time for all APCount objects
+    APC_resetCount()
+    APC_resetTime()
+    return 0
+}
+
+func APC_resetCount(){
+    // Sets all counts back to 0
+    apc[0].n = 0
+    apc[1].n = 0
+    return 0
+}
+
+func APC_resetTime(){
+    // Sets all times for last AP to 0
+    apc[0].time = 0
+    apc[0].time = 0
+    return 0
+}
+
+func APC_getCount(){
+    // APC_getCount(index of apc to get count from)
+    // check that the passed index is actually within the bounds of the array
+    if($1<numAPCs && $1>=0) return apc[$1].n
+    // if the index passed is outside the bounds, return -1
+    return -1
+}
+
+func APC_getTime(){
+    // APC_getTime(index of apc to get count from)
+    // check that the passed inex is acutally within the bounds of the arry
+    if($1<numAPCs && $1>=0) return apc[$1].time
+    // if teh index passed is outside the bounds, return -1
+    return -1
+}
