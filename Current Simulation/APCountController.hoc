@@ -10,13 +10,15 @@ numAPCs = 2
 // create array to store AP counts
 objref apc[numAPCs]	
 
-// creates a new APCount object in node 5, which counts the # of 
-//  times Vm crosses the threshold in the positive direction
-node[5] apc[0] = new APCount(.5)
+func APC_connect(){
+    // creates a new APCount object in node 5, which counts the # of 
+    //  times Vm crosses the threshold in the positive direction
+    node[5] apc[0] = new APCount(.5)
 
-// creates a new APCount object in second to last node
-node[axonnodes-2] apc[1] = new APCount(.5)  
-
+    // creates a new APCount object in second to last node
+    node[axonnodes-2] apc[1] = new APCount(.5)  
+    return 0
+}
 
 func APC_setThresh(){
     // APC_setThresh(threshold (mV))

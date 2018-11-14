@@ -44,13 +44,11 @@ load_file("RunCtrl.ses")		// open run control window with appropriate settings
 
 //**********************************************************
 // Functions that are used to determine the block threshold
-// These were working awhile ago, but once the new waveforms
-// were created, these became less useful.  These tests are 
-// under construction
 //**********************************************************
-load_file("ThreshFinderHelper.hoc")		// load helper functions for determining block threshold
-load_file("ThreshFinderv1_2.hoc")		// load helper functions for determining block threshold
+load_file("APCountController.hoc")
+load_file("ThreshFinder.hoc")
 load_file("APCount-40mvRecordto(vec).hoc") 	// records APCount data to a vector "apvec"
+
 
 load_file("run_tests.hoc")				// test function menu
 
