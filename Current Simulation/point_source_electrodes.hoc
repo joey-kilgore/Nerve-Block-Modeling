@@ -103,22 +103,16 @@ proc init_point_sources() {
 	
 	state_tri=0
 	first_tri=1
-
-    	numAPCs = 2
-
 }
 
 
 // change_pos updates the distance of the electrode from each compartment
 proc change_pos(){
-
-		for i=0,axontotal-1 {
-
+	for i=0,axontotal-1 {
 		ext1.x[i]=(rhoe)/(4*PI*sqrt((yelec^2)+((xelec[0]-x.x[i])^2)))	//nV//
 		ext2.x[i]=(rhoe)/(4*PI*sqrt((yelec^2)+((xelec[1]-x.x[i])^2)))	//nV//
 		ext3.x[i]=(rhoe)/(4*PI*sqrt((yelec^2)+((xelec[2]-x.x[i])^2)))	//nV//
-
-		}
+	}
 }
 
 
@@ -127,7 +121,7 @@ proc change_pos(){
 //  main
 //***************************************************************
 
-init_point_sources ()
+init_point_sources()
 change_pos()
 
 

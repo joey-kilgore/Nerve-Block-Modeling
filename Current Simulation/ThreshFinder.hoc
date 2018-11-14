@@ -19,6 +19,9 @@ proc setStim(){
     stimClamp.dur=$3
 }
 
+// the initial setup has the simclamp set with an amplitude of 10nA, a delay of 40ms
+//  and a durationg of .1ms
+setStim(10, 40, .1)
 
 
 proc setAmps(){
@@ -241,6 +244,7 @@ func findThreshold(){
     if(!hasBlocked) print "The range was insufficient for blocking"
     if(!hasPassed) print "The range was insufficient for allowing APs"
     if(!hasSteady) print "The range never reached a steady state"
+    if(!hasBlocked || !hasPassed || !hasSteady) return 0
 
     // if there was a successful search (all states were met) print
     //  and return the minimum value for blocking
@@ -253,5 +257,5 @@ func findThreshold(){
 }
 
 func testIt(){
-    return findThreshold(1,1000000,10,10,50,.1,1,100)
+    return findThreshold(400000,500000,10,10,50,.1,1,1000)
 }
