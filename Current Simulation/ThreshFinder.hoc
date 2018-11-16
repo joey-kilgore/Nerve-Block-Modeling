@@ -1,9 +1,6 @@
 // The Thresh finder is used to find the minimum current and voltage for a given
 // setup (fiber diam, waveform shape, etc) to block
 
-efficientState = 0
-
-
 // Declaring the stimClamp that will generate the test pulse
 objref stimClamp
 // The test pulse will be generated at node 10
@@ -148,8 +145,14 @@ func testWaveForm(){
             printOutputNoSteadyState()
             return -1
         }
+    } else {
+        // if the efficient state is enabled, the user already knows the initial spikes
+        initialSpikes = knownSpikes
     }
 
+    // check for the stop flag, if its on return -2 immediately
+    if(stop_flag == 1) return -2
+    
     APC_reset() // 2.
 
     setStim(testStimAmp, testStimDel, testStimDur)  // 3.
@@ -252,12 +255,10 @@ func findThreshold(){
 
     // if there was a successful search (all states were met) print
     //  and return the minimum value for blocking
-    // because the last value could be either a block or a pass, 
-    //  adding the resolution will mean the amplitude certainly blocked
-    minimumBlock = level + resolution
+    // because the current upper bound must be a block, that value is returned
 
-    print "Threshold for block = ", minimumBlock
-    return minimumBlock
+    print "Threshold for block = ", upper
+    return upper
 }
 
 func printOutputHeader(){
@@ -288,4 +289,93 @@ func printOutputSteadyState(){
 
 func testIt(){
     return findThreshold(500000,900000,10,10,50,.1,1,1000)
+}
+
+// creating the GUI
+// creating the thresholdbox object that will be the vbox for the GUI
+objref thresholdbox
+thresholdbox = new VBox()
+proc setInitThreshParams(){
+    lowB = 500000   // lower bound
+    highB = 900000  // upper bound
+    res = 1000  // resolution
+    ap_thresh = -10 // threshold for AP
+
+    stimamp = 10    // test stim amp
+    stimdur = .1    // test stim duration
+    stimdel = 50    // test stim delay
+
+    anode_coeff = 1 //anodic biphasic coefficient
+
+    efficientState = 0  // efficient state flag
+    knownSpikes = 0 //known number of initial spikes (goes with efficient state)
+
+    lower = 0   // bounds and search values are not
+    upper = 0   //  set initially
+    level = 0
+}
+
+proc drawThreshFinder(){
+    thresholdbox.intercept(1)
+    xpanel("Search Parameters")
+    xpvalue("Lower Bound (nA): ", &lowB)
+    xpvalue("Upper Bound (nA): ", &highB)
+    xpvalue("Search resolution : ", &res)
+    xpvalue("APCount detection threshold (mV): ", &ap_thresh)
+    xpanel()
+
+    xpanel("Test Pulse Stimulus Parameters")
+    xpvalue("Stimulus amperage (nA): ", &stimamp)
+    xpvalue("Stimulus duration (ms): ", &stimdur)
+    xpvalue("Stimulus delay (ms): ", &stimdel)
+    xpanel()
+
+    xpanel("Waveform Parameters")
+    xpvalue("Anodic Coefficient : ", &anode_coeff)
+    xpanel()
+
+    xpanel("Go!")
+    xbutton("Find threshold", "findThreshold(lowB, highB, ap_thresh, stimamp, stimdel, stimdur, anode_coeff, res)")
+    xbutton("Stop", "stopRun()")
+    xcheckbox("Efficient search (will not record # of initial spikes)", &efficientState)
+    xpvalue("Number of known Init spikes (for efficient search) : ", &knownSpikes)
+    xlabel("")
+    xpanel()
+
+    xpanel("State variables")
+    xlabel("These values for informational purposes only.  Do not modify.")
+    xpvalue("Current Lower Bound: ", &lower)
+    xpvalue("Current upper Bound: ", &upper)
+    xpvalue("Current HFAC test amplitude: ", &level)
+    xpanel()
+    thresholdbox.intercept(0)
+    thresholdbox.map("Threshold detector", 28, 591, -1, -1)
+}
+setInitThreshParams()
+drawThreshFinder()
+
+proc setInitThreshParams(){
+    lowB = 500000   // lower bound
+    highB = 900000  // upper bound
+    res = 1000  // resolution
+    ap_thresh = -10 // threshold for AP
+
+    stimamp = 10    // test stim amp
+    stimdur = .1    // test stim duration
+    stimdel = 50    // test stim delay
+
+    anode_coeff = 1 //anodic biphasic coefficient
+
+    efficientState = 0  // efficient state flag
+    knownSpikes = 0 //known number of initial spikes (goes with efficient state)
+
+    lower = 0   // bounds and search values are not
+    upper = 0   //  set initially
+    level = 0
+}
+
+proc stopRun(){
+    // stop run will allow the user to stop a run if something is going wrong
+    stop_flag = 1
+    stoprun = 1
 }
