@@ -37,7 +37,6 @@ proc setAmps(){
     if (state_sin==1){
         amp1 = $1
         sine_val()
-        print "Updated amplitude sine wave"
     } else {
         // check for a balanced square wave
         if (state_bal==1){
@@ -145,7 +144,10 @@ func testWaveForm(){
         initialSpikes = countInitialSpikes(blockWaveAmp, blockWaveCo)
 
         // 1b. (note that there is atleast a 5ms padding before the test pulse)
-        if(APC_getTime(1)-5 > testStimDel) return -1
+        if(APC_getTime(1)-5 > testStimDel) {
+            printOutputNoSteadyState()
+            return -1
+        }
     }
 
     APC_reset() // 2.
@@ -155,14 +157,13 @@ func testWaveForm(){
 
     run()   // 4.
 
-    print "Proximal spikes = ", APC_getCount(0) // 5.
-    print "Distal spikes = ", APC_getCount(1) 
-    print "Distal spikes without test pulse = ", initialSpikes
-
     // 6.
     if(stop_flag == 1) return -2
-    if(APC_getCount(1) == initialSpikes) return 1  // AP was blocked
-    return 0    // AP was not blocked
+    if(APC_getCount(1) == initialSpikes) {wasBlocked = 1  // AP was blocked
+    }else{ wasBlocked = 0}    // AP was not blocked
+
+    printOutputSteadyState(wasBlocked)
+    return wasBlocked
 }
 
 func findThreshold(){
@@ -207,11 +208,14 @@ func findThreshold(){
     // initialize the level
     level = 0
 
+    // print the output header to be able to know exactly what was recorded
+    printOutputHeader()
+
     // begin binary search
     while(abs(lower-upper) > resolution && stop_flag==0){
         // find the midpoint of the two amplitudes
         level = (lower+upper)/2
-        print "Current amplitude = ", level
+
         // run the simulation passing level as the amplitude
         blocked = testWaveForm(stimAmp, stimDel, stimDur, level, waveCo)
     
@@ -256,6 +260,32 @@ func findThreshold(){
     return minimumBlock
 }
 
+func printOutputHeader(){
+    print "Outputs are given in the order :"
+    print "1. Testing Amplitude"
+    print "2. Was a stable state reached (0 for no, 1 for yes)"
+    print "3. Count proximal spikes with stimulus"
+    print "4. Time of last proximal spike"
+    print "5. Count distal spikes with stimulus"
+    print "6. Time of last distal spike"
+    print "7. Count of distal spikes without stimulus"
+    print "8. Was there a block (0 for no, 1 for yes)"
+    return 0
+}
+
+func printOutputNoSteadyState(){
+    // print output for a trial if no steady state was reached
+    print level, ",0,,,,,,,"
+    return 0
+}
+
+func printOutputSteadyState(){
+    // printOutputSteadyState(wasBlocked)
+    // print output for a trial if a steady state was reached
+    print level, ",1,", APC_getCount(0), ",", APC_getTime(0), ",", APC_getCount(1), ",", APC_getTime(1), ",", initialSpikes, ",", $1
+    return 0
+}
+
 func testIt(){
-    return findThreshold(400000,500000,10,10,50,.1,1,1000)
+    return findThreshold(500000,900000,10,10,50,.1,1,1000)
 }
