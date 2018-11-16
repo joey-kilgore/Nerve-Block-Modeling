@@ -1,0 +1,417 @@
+//D. Michael Ackermann
+//7/3/08
+//Last Edit 7/9/08
+//Filename = ThreshFinderv1_2.hoc
+//Version = 1.2
+//Desc = Class for implementing the block Threshold Finder
+//Version Changes = solve the false "Stimulus insufficient to generate action potential" error
+//This error is generated due to asymmetrical onset AP production at the onset of block waveform
+//To fix this --REMOVED THE CONDITION THAT THE APC_getN(0)>hits -- THIS MEANS THAT THE SYSTEM WILL NO 
+//LONGER DETECT IF THERE IS INSUFFICIENT TEST STIM AMPLITUDE!!!
+//i.e be sure that the stim amplitude is properly set!
+//
+//Note=Testing has not been performed on find_threshEXT (all other functions and procedures have been 
+//tested to at least some degree)
+//
+//Known Bugs -
+//1.  Threshold detection is only currently stable for negative amplitude ranges
+//2.  The block threshold will be slightly underestimated by something between 0 and the search resolution
+//3.  If amplitude range is too small, the block threshold will be logged as the highest binary search value below the upper threshold (i.e. a false threshold!)
+//4.  THE SYSTEM WILL NO LONGER DETECT IF THERE IS INSUFFICIENT TEST STIM AMPLITUDE!!!
+//5.  The output file may contain the message "No steady state at frequency ######, amp #######.  If so, ignore it.  It just means that the last tested
+//block amplitude resulted in repetitive firing.  This has no effect on the function's ability to detect the threshold.
+
+//D. Michael Ackermann
+//7/3/08
+//Last Edit 7/7/08
+//Filename = ThreshFinderv1_1.hoc
+//Version = 1.1
+//Desc = Only include relevant functions & minor edits to accomodate this
+//Comments added to code
+//Testing has not been performed on find_threshEXT (all other functions and procedures have been tested to at least some degree)
+//Known Bugs -
+//1.  Threshold detection is only currently stable for negative amplitude ranges
+//2.  The block threshold will be slightly underestimated by something between 0 and the search resolution
+//3.  If amplitude range is too small, the block threshold will be logged as the highest binary search value below the upper threshold (i.e. a false threshold!)
+
+/*ThreshFinder.hoc
+Version 1.0
+Alan Barnes (acbarnes@princeton.edu)
+6/28/05
+Class encapsulation of threshold finder utility.  Performs a binary search to
+find the minimum amperage required by a specified waveform to achieve a nerve
+block.
+
+There are two search modes, efficient and inefficient.  Both are logarithmic
+time O(K*log((upper_search_bound - lower_search_bound)/search_resolution)),
+but for the efficient search, K=1, versus K=2 for the inefficient.  However, the
+efficient search has a greater potential for errors than the inefficient search,
+so some caution is required.
+*/
+load_file("ResObj.hoc")
+
+//double number_of_spikes
+//
+number_of_spikes = 5
+
+begintemplate ThreshFinder
+
+external number_of_spikes
+
+public init, find_thresh, find_threshEXT, stop_run, run_test, getRes, count_spikes, draw_thresh
+external setstim, setamps, APC_appVec, APC_closeVec, APC_getN, APC_setN, APC_setT, APC_getT, APC_setThresh, getFreq, run//, setglobblockmsg, getStimAmp, getStimDel, getStimDur, getOnset, APC_count
+objref threshbox
+strdef warn
+
+/*Initializes all data members, called whenever a ThreshFinder object is
+instantiated.  Pretty self-explanatory.*/
+proc init() {
+
+     lowB = -3000000   //lower bound
+     highB = 0  //upper bound
+     stimamp = 10   //test stim amp
+     stimdel = 0   //test stim delay
+     stimdur = .1   //test stim duration
+     anode_coeff = 1  //anodic biphasic coefficient
+     ap_thresh = -10  //AP detection threshold
+     res=20   //threshold resolution
+     level=0   		//current HFAC stim amplitude
+     hits=0			//# of spikes due to HFAC only (# of onset spikes)
+     stop_flag = 0   //flag to stop simulations after threshold is found
+     min_val=0			//current minimum HFAC block threshold
+     eff_state=0     //flag for implementing 'efficient' run (1=active)
+     hasblocked = 0  //flag for whether AP is blocked
+     haspassed = 0
+     threshbox= new VBox()
+     print "threshfinder init"
+     draw_thresh(0)
+}
+
+/**************************THRESHOLD PROCEDURES*******************************/
+/*count_spikes runs the blocking electrode(s) without the test potential
+electrode firing and returns the number of initial firings caused by the
+blocking electrodes.  It can be called with one or two parameters.  In the case
+of a sine wave or a balanced square wave, it takes one parameter which it uses
+as the amperage (in nA).  In the case of an unbalanced wave, it takes two
+parameters, the first is the cathodic amplitude, and the second is the
+coefficient relating the anodic charge to the cathodic charge (should
+be a positive value between 0 and 1).  The 3rd parameter is used in conjunction 
+with the autorunner class and stores additional data about the run.*/
+func count_spikes(){ localobj data
+
+     if (stop_flag==1) return -2
+     
+//   initialize number and time of AP's
+     APC_setN(1, 0)
+     APC_setN(0, 0)
+     APC_setT(1, 0)
+     APC_setT(0, 0)
+
+     setstim(0,0,0)
+	 //print "amplitude =",$1,"anodic coeff = ",$2  //debugging code
+     setamps($1, $2)
+
+     if (eff_state==0) run()
+     
+     if (stop_flag==1) return -2
+     
+     if (numarg()==3){ 
+        data = $o3
+        data.spikes = APC_getN(1)
+/*	number_of_spikes = APC_getN(1)*/
+        APC_closeVec(1)
+     }
+     return APC_getN(1)
+}
+
+/*run_test runs a simulation with both the blocking and stimulating electrodes
+active and returns 1 if the action potential is blocked, 0 if it is not blocked
+and -1 if no action potential is generated.  Run_test takes 5 parameters
+The first parameter is the amplitude of the blocking wave in
+nA, the second is the amplitude of the stimulating pulse in nA, the third is the
+duration in ms of the stimulating pulse, and the fourth is the delay in ms of
+the pulse.  The fifth parameter is the coefficient relating the cathodic
+amplitude to the anodic amplitude, such that -1*cathodic_amp*coeff*cath0d_dur = -1*anodic_amp*anod_dur.
+The coefficient should be a positive number.  The 6th parameter is used in 
+conjunction with the AutoRunner class, it is a ResObj which holds additional
+data about the run.*/
+func run_test(){ local i
+
+    if (stop_flag==1) return -2
+     
+    if (numarg()==6) {
+        hits = count_spikes($1, $5, $o6)
+		//print "num args 6, hits = ", hits   //debugging code
+	}
+    if (numarg()==5) {
+        //setamps($1, $2)
+
+        hits = count_spikes($1, $5)
+	    //print "num args 5, hits = ", hits   //debugging code
+	}
+
+    number_of_spikes = hits
+
+    if (hits==-2) return -2
+
+    if (eff_state==0 && (APC_getT(0)+5) > $4){            
+        i = getFreq()
+        sprint(warn, "No steady state at frequency %d, amp %d", i, $1)
+        return -3
+    }
+    
+    APC_setN(0, 0)
+    APC_setN(1, 0)
+    setstim($2, $4, $3)
+    
+    run()
+
+    print "Proximal spikes = ", APC_getN(0)
+    print "Distal spikes = ", APC_getN(1)
+     
+    if (stop_flag==1) return -2
+    if (eff_state==1 && APC_getN(0)>APC_getN(1)) return 1   //if apcount of prox node is greater than distal, return 1 (blocked)
+    if (eff_state==1 && APC_getN(0)<=APC_getN(1)) return 0  //otherwise, return 0 for not blocked
+    if ((APC_getN(1) - hits)==0) return 1  //REMOVED THE CONDITION THAT THE APC_getN(0)>hits -- THIS MEANS THAT THE SYSTEM WILL NO LONGER DETECT IF THERE IS INSUFFICIENT TEST STIM AMPLITUDE!!!
+    if ((APC_getN(1) - hits) > 0) return 0   
+    return -1//The return for an insufficient test stim amplitude.  This function should really never reach this line/return a -1!  If so, there is an error.
+}
+
+/*find_thresh is the top-level binary search procedure for the threshold finder
+module.  It is called with 7 parameters, as follows:
+find_thresh(lower bound (nA), upper bound (nA), stimulus amperage (nA), stimulus duration (ms), stimulus delay (ms), apcount threshold (mV), anodic coefficient)
+The anodic coeffiecient is the coefficient relating the cathodic
+amplitude to the anodic amplitude, such that cathodic_amp*cathod_dur*coeff = -1*anodic_amp*anod*dur.
+The coefficient should be a positive number.*/
+func find_thresh() {  local blocked
+
+    lower = $1
+    upper = $2
+    hasblocked = 0
+    haspassed = 0
+    warn = ""
+    setstim(0,0,0)
+    APC_setThresh(0, $6)
+    APC_setThresh(1, $6)
+    stop_flag=0
+     
+    if (lower>=upper){ 
+        continue_dialog("Error: Invalid range")
+        return
+    }
+    if (lower<0 && upper>0){
+        continue_dialog("Error: Range must be entirely positive or entirely negative")
+        return
+    }
+     
+    if (upper<=0 && lower<0){
+        while(abs(lower-upper) > res && stop_flag==0){
+            level = (lower+upper)/2
+            print "attempted threshold = ", level
+            blocked = run_test(level, $3, $4, $5, $7)
+	        print "blocked status = ", blocked
+
+            if (blocked==1){
+                hasblocked = 1
+                lower = level
+                min_val=level
+		        print "current block thresh = ",min_val
+            }else{ 
+                if (blocked==0 || blocked==-3){
+                    haspassed = 1
+                    upper = level
+                    min_val=lower
+                }else{
+                    if (blocked==-1) print "Error: Stimulus insufficient to generate action potential.\n"
+                    if (blocked==-2) print "Simulation stopped.\n"
+                    break
+                }
+            }
+        }
+    }else{
+        while(abs(lower-upper) > res && stop_flag==0){
+            level = (lower+upper)/2
+            blocked = run_test(level, $3, $4, $5, $7)
+            if (blocked==1){
+                hasblocked = 1
+                upper = level
+                min_val=level
+            }else{ 
+                if (blocked==0 || blocked==-3){
+                    haspassed = 1
+                    lower = level
+                    min_val=upper
+                }else{
+                    if (blocked==-1) print "Error: Stimulus insufficient to generate action potential.\n"
+                    if (blocked==-2) print "Simulation stopped.\n"
+                    break
+                }
+            }
+        }
+    }  
+	
+    //setglobblockmsg(warn)  //set global warning string to default
+      
+	if (blocked==1){ 
+        min_val=level
+    }else{ 
+        min_val = upper
+    }
+      
+	print "Threshold = ",min_val
+	  
+    if (blocked==-2 || stop_flag==1) { warn = "Simulation stopped.\n" }
+    if (hasblocked==0){ warn = "Range entirely below threshold.  No threshold found." }
+    if (haspassed==0){ warn = "Range entirely above threshold.  No threshold found." }
+    if (blocked==-1){ warn = "Error: Stimulus insufficient to generate action potential." }
+      
+	//setglobblockmsg(warn)  //set global warning string to new warning message
+	    
+    return min_val
+}
+
+/*Extended find_thresh method for use with AutoRunner class, takes an extra parameter
+pointing to a ResObj, into which it stores additional data about the run.*/   
+//find_thresh(lower bound (nA), upper bound (nA), stimulus amperage (nA), stimulus duration (ms), stimulus delay (ms), apcount threshold (mV), anodic coefficient) 
+func find_threshEXT() {  local blocked localobj data
+    lower = $1
+    upper = $2
+    hasblocked = 0
+    haspassed = 0
+    warn = ""
+     
+    if (lower>=upper){ 
+        continue_dialog("Error: Invalid range")
+        return
+    }
+    if (lower<0 && upper>0){
+        continue_dialog("Error: Range must be entirely positive or entirely negative")
+        return
+    }
+     
+    data =  $o8
+    setstim(0,0,0)
+    APC_setThresh(0, $6)
+    APC_setThresh(1, $6)
+    stop_flag=0
+    if (upper<=0 && lower<0){
+        while(abs(lower-upper) > res && stop_flag==0){
+            APC_appVec(1, data.time)
+            level = (lower+upper)/2
+            blocked = run_test(level, $3, $4, $5, $7, data)
+            if (blocked==1){
+                hasblocked = 1
+                lower = level
+                min_val=level
+            }else{ 
+                if (blocked==0 || blocked==-3){
+                    haspassed = 1
+                    upper = level
+                    min_val=lower
+                }else{
+                    if (blocked==-1) print "Error: Stimulus insufficient to generate action potential.\n"
+                    if (blocked==-2) print "Simulation stopped.\n"
+                    break
+                }
+            }
+        }
+    }else{
+        while(abs(lower-upper) > res && stop_flag==0){
+            APC_appVec(1, data.time)
+            level = (lower+upper)/2
+            blocked = run_test(level, $3, $4, $5, $7, data)
+            if (blocked==1){
+                hasblocked = 1
+                upper = level
+                min_val=level
+            }else{ 
+                if (blocked==0 || blocked==-3){
+                    haspassed = 1
+                    lower = level
+                    min_val=upper
+                }else{
+                    if (blocked==-1) print "Error: Stimulus insufficient to generate action potential.\n"
+                    if (blocked==-2) print "Simulation stopped.\n"
+                    break
+                }
+            }
+        }
+    }
+
+    if (blocked==1){ 
+        min_val=level
+    }else{ 
+        min_val = upper
+    }
+    data.thresh=min_val
+    data.block = hasblocked  
+      
+    if (blocked==-2 || stop_flag==1) { warn = "Simulation stopped.\n" }
+    if (hasblocked==0){ warn = "Range entirely below threshold.  No threshold found." }
+    if (haspassed==0){ warn = "Range entirely above threshold.  No threshold found." }
+    if (blocked==-1){ warn = "Error: Stimulus insufficient to generate action potential." }
+    data.warnings = warn
+      
+    return min_val
+}
+
+/*Stops the simulation.*/      
+proc stop_run(){
+    stop_flag=1
+    stoprun=1
+}
+
+func getRes(){
+    return res
+}
+
+/*Draws threshold finder window*/
+proc draw_thresh(){
+	
+    if (threshbox.ismapped()==0){
+        threshbox.intercept(1)
+        xpanel("Search Parameters")
+        xpvalue("Lower Bound (nA): ", &lowB)
+        xpvalue("Upper Bound (nA): ", &highB)
+        xpvalue("Search resolution : ", &res)
+        xpvalue("APCount detection threshold (mV): ", &ap_thresh)
+        xpanel()
+
+        xpanel("Test Pulse Stimulus Parameters")
+        xpvalue("Stimulus amperage (nA): ", &stimamp)
+        xpvalue("Stimulus duration (ms): ", &stimdur)
+        xpvalue("Stimulus delay (ms): ", &stimdel)
+        xpanel()
+
+        xpanel("Waveform Parameters")
+        xpvalue("Anodic Coefficient : ", &anode_coeff)
+        xpanel()
+
+        xpanel("Go!")
+        xbutton("Find threshold", "find_thresh(lowB, highB, stimamp, stimdur, stimdel, ap_thresh, anode_coeff)")
+        xbutton("Stop", "stop_run()")
+        xcheckbox("Efficient search (will not record # of initial spikes)", &eff_state)
+        xlabel("")
+        xpanel()
+
+        xpanel("State variables")
+        xlabel("These values for informational purposes only.  Do not modify.")
+        xpvalue("Current Lower Bound: ", &lower)
+        xpvalue("Current upper Bound: ", &upper)
+        xpvalue("Current HFAC test amplitude: ", &level)
+        xpvalue("No. of initial spikes at current level: ", &hits)
+        xpvalue("Current Minimum block threshold: ", &min_val)
+        xlabel("Warnings:")
+        xvarlabel(warn)
+        xpanel()
+
+        threshbox.intercept(0)
+        threshbox.map("Threshold detector", 28, 591, -1, -1)
+    }
+
+    if ($1 == 1) {
+		threshbox.unmap()
+    }
+}
+
+endtemplate ThreshFinder
