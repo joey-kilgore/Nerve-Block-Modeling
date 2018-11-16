@@ -1,5 +1,5 @@
 // The Thresh finder is used to find the minimum current and voltage for a given
-// setup (fiber diam, waveform shape, etc) to block
+// setup (fiber diam, waveform shape, etc) to block an action potential (in this case a test pulse)
 
 // Declaring the stimClamp that will generate the test pulse
 objref stimClamp
@@ -24,8 +24,8 @@ setStim(10, 40, .1)
 proc setAmps(){
     // Sets blocking electrode amperages to proper levels, depending on waveform and
     //  configuration, based on two parameters.  Param 1 is the amplitude of the first
-    //  electrode (other two are dependent on this value) and param 2 is the coefficient
-    //  relating the anodic charge to the cathodic charge, only necessary for
+    //  electrode (other two possible electrodes are dependent on this value) and 
+    //  param 2 is the coefficient relating the anodic charge to the cathodic charge, only necessary for
     //  unbalanced waves.
 
     // Because hoc does not support else if statements
@@ -120,12 +120,12 @@ func testWaveForm(){
     //  2. Reset the APCount objects
     //  3. Set the test stimulus, and blocking wave
     //  4. Run the simulation
-    //  5. Print out the number of Proximal and Distal spikes
-    //  6. Return a value of
+    //  5. Return a value of
     //      1, if AP was blocked
     //      0, if AP was not blocked
     //      -1, no steady state for frequency (step 1b)
     //      -2, if the stop flag is every on (also done at very beginning)
+    //  6. Give output data to console
 
     // read all parameters
     testStimAmp = $1    // amplitude for test stimulus
@@ -146,6 +146,7 @@ func testWaveForm(){
             return -1
         }
     } else {
+        // 1a.
         // if the efficient state is enabled, the user already knows the initial spikes
         initialSpikes = knownSpikes
     }
@@ -160,12 +161,12 @@ func testWaveForm(){
 
     run()   // 4.
 
-    // 6.
+    // 5.
     if(stop_flag == 1) return -2
     if(APC_getCount(1) == initialSpikes) {wasBlocked = 1  // AP was blocked
     }else{ wasBlocked = 0}    // AP was not blocked
 
-    printOutputSteadyState(wasBlocked)
+    printOutputSteadyState(wasBlocked)  // 6.
     return wasBlocked
 }
 
@@ -182,6 +183,7 @@ func findThreshold(){
     stimDur = $6    // test pulse duration
     waveCo = $7     // coefficient relating anodic charge to the cathodic charge, only necessary for unbanced square wave
     resolution = $8 // resolution for the search
+
     // check for valid ranges
     if (lower >= upper){
         continue_dialog("Error: Invalid range")
@@ -261,15 +263,17 @@ func findThreshold(){
     return upper
 }
 
+// OUTPUT METHODS
 func printOutputHeader(){
+    // outputs the list so that it is clear what data is what
     print "Outputs are given in the order :"
     print "1. Testing Amplitude"
     print "2. Was a stable state reached (0 for no, 1 for yes)"
-    print "3. Count proximal spikes with stimulus"
-    print "4. Time of last proximal spike"
-    print "5. Count distal spikes with stimulus"
-    print "6. Time of last distal spike"
-    print "7. Count of distal spikes without stimulus"
+    print "3. Count proximal spikes with stimulus (Left)"
+    print "4. Time of last proximal spike (Left)"
+    print "5. Count distal spikes with stimulus (Right)"
+    print "6. Time of last distal spike (Right)"
+    print "7. Count of distal spikes without stimulus (Right)"
     print "8. Was there a block (0 for no, 1 for yes)"
     return 0
 }
@@ -285,10 +289,6 @@ func printOutputSteadyState(){
     // print output for a trial if a steady state was reached
     print level, ",1,", APC_getCount(0), ",", APC_getTime(0), ",", APC_getCount(1), ",", APC_getTime(1), ",", initialSpikes, ",", $1
     return 0
-}
-
-func testIt(){
-    return findThreshold(500000,900000,10,10,50,.1,1,1000)
 }
 
 // creating the GUI
@@ -316,6 +316,7 @@ proc setInitThreshParams(){
 }
 
 proc drawThreshFinder(){
+    // Draw the GUI for the threshFinder
     thresholdbox.intercept(1)
     xpanel("Search Parameters")
     xpvalue("Lower Bound (nA): ", &lowB)
