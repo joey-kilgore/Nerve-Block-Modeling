@@ -1,0 +1,39 @@
+objectvar save_window_, rvp_
+objectvar scene_vector_[5]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{
+save_window_ = new Graph(0)
+save_window_.size(0,110,-4e+06,4e+06)
+scene_vector_[4] = save_window_
+{save_window_.view(0, -4e+06, 110, 8e+06, 1482, 744, 530.1, 200.8)}
+graphList[1].append(save_window_)
+save_window_.save_name("graphList[1].")
+save_window_.addvar("SineRamp[0].i", 1, 1, 0.8, 0.9, 2)
+}
+{
+xpanel("SineRamp[0] at trajelectrode(0.5)", 0)
+xlabel("SineRamp[0] at trajelectrode(0.5)")
+traj.f = 10000
+xvalue("f","traj.f", 1,"", 0, 1 )
+traj.i = -2e+06
+xvalue("i","traj.i", 0,"", 0, 1 )
+traj.TimeStart = 0
+xvalue("TimeStart","traj.TimeStart", 0,"", 0, 1 )
+traj.oldt = 0
+xvalue("oldt","traj.oldt", 0,"", 0, 1 )
+xpanel(668,451)
+}
+{
+ocbox_ = new VBox()
+ocbox_list_.prepend(ocbox_)
+ocbox_.intercept(1)
+}
+{
+ocbox_ = ocbox_list_.object(0)
+ocbox_.intercept(0)
+ocbox_.map("SineRamp", 820, 206, 149.4, 171)
+}
+objref ocbox_
+objectvar scene_vector_[1]
+{doNotify()}

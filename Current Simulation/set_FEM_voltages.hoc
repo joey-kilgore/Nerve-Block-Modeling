@@ -1,0 +1,231 @@
+
+
+//***************************************************************
+//  variables
+//***************************************************************
+
+
+// required file format:  
+//Declare output file
+objref SimDataResultsFileObj        //declare output file object
+SimDataResultsFileObj = new File()
+
+
+//Declare input file
+objref FEMVoltagesFileObj        //declare input file object
+FEMVoltagesFileObj = new File()
+
+// initialize variables
+objref X_vec
+X_vec = new Vector (60000,0)
+
+objref Volt_vec
+Volt_vec = new Vector (60000,0)
+
+number_of_points = 0
+xelecfile = 0
+xmaxelecfile = 25000
+xminelecfile = -25000
+velocityelecfile = 0
+update_rate = .005
+update_limit = 0
+distance_moved = 0
+delayelecfile = 0
+onewayelecfile = 0
+starting_position = 0
+
+objref ElectFile
+ElectFile = new VBox()
+
+
+//***************************************************************
+//  procedures
+//***************************************************************
+
+proc set_FEM_voltages(){
+
+	for i=0,axontotal-1 {
+
+		if (x.x[i]<X_vec.x[0]) {
+
+			ext1.x[i]= Volt_vec.x[0]/1e-3  // V/1mA = Ohms //
+
+		} else {
+
+			if (x.x[i]>X_vec.x[number_of_points-1]) {
+
+				ext1.x[i]= Volt_vec.x[number_of_points]/1e-3  // V/1mA = Ohms //
+			} else {
+
+				for (j=0; j<number_of_points; j+=1) {
+					if ( ((x.x[i]< X_vec.x[j+1]) && (x.x[i]> X_vec.x[j])) || (x.x[i]== X_vec.x[j]) )  {
+
+						ext1.x[i]= Volt_vec.x[j]/1e-3  // V/1mA = Ohms //
+					}
+                 	 	}
+			}
+		}
+	}
+
+}
+
+proc FEM_file_selection() {
+
+	//-------------------------------------------
+	//------FEM Voltage file selection
+
+	// bring up a dialog to select the log file
+	FEMVoltagesFileObj.chooser("r", "Select FEM File", "*.reg", "Read", "Cancel", FEMVoltagesFileObj.dir)
+
+// 	if no choice has been made, macro electrode values
+	if (FEMVoltagesFileObj.chooser() != 0) {
+
+		// read *.reg file that is output from Maxwell
+
+		// read the header and discard
+		for (i=0;i<6;i+=1) {
+			fileentry1 = FEMVoltagesFileObj.scanvar()
+			print fileentry1
+		}
+		i = 0
+
+		while (!FEMVoltagesFileObj.eof()){
+
+			fileentry1 = FEMVoltagesFileObj.scanvar()
+			fileentry2 = FEMVoltagesFileObj.scanvar()
+			fileentry3 = FEMVoltagesFileObj.scanvar()
+			fileentry4 = FEMVoltagesFileObj.scanvar()
+
+			if ((fileentry1 == 0) && (fileentry3 == 0)) {
+
+				X_vec.x[i] = fileentry2 * 1e6-30000   //um - 30mm
+				Volt_vec.x[i] = fileentry4  //V
+
+				i+=1
+			}
+
+		}
+
+		number_of_points = i
+
+		set_FEM_voltages()
+	}
+}
+
+// change_pos updates the distance of the electrode from each compartment
+proc change_pos_file(){
+
+	for i=0,number_of_points {
+
+		X_vec.x[i] = X_vec.x[i]+$1
+	}
+	
+	// update the current amount that the electrode has moved
+	distance_moved = distance_moved +$1
+	set_FEM_voltages()
+}
+
+// change_pos updates the distance of the electrode from each compartment
+proc update_movement_params(){
+
+	// move back to zero
+//	change_pos_file(-distance_moved)
+	// move to the new starting position
+//	change_pos_file(starting_position)
+
+//	update_limit = update_rate
+//	xelecfile=(update_limit*1e3)*velocityelecfile
+}
+
+// These three procedures setup the electrode position selection Vboxes
+proc ElectFile_Vbox() {
+
+		ElectFile.intercept(1)
+	
+		xpanel("Choose Electrode Position")
+		xvalue("X1 pos(um):  static, don't enter anything here", "distance_moved")
+		xvalue("Starting position","starting_position")
+
+		xpanel()
+		xpanel ("Setup movement parameters")
+		xcheckbox ("One way movement",&onewayelecfile)
+		xvalue("X1 max(um)", "xmaxelecfile")
+		xvalue("X1 min(um)", "xminelecfile")
+		xvalue("velocity(m/sec)", "velocityelecfile")
+		xvalue("update rate (msec)", "update_rate")
+		xvalue("Movement delay(msec)", "delayelecfile")
+		
+		xpanel()
+		
+
+		ElectFile.intercept(0)
+
+
+}
+
+
+proc position_move()  {
+
+	print "in postition_move()"
+	velocityelecfile = 0
+
+	if (velocityelecfile>10) {
+
+		if (t == 0) {
+			update_movement_params()
+			print "t is zero"
+		}
+
+		if (t >delayelecfile) {
+
+			update_count = update_count + dt
+
+			if (update_count >= update_limit) {
+
+				update_count = 0
+				distance_moved = distance_moved + xelecfile
+
+				if (electsel[4] == 1) {  //electrode is selected from file
+					change_pos_file(xelecfile)
+				} else {
+					change_pos()
+				}
+
+				if (distance_moved <= xminelecfile){
+					xelecfile = -xelecfile
+
+					// halt movement
+					if (onewayelecfile == 1) {
+						xelecfile = 0
+					}
+
+					print "time at min"
+					print t
+				}
+				if (distance_moved >= xmaxelecfile){
+					xelecfile = -xelecfile
+
+					// halt movement
+					if (onewayelecfile == 1) {
+						xelecfile = 0
+					}
+
+					print "time at max"
+					print t
+
+				}
+
+			}
+		}
+	}
+}
+
+
+
+//***************************************************************
+//  main
+//***************************************************************
+
+update_movement_params()
+ElectFile_Vbox()
+

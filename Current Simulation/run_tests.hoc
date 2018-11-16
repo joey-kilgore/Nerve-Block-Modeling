@@ -1,0 +1,67 @@
+// This file provides a menu to run the various automated tests
+strdef autotestlabel
+autotestlabel = "Choose one of the automated tests:"
+
+proc autotestpanel() {
+	xpanel("HFAC auto tests")
+	xvarlabel(autotestlabel)
+	xradiobutton("Strength Duration", "autotest(1)")
+	xradiobutton("DC HFAC sweep", "autotest(2)")
+	xradiobutton("Threshold Finder", "autotest(3)")
+	xradiobutton("Electrode Movement", "autotest(4)")
+	xradiobutton("DC ramp test", "autotest(5)")
+	xradiobutton("HFAC ramp test", "autotest(6)")
+	xradiobutton("Subthreshold ramp test", "autotest(7)")
+	xradiobutton("Block Threshold Detect", "autotest(8)")
+	xpanel(36,734)
+}
+autotestpanel()
+
+proc autotest() {
+	if ($1 == 1) {
+		autotestlabel = "Strength Duration"
+		load_file("stduration_autorun.hoc")			// load looping procedure
+		load_file("stduration_autorun_control.ses")	// open automated test control panel
+
+	}else if ($1 == 2) {
+		autotestlabel = "DC HFAC sweep"
+		// control panel and looping procedure to run DC HFAC automated tests
+		load_file("DCHFAC_autorun.hoc")			// load looping procedure
+		load_file("DCHFAC_autorun_control.ses")		// open automated test control panel
+
+	}else if ($1 == 3) {
+		autotestlabel = "HFAC Threshold Finder"
+		// control panel and looping procedure to run HFAC ramp automated tests
+		load_file("HFACBlockThresholdDetect_autorun.hoc")	// load looping procedure
+		load_file("HFACBlockThresholdDetect_autorun_control.ses")	// open automated test control panel
+
+	}else if ($1 == 4) {
+		autotestlabel = "Electrode Movement"
+		// control panel and looping procedure to run Electrode movement automated tests
+		load_file("Elecmove_autorun.hoc")			// load looping procedure
+		load_file("Elecmove_autorun_control.ses")		// open automated test control panel
+
+	}else if ($1 == 5) {
+		autotestlabel = "DC ramp test"
+		// control panel and looping procedure to run DC ramp automated tests
+		load_file("DC_ramp_autorun.hoc")			// load looping procedure
+		load_file("DC_ramp_autorun_control.ses")		// open automated test control panel
+
+	}else if ($1 == 6) {
+		autotestlabel = "HFAC ramp test"
+		// control panel and looping procedure to run HFAC ramp automated tests
+		load_file("HFAC_ramp_autorun.hoc")			// load looping procedure
+		load_file("HFAC_ramp_autorun_control.ses")		// open automated test control panel
+
+	}else if ($1 == 7) {
+		autotestlabel = "Ramp Time Finder"
+		load_file("RampTimeFinder_autorun.hoc")	// load ramp time finder module
+		load_file("RampTimeFinder_control.ses")		// open automated test control panel
+
+	}else if ($1 == 8) {
+		autotestlabel = "Block Threshold Detect"
+		load_file("HFACBlockThresholdDetect_autorun.hoc")		// load Block Threshold Detect module
+		load_file("HFACBlockThresholdDetect_autorun_control.ses")		// open automated test control panel
+	}
+}
+

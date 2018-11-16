@@ -1,0 +1,43 @@
+// Create save file objects for the simulations
+objref fil
+fil = new File("L:/Work/data2.txt")
+fil.aopen()
+
+// First load the CNOW_run to load all other files
+load_file("CNOW_run.hoc")
+
+proc sim1(){
+    // Initialize the simulation
+    // The only special change is setting the stopping time for the simulation
+    // to 50ms, which is half the normal stopping time of 100ms
+    tstop = 50
+    // start the simulation
+    run()
+    // Print how long the simulation took to run in real time
+    print "Simulation 1 runtime (s): ", realtime
+}
+
+
+
+proc sim2(){
+    // Initialize te next simulation
+    // The only change we will make here is making dt smaller
+    // this should cause the simulation to run longer, but should give more accurate results
+    // dt will be cut in half
+    dt = dt/2
+    // start the simulation
+    run()
+    // Print how long the simulation took to run in real time
+    print "Simulation 2 runtime (s): ", realtime
+}
+
+// MAIN
+sim1()
+// close file from sim1 open new file for sim2
+fil.close()
+fil = new File("L:/Work/data3.txt")
+fil.aopen()
+
+sim2()
+// close file after sim2
+fil.close()
