@@ -32,7 +32,6 @@ proc DrawSaveFileVBox(){
     xlabel("You can enter the directory path, and then")
     xlabel("just enter the file name and extension when")
     xlabel("selecting your values.")
-
     xbutton("Enter File Directory", "enterFileDirectory()") // enter directory for files to simplify the process
 
     // each check box will launch a dialog box to input the file path
@@ -56,13 +55,17 @@ proc enterFileDirectory(){
     strdef direc    // direc will store the string the user enters as the file path
     string_dialog("Enter Directory Path, should end with a '/'", direc)
 
-    filePathMGate = direc
-    filePathHGate = direc
-    filePathVoltage = direc
-    filePathSGate = direc
-    filePathINa = direc
-    filePathIK = direc
-    filePathIL = direc
+    sprint(filePathMGate, "%s%s", direc, "MGate.csv")
+    sprint(filePathHGate, "%s%s", direc, "HGate.csv")
+    sprint(filePathVoltage, "%s%s", direc, "Voltage.csv")
+    sprint(filePathSGate, "%s%s", direc, "SGate.csv")
+    sprint(filePathINa, "%s%s", direc, "INa.csv")
+    sprint(filePathIK, "%s%s", direc, "IK.csv")
+    sprint(filePathIL, "%s%s", direc, "IL.csv")
+
+    for i=0, 6 {
+        valueToSaveSelected[i] = 1
+    }
 }
 
 // Gets the file path when a user selected a value to save
