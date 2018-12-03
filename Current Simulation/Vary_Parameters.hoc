@@ -22,10 +22,21 @@ currentTrialNum = 0
 percentCompleteAmount = 0
 
 proc runTestAcrossParams(){
-    // the runTestAcrossParams is the bread and butter
+    // the runTestAcrossParams is the bread and butter of Vary_Parameters
     // within this procedure, we will loop through each parameter
     // after each change in the parameters, we will run the threshfinder
     //  on that specific set of inputs
+
+    // check if this procedure was passed parameters, this can be useful when
+    //  running simulations straight from other code, and not inputing into the UI
+    if(numarg() > 0){
+        amplitudeMin = $1
+        amplitudeMax = $2
+        amplitudeInc = $3
+        frequencyMin = $4
+        frequencyMax = $5
+        frequencyInc = $6
+    }
 
     initCurrentParams() // set the current params to their starting values
     
