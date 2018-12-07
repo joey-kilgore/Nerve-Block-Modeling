@@ -1,5 +1,67 @@
 // Multiple_Simulations is a compilation of multiple tests each having a specific purpose
-// These tests are not meant to be run from a UI but are instead a pre defined set of instructions
+// These tests are not meant to be run from a UI but are instead a predefined set of instructions
 //  that will often run multiple simulations and from this try and show some effect in the simulatins
 //  They could be as simple as finding a block threshold across changing frequencies or changing diameters
 //  The point is that these procedures are set simulations each having a specific experiment they conduct
+
+proc varyGnabar(){
+    // varyGnabar looks at the gnabar (Na conductance) variable, and shows what occurs when the
+    //  value is changed from its initial state (3.0) to 3.3
+    
+    // Initial Conditions for Experiment :
+    // Number of electrodes = 1
+    // Waveform shape = Sine wave
+    // offset = 0nA
+    // Frequency = 10kHz
+    // Amplitude = 600000nA (known block)
+    // pulse train onset = 10ms 
+    // pulse train duration = 300ms
+
+    // Number of axonnodes = 101
+    // axon diameter = 10um
+    // dt = .005ms
+    // Tstop = 150ms
+    // init = -80mV
+
+    // Set the waveform to sine wave
+    waveform_sel(1)
+    // Set the offset to 0
+    setoffset(0)
+    // set frequency
+    freq = 10000
+    // set the amplitude
+    amp1 = 576000
+    // set the pulse train onset
+    onset1 = 10
+    // set the pulse train duration
+    dur1 = 300
+    // update sine parameters
+    sinestim()
+
+    // set tstop
+    tstop = 150
+    // set initial voltage
+    v_init = -80
+
+    // turn off test stimulus
+    setStim(0,0,0)
+
+    // Two simulations will be run.
+    // The first will have the default value of gnabar (3.0)
+    // The second will have the value of 3.3 for gnabar for all axnodes
+    firstGnabar = 3.0
+    secondGnabar = 3.3
+    
+    // First simulation
+    setGnabarForAllAxnodes(firstGnabar)
+    run()
+    // Second simulation
+    setGnabarForAllAxnodes(secondGnabar)
+    run()
+}
+
+proc setGnabarForAllAxnodes(){
+    for i=0,axonnodes-1 {
+        node[i].gnabar_axnode = $1
+    }
+}
