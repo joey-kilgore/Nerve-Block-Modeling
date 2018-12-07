@@ -60,3 +60,8 @@ load_file("advanceproc.hoc")
 load_file("save_to_file_UI.hoc")
 load_file("save_to_file.hoc")
 
+//**********************************************************
+// Ability to vary multiple parameters
+//**********************************************************
+load_file("Vary_Parameters.hoc")
+load_file("Vary_Parameters_UI.hoc")

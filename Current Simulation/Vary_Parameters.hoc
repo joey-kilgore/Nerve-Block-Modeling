@@ -1,0 +1,142 @@
+// The Vary_Parameters.hoc allows the user to test a huge series of trials
+//  and vary multiple parameters within the test
+
+// The following variables are all used 
+// each parameter has a maximum value
+amplitudeMax = 0
+frequencyMax = 0
+// each parameter has a minimum value
+amplitudeMin = 0
+frequencyMin = 0
+// each parameter has an increment value, which will be the amount the parameter
+//  changes between each iteration
+amplitudeInc = 0
+frequencyInc = 0
+// each parameter has a current value, which will be used when setting the simulation
+amplitudeCur = 0
+frequencyCur = 0
+
+// additional values will help us tell how much of the simulation is complete
+numTotalTrials = 0
+currentTrialNum = 0
+percentCompleteAmount = 0
+
+proc runTestAcrossParams(){
+    // the runTestAcrossParams is the bread and butter of Vary_Parameters
+    // within this procedure, we will loop through each parameter
+    // after each change in the parameters, we will run the threshfinder
+    //  on that specific set of inputs
+
+    // check if this procedure was passed parameters, this can be useful when
+    //  running simulations straight from other code, and not inputing into the UI
+    if(numarg() > 0){
+        amplitudeMin = $1
+        amplitudeMax = $2
+        amplitudeInc = $3
+        frequencyMin = $4
+        frequencyMax = $5
+        frequencyInc = $6
+    }
+
+    initCurrentParams() // set the current params to their starting values
+    
+    // before running through all the test, we will loop through all the parameters
+    //  and give output for the param values for each trail, and count the total number of trials
+    outputTrialParams()
+    
+    
+    canIncrement = 1    // canIncrement will keep track if we could successfully
+                        //  increment the params without exceeding the max on every param
+                        //  it is set to 1 to force at least 1 trial
+    
+    currentTrialNum = 0
+    while(canIncrement == 1){
+        percentComplete()   // update the percent of trials completed
+
+        setParams() // sets the current simulation variables for the current params
+        
+        // to test the waveform first the APCs must be setup correctly
+        //  see the APCountController.hoc for more details
+        APC_connect()   // connect the APCounters to the model
+        APC_setThresh(0)    // set the threshold for the APCounters
+        // now we can test if the wave blocks an action potential
+        testWaveForm(10, 50, .1, amplitudeCur, 1)  
+        currentTrialNum += 1
+        canIncrement = incrementParams()    // increment the params
+    }
+}
+
+proc initCurrentParams(){
+    // initCurrentParams sets the current parameters to the minimum values
+    //  essentially setting the current params to the starting point
+    amplitudeCur = amplitudeMin
+    frequencyCur = frequencyMin
+}
+
+proc outputTrialParams(){
+    // outputTrialParams will output the parameter values for each
+    //  trail one after the other, that way it can be matched to the trial output
+    //  later on.
+    // This will also count the total number of trials
+    numTotalTrials = 0  // init the counter at 0
+    canIncrement = 1    // this will force us to look at at least 1 trial
+    while(canIncrement == 1){
+        print amplitudeCur, ",", frequencyCur
+        numTotalTrials += 1
+        canIncrement = incrementParams()    // increment the params
+    }
+}
+
+proc percentComplete(){
+    // this will update the percent complete value
+    percentCompleteAmount = currentTrialNum / numTotalTrials * 100
+}
+
+proc setParams(){
+    // setParams will set the current simulation variables to the current
+    //  value set from incrementing the params
+    
+    // the amplitude needs to be set for the waveform
+    //  currently this would not work with waveforms other than the sine wave
+    amp1 = amplitudeCur // set the amplitude
+    sine_val()  // call the same method used by the sine_waveform UI to update the amplitudes
+    level = amplitudeCur // set the amplitude for the output in the threshfinder (see func printOutputSteadyState)
+
+    // the frequency needs to be set for the waveform
+    //  currently this would not work with wavforms other than the sine wave
+    freq = frequencyCur
+    sinestim()
+}
+
+func incrementParams(){
+    // the incrementParams finds the next parameter to increment, and then sets it
+    // this is done by using the following priority for incrementing
+    // 1. Amplitude
+    // 2. Frequency
+    // so if the amplitude can be incremented without going over the max, then it is incremented
+    // if the amplitude being incremented would exceed the max, then it is set back to the min 
+    //  and the next parameter in the list gets incremented
+    // its just like counting, increment until you can't, then rollover to the next
+    // if a parameter is incremented incrementParams returns 1
+    // if incrementing the params causes them to all get set to the min, then incrementParams returns 0
+
+    // First check if the amplitude can be incremented without exceeding its max
+    if(amplitudeCur+amplitudeInc <= amplitudeMax){
+        amplitudeCur += amplitudeInc   // it can be incremented so it is done here
+        return 1    // because a paramter was incremented we return 1
+    }
+    // because it couldn't be incremented it 'rolls over' back to its minimum
+    amplitudeCur = amplitudeMin 
+
+    // Second check if the frequency can be incremented without exceeding its max
+    if(frequencyCur+frequencyInc <= frequencyMax){
+        frequencyCur += frequencyInc    // it can be incremented so it is done her
+        return 1    // a parameter was incremented so we return 1
+    }
+    // the frequency could not be incremented so it 'rolls over' back to its minimum
+    frequencyCur = frequencyMin
+
+    // at this point, all parameters have 'rolled over'
+    // so no parameter was successfully incremented so we return 0
+    return 0
+}
