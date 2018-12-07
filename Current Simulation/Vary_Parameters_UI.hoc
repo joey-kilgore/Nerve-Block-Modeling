@@ -1,0 +1,58 @@
+// creating the GUI
+// creating the varyParamsBox object that will be the vbox for the GUI
+objref varyParamsBox
+varyParamsBox = new VBox()
+
+proc drawVaryParams(){
+    // draw the GUI for the Vary_Parameters
+    varyParamsBox.intercept(1)
+
+    // create panel at the top with some labels describing
+    //  what the vary paramaters does
+    xpanel("Seach Paramaters")
+    xlabel("These parameters will all")
+    xlabel("be searched and display output")
+    xlabel("to the console")
+    xpanel()
+
+    // create panel for choosing the amplitudes bounds and increment
+    xpanel("Amplitude (nA)")
+    xpvalue("Max Amplitude", &amplitudeMax)
+    xpvalue("Min Amplitude", &amplitudeMin)
+    xpvalue("Amplitude Increment", &amplitudeInc)
+    xpanel()
+
+    // create panel for choosing the frequency bounds and increment
+    xpanel("Frequency (Hz)")
+    xpvalue("Max Frequency", &frequencyMax)
+    xpvalue("Min Frequency", &frequencyMin)
+    xpvalue("Frequency Increment", &frequencyInc)
+    xpanel()
+
+    // create panel for actually starting the test through all params
+    xpanel("Start Search")
+    xbutton("Start Search", "runTestAcrossParams()")
+    xpanel()
+
+    // create panel to show current values
+    xpanel("Current Values (DO NOT CHANGE)")
+    xpvalue("Current Amplitude", &amplitudeCur)
+    xpvalue("Current Frequency", &frequencyCur)
+    xpvalue("PERCENT COMPLETE", &percentCompleteAmount)
+    xpanel()
+
+    varyParamsBox.intercept(0)
+    varyParamsBox.map("Vary Parameters", 128, 391, -1, -1)
+}
+
+proc setInitVaryParams(){
+    amplitudeMax = 400000
+    frequencyMax = 10000
+    amplitudeMin = 300000
+    frequencyMin = 9000
+    amplitudeInc = 50000
+    frequencyInc = 500
+}
+
+setInitVaryParams()
+drawVaryParams()
