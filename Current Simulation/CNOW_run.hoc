@@ -65,3 +65,8 @@ load_file("save_to_file.hoc")
 //**********************************************************
 load_file("Vary_Parameters.hoc")
 load_file("Vary_Parameters_UI.hoc")
+
+//**********************************************************
+// Test Experiment Procs
+//**********************************************************
+load_file("Multiple_Simulations.hoc")
