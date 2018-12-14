@@ -61,7 +61,53 @@ proc varyGnabar(){
 }
 
 proc setGnabarForAllAxnodes(){
+    // set gnabar value for all axnodes in the model
     for i=0,axonnodes-1 {
         node[i].gnabar_axnode = $1
+    }
+}
+
+proc setGnabarForSomeAxnodes(){
+    // set gnabar value for axnodes within a certain range from the center
+    //  the range is the value passed
+    //  for example if 5 is passed as a parameter, than the center node
+    //   is changed to the value, and nodes 5 to the left and right are also set
+    
+    rangeNum = $1
+    valueNum = $2
+
+    // set value of center node
+    node[(axonnodes-1)/2].gnabar_axnode = valueNum
+
+    // loop through the range
+    for(i=1; i<=rangeNum; i = i+1){
+        // set the nodes to the left and right to the value passed
+        node[(axonnodes-1)/2 + i].gnabar_axnode = valueNum
+        node[(axonnodes-1)/2 - i].gnabar_axnode = valueNum
+    }
+
+}
+
+proc changeGnabarFromCenter(){
+    // this experiment looks at how adjusting the gnabar value effects the block threshold
+    // This starts by changing only the center node, then
+    //  increases the number of nodes changed on each side of the center node
+    // One parameter passed, the value that the center nodes gnabar will be set to
+
+    // first run the findThreshold with no changed gnabar values
+    setGnabarForAllAxnodes(3.0)
+    print "No changed nodes"
+    findThreshold(400000,600000,0,10,50,.1,1,1000)
+
+    // loop till 14 nodes on each side of the center node, and the center node have changed 
+    for(i=0; i<15; i=i+2){
+        // reset all gnabar values
+        setGnabarForAllAxnodes(3.0)
+        // set the values for center nodes
+        setGnabarForSomeAxnodes(i,$1)
+        // print the set being tested
+        print "Range of set nodes", i
+        // find the block threshold
+        findThreshold(400000,600000,0,10,50,.1,1,1000)
     }
 }
