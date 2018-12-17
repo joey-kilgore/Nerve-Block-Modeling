@@ -1,0 +1,299 @@
+Gnabar value,2.7
+	0 
+C:/Users/Joey/Desktop/Stuff/Code/NEURON/Current Simulation/
+	1 
+	1 
+	1 
+	1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+115000 
+115000 
+115000 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+No changed nodes
+Outputs are given in the order :
+1. Testing Amplitude
+2. Was a stable state reached (0 for no, 1 for yes)
+3. Count proximal spikes with stimulus (Left)
+4. Time of last proximal spike (Left)
+5. Count distal spikes with stimulus (Right)
+6. Time of last distal spike (Right)
+7. Count of distal spikes without stimulus (Right)
+8. Was there a block (0 for no, 1 for yes)
+500000 ,1,6 ,50.125 ,7 ,52.33 ,6 ,0 
+550000 ,1,5 ,50.125 ,6 ,52.465 ,5 ,0 
+575000 ,1,5 ,50.125 ,6 ,52.895 ,5 ,0 
+587500 ,1,5 ,50.125 ,5 ,20.685 ,5 ,1 
+581250 ,1,5 ,50.125 ,5 ,20.455 ,5 ,1 
+578125 ,1,5 ,50.125 ,5 ,20.395 ,5 ,1 
+576562.5 ,1,5 ,50.125 ,5 ,20.37 ,5 ,1 
+575781.25 ,1,5 ,50.125 ,6 ,53.275 ,5 ,0 
+Threshold for block = 576562.5 
+Range of set nodes0 
+Outputs are given in the order :
+1. Testing Amplitude
+2. Was a stable state reached (0 for no, 1 for yes)
+3. Count proximal spikes with stimulus (Left)
+4. Time of last proximal spike (Left)
+5. Count distal spikes with stimulus (Right)
+6. Time of last distal spike (Right)
+7. Count of distal spikes without stimulus (Right)
+8. Was there a block (0 for no, 1 for yes)
+500000 ,1,6 ,50.125 ,7 ,52.29 ,6 ,0 
+550000 ,1,5 ,50.125 ,6 ,52.375 ,5 ,0 
+575000 ,1,5 ,50.125 ,6 ,52.475 ,5 ,0 
+587500 ,1,5 ,50.125 ,6 ,52.575 ,5 ,0 
+593750 ,1,5 ,50.125 ,6 ,52.675 ,5 ,0 
+596875 ,1,5 ,50.125 ,6 ,52.785 ,5 ,0 
+598437.5 ,1,5 ,50.125 ,6 ,52.945 ,5 ,0 
+The range was insufficient for blocking
+Range of set nodes2 
+Outputs are given in the order :
+1. Testing Amplitude
+2. Was a stable state reached (0 for no, 1 for yes)
+3. Count proximal spikes with stimulus (Left)
+4. Time of last proximal spike (Left)
+5. Count distal spikes with stimulus (Right)
+6. Time of last distal spike (Right)
+7. Count of distal spikes without stimulus (Right)
+8. Was there a block (0 for no, 1 for yes)
+500000 ,1,5 ,50.125 ,6 ,52.285 ,5 ,0 
+550000 ,1,5 ,50.125 ,6 ,52.375 ,5 ,0 
+575000 ,1,5 ,50.125 ,6 ,52.455 ,5 ,0 
+587500 ,1,5 ,50.125 ,6 ,52.525 ,5 ,0 
+593750 ,1,5 ,50.125 ,6 ,52.575 ,5 ,0 
+596875 ,1,5 ,50.125 ,6 ,52.61 ,5 ,0 
+598437.5 ,1,5 ,50.125 ,6 ,52.63 ,5 ,0 
+The range was insufficient for blocking
+Range of set nodes4 
+Outputs are given in the order :
+1. Testing Amplitude
+2. Was a stable state reached (0 for no, 1 for yes)
+3. Count proximal spikes with stimulus (Left)
+4. Time of last proximal spike (Left)
+5. Count distal spikes with stimulus (Right)
+6. Time of last distal spike (Right)
+7. Count of distal spikes without stimulus (Right)
+8. Was there a block (0 for no, 1 for yes)
+500000 ,1,3 ,50.12 ,4 ,52.285 ,3 ,0 
+550000 ,1,3 ,50.12 ,4 ,52.43 ,3 ,0 
+575000 ,1,3 ,50.12 ,4 ,52.945 ,3 ,0 
+587500 ,1,3 ,50.12 ,3 ,16.41 ,3 ,1 
+581250 ,1,3 ,50.12 ,3 ,16.315 ,3 ,1 
+578125 ,1,3 ,50.12 ,3 ,16.285 ,3 ,1 
+576562.5 ,1,3 ,50.12 ,3 ,16.275 ,3 ,1 
+Threshold for block = 576562.5 
+Range of set nodes6 
+Outputs are given in the order :
+1. Testing Amplitude
+2. Was a stable state reached (0 for no, 1 for yes)
+3. Count proximal spikes with stimulus (Left)
+4. Time of last proximal spike (Left)
+5. Count distal spikes with stimulus (Right)
+6. Time of last distal spike (Right)
+7. Count of distal spikes without stimulus (Right)
+8. Was there a block (0 for no, 1 for yes)
+500000 ,1,3 ,50.12 ,3 ,52.28 ,2 ,0 
+550000 ,1,3 ,50.12 ,3 ,52.435 ,2 ,0 
+575000 ,1,3 ,50.12 ,2 ,13.77 ,2 ,1 
+562500 ,1,3 ,50.12 ,3 ,52.535 ,2 ,0 
+568750 ,1,3 ,50.12 ,3 ,52.64 ,2 ,0 
+571875 ,1,3 ,50.12 ,3 ,52.79 ,2 ,0 
+573437.5 ,1,3 ,50.12 ,2 ,13.76 ,2 ,1 
+Threshold for block = 573437.5 
+Range of set nodes8 
+Outputs are given in the order :
+1. Testing Amplitude
+2. Was a stable state reached (0 for no, 1 for yes)
+3. Count proximal spikes with stimulus (Left)
+4. Time of last proximal spike (Left)
+5. Count distal spikes with stimulus (Right)
+6. Time of last distal spike (Right)
+7. Count of distal spikes without stimulus (Right)
+8. Was there a block (0 for no, 1 for yes)
+500000 ,1,3 ,50.12 ,3 ,52.285 ,2 ,0 
+550000 ,1,3 ,50.12 ,3 ,52.435 ,2 ,0 
+575000 ,1,3 ,50.12 ,2 ,13.88 ,2 ,1 
+562500 ,1,3 ,50.12 ,3 ,52.535 ,2 ,0 
+568750 ,1,3 ,50.12 ,3 ,52.64 ,2 ,0 
+571875 ,1,3 ,50.12 ,3 ,52.775 ,2 ,0 
+573437.5 ,1,3 ,50.12 ,2 ,13.86 ,2 ,1 
+Threshold for block = 573437.5 
+Range of set nodes10 
+Outputs are given in the order :
+1. Testing Amplitude
+2. Was a stable state reached (0 for no, 1 for yes)
+3. Count proximal spikes with stimulus (Left)
+4. Time of last proximal spike (Left)
+5. Count distal spikes with stimulus (Right)
+6. Time of last distal spike (Right)
+7. Count of distal spikes without stimulus (Right)
+8. Was there a block (0 for no, 1 for yes)
+500000 ,1,3 ,50.12 ,3 ,52.29 ,2 ,0 
+550000 ,1,3 ,50.12 ,3 ,52.44 ,2 ,0 
+575000 ,1,2 ,50.12 ,2 ,13.93 ,2 ,1 
+562500 ,1,3 ,50.12 ,3 ,52.535 ,2 ,0 
+568750 ,1,3 ,50.12 ,3 ,52.635 ,2 ,0 
+571875 ,1,2 ,50.12 ,2 ,13.88 ,2 ,1 
+570312.5 ,1,3 ,50.12 ,3 ,52.66 ,2 ,0 
+Threshold for block = 571875 
+Range of set nodes12 
+Outputs are given in the order :
+1. Testing Amplitude
+2. Was a stable state reached (0 for no, 1 for yes)
+3. Count proximal spikes with stimulus (Left)
+4. Time of last proximal spike (Left)
+5. Count distal spikes with stimulus (Right)
+6. Time of last distal spike (Right)
+7. Count of distal spikes without stimulus (Right)
+8. Was there a block (0 for no, 1 for yes)
+500000 ,1,3 ,50.12 ,3 ,52.295 ,2 ,0 
+550000 ,1,3 ,50.12 ,3 ,52.445 ,2 ,0 
+575000 ,1,2 ,50.12 ,2 ,13.955 ,2 ,1 
+562500 ,1,3 ,50.12 ,3 ,52.535 ,2 ,0 
+568750 ,1,3 ,50.12 ,3 ,52.62 ,2 ,0 
+571875 ,1,2 ,50.12 ,2 ,13.895 ,2 ,1 
+570312.5 ,1,2 ,50.12 ,2 ,13.875 ,2 ,1 
+Threshold for block = 570312.5 
+Range of set nodes14 
+Outputs are given in the order :
+1. Testing Amplitude
+2. Was a stable state reached (0 for no, 1 for yes)
+3. Count proximal spikes with stimulus (Left)
+4. Time of last proximal spike (Left)
+5. Count distal spikes with stimulus (Right)
+6. Time of last distal spike (Right)
+7. Count of distal spikes without stimulus (Right)
+8. Was there a block (0 for no, 1 for yes)
+500000 ,1,3 ,50.12 ,3 ,52.295 ,2 ,0 
+550000 ,1,3 ,50.12 ,3 ,52.445 ,2 ,0 
+575000 ,1,2 ,50.12 ,2 ,13.965 ,2 ,1 
+562500 ,1,3 ,50.12 ,3 ,52.54 ,2 ,0 
+568750 ,1,2 ,50.12 ,3 ,52.815 ,2 ,0 
+571875 ,1,2 ,50.12 ,2 ,13.905 ,2 ,1 
+570312.5 ,1,2 ,50.12 ,2 ,13.88 ,2 ,1 
+Threshold for block = 570312.5 
