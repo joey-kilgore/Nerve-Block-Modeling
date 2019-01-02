@@ -10,8 +10,7 @@ load_proc("nrnmainmenu")
 // mechanisms and cell definitions
 //**********************************************************
 load_file("select_mechanism.hoc")	// select mechanism
-load_file("MRG_init_cell_defs.hoc")	// open cell definition file for MRG model
-
+load_file("init_cell.hoc")
 
 //**********************************************************
 // electrode and waveform selection
