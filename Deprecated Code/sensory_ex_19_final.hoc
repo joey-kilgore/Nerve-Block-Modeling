@@ -1,0 +1,453 @@
+/*--------------------------------------------------------------------
+
+06/16
+Jessica Gaines
+
+04/15
+Lane Heyboer
+Julia Slopsema
+
+02/02
+Cameron C. McIntyre
+
+SIMULATION OF PNS MYELINATED AXON
+
+
+
+This model is described in detail in:
+
+
+McIntyre CC, Richardson AG, and Grill WM. Modeling the excitability of
+
+mammalian nerve fibers: influence of afterpotentials on the recovery
+
+cycle. Journal of Neurophysiology 87:995-1006, 2002.
+
+
+
+This model can not be used with NEURON v5.1 as errors in the
+
+extracellular mechanism of v5.1 exist related to xc. The original
+
+stimulations were run on v4.3.1. NEURON v5.2 has corrected the 
+
+limitations in v5.1 and can be used to run this model.
+
+----------------------------------------------------------------------*/
+// Read in axon properties (fiberD, num_nodes) and voltages in each axon segment
+
+strdef node_read, mysa_read, flut_read, stin_read, fiberD_read, num_nodes_read 
+objref node_volt, mysa_volt, flut_volt, stin_volt, fiberD, num_nodes, f1, f2, f3, f4, f5, f6
+
+f1=new File()
+f2=new File()
+f3=new File()
+f4=new File()
+f5=new File()
+f6=new File()
+
+node_volt=new Vector()
+mysa_volt=new Vector()
+flut_volt=new Vector()
+stin_volt=new Vector()
+fiberD=new Vector()
+num_nodes=new Vector()
+
+
+sprint(node_read,"nodes.dat")
+sprint(mysa_read,"mysas.dat")
+sprint(flut_read,"fluts.dat")
+sprint(stin_read,"stins.dat")
+sprint(fiberD_read,"fiberD.dat")
+sprint(num_nodes_read,"num_nodes.dat")
+
+f1.ropen(node_read)
+f2.ropen(mysa_read)
+f3.ropen(flut_read)
+f4.ropen(stin_read)
+f5.ropen(fiberD_read)
+f6.ropen(num_nodes_read)
+
+node_volt.scanf(f1)
+mysa_volt.scanf(f2)
+flut_volt.scanf(f3)
+stin_volt.scanf(f4)
+fiberD.scanf(f5)
+num_nodes.scanf(f6)
+
+f1.close()
+f2.close()
+f3.close()
+f4.close()
+f5.close()
+f6.close()
+
+// Fiber diameter (the floating point value) is the first and only entry in the vector fiberD
+fiberDiam=fiberD.x[0]
+
+// The number of nodes (the integer value) is the first and only entry in the vector num_nodes
+axonnodes=num_nodes.x[0]
+
+//print axonnodes
+
+load_file("noload.hoc")
+
+proc model_globels() {			
+	
+	celsius=37		//degrees C//	// Human body temperature			
+	
+	v_init=-79.3565 //mV//          // starting voltage
+	dt=0.01 //ms//                  // time step
+	tstop=170 //ms//                // time at which simulation terminates
+	node_volt //mV//                // voltage profile in the node from MAXWELL
+	mysa_volt //mV//                // voltage profile in the mysa from MAXWELL
+	flut_volt //mV//                // voltage profile in the flut from MAXWELL
+	stin_volt //mV//                // voltage profile in the stin from MAXWELL
+	fiberDiam //um//                // Diameter of the axon fiber
+    num_nodes                       // Number of nodes modeled
+
+
+	//Extracellular stimuluation parameters//
+	delay=120 //ms          // time before the stimulation is applied
+	
+	pw=.1	//ms            // pulse width, the duration of the stimulation
+
+	//topological parameters//
+	paranodes1=(axonnodes-1)*2//156_40_156 (nodes-1)*2      // number of mysa segments in the axon model
+
+	paranodes2=(axonnodes-1)*2//156_40_156 (nodes-1)*2      // number of flut segments in the axon model
+
+	axoninter=(axonnodes-1)*6//468_120_468                  // number of stin segments in the axon model
+
+	axontotal=axonnodes+paranodes1+paranodes2+axoninter//859_221_859    // total number of segments in the axon model
+
+
+	//morphological parameters//	
+	paralength1=3       // mysa length
+	
+	nodelength=1.0      // node length
+	
+	space_p1=0.002      // mysa periaxonal space width
+	
+	space_p2=0.004      // flut periaxonal space width
+	
+	space_i=0.004       // stin periaxonal space width
+	
+	//electrical parameters//	
+	rhoa=0.7e6 //Ohm-um//                       //axoplasmic resistivity
+	
+	mycm=0.1 //uF/cm2/lamella membrane//    // myelin capacitance
+	
+	mygm=0.001 //S/cm2/lamella membrane//   // myelin conductance
+}
+model_globels ()
+
+
+proc dependent_var() {
+
+    // linear interpolation of properties from McIntyre, Richardson, and Grill (2002) for any fiber diameter between 5.7 and 16 um
+
+	g = 0.0172*(fiberDiam)+0.5076    		//??
+	axonD = 0.889*(fiberDiam)-1.9104  		//diameter of the axon
+	nodeD = 0.3449*(fiberDiam)-0.1484 		//diameter of the node
+	paraD1 = 0.3527*(fiberDiam)-0.1804		//diameter of paranode 1
+	paraD2 = 0.889*(fiberDiam)-1.9104 		//diameter of paranode 2
+	deltax = 969.3*log(fiberDiam)-1144.6		//total length between nodes (including 1/2 the node on each side)
+	paralength2 = 2.5811*(fiberDiam)+19.59 	//length of paranode2
+	nl = 65.897*log(fiberDiam)-32.666		//number of lamella
+	
+	Rpn0=(rhoa*0.01)/(PI*((((nodeD/2)+space_p1)^2)-((nodeD/2)^2)))
+	
+	Rpn1=(rhoa*0.01)/(PI*((((paraD1/2)+space_p1)^2)-((paraD1/2)^2)))
+	
+	Rpn2=(rhoa*0.01)/(PI*((((paraD2/2)+space_p2)^2)-((paraD2/2)^2)))
+	
+	Rpx=(rhoa*0.01)/(PI*((((axonD/2)+space_i)^2)-((axonD/2)^2)))
+	
+	interlength=(deltax-nodelength-(2*paralength1)-(2*paralength2))/6
+
+
+	//axonD=diameter of the axon
+	//nodeD=diameter of the node
+	//paraD1=diameter of paranode 1
+	//paraD2diameter of paranode 2
+	//deltax=total length between nodes (including 1/2 the node on each side)
+	//paralength2=length of paranode2
+	//n1=number of lamella
+}
+dependent_var()
+
+objectvar stim
+
+create node[axonnodes], MYSA[paranodes1], FLUT[paranodes2], STIN[axoninter]
+
+access node[0]	//APD
+
+print fiberDiam
+
+proc initialize(){
+
+	print nl
+	print fiberDiam
+	print axonD
+	print paraD2
+	print paraD1
+	
+	forall insert extracellular // initialize extracellular voltage source
+	forall e_extracellular = 0  // set extracellular voltage source to ground
+	
+	for i=0,axonnodes-1 {
+		node[i]{
+			nseg=1
+			diam=nodeD
+			L=nodelength
+			Ra=rhoa/10000
+			cm=2
+			insert node_sensory_9       // mod file declaring nodal channel properties
+			xraxial=Rpn0 
+			xg=1e10 
+			xc=0		
+		}
+	}
+	
+	for i=0, paranodes1-1 {
+		MYSA[i]{
+			nseg=1
+			diam=fiberDiam
+			L=paralength1
+			Ra=rhoa*(1/(paraD1/fiberDiam)^2)/10000
+			cm=2*paraD1/fiberDiam
+			insert mysa_sensory_16      // mod file declaring mysa channel properties
+			xraxial=Rpn1 
+			xg=mygm/(nl*2) 
+			xc=mycm/(nl*2)
+		}
+	}
+	
+	for i=0, paranodes2-1 {
+		FLUT[i]{
+			nseg=1
+			diam=fiberDiam 
+			L=paralength2
+			Ra=rhoa*(1/(paraD2/fiberDiam)^2)/10000
+			cm=2*paraD2/fiberDiam	
+			insert flut_sensory_16      // mod file declaring flut channel properties
+			xraxial=Rpn2 
+			xg=mygm/(nl*2) 
+			xc=mycm/(nl*2)
+		}
+	}
+	
+	for i=0, axoninter-1 {
+		STIN[i]{
+			nseg=1
+			diam=fiberDiam
+			L=interlength
+			Ra=rhoa*(1/(axonD/fiberDiam)^2)/10000
+			cm=2*axonD/fiberDiam
+			insert stin_sensory_16      // mod file declaring stin channel properties
+			xraxial=Rpx 
+			xg=mygm/(nl*2) 
+			xc=mycm/(nl*2)
+		}
+	}
+	
+	for i=0, axonnodes-2 {
+
+		connect MYSA[2*i](0), node[i](1)
+
+		connect FLUT[2*i](0), MYSA[2*i](1)
+		connect STIN[6*i](0), FLUT[2*i](1)
+		connect STIN[6*i+1](0), STIN[6*i](1)
+		connect STIN[6*i+2](0), STIN[6*i+1](1)
+
+		connect STIN[6*i+3](0), STIN[6*i+2](1)
+
+		connect STIN[6*i+4](0), STIN[6*i+3](1)	
+		connect STIN[6*i+5](0), STIN[6*i+4](1)	
+		connect FLUT[2*i+1](0), STIN[6*i+5](1)
+		connect MYSA[2*i+1](0), FLUT[2*i+1](1)
+
+		connect node[i+1](0), MYSA[2*i+1](1)
+	}
+	
+	
+	finitialize(v_init)
+	
+	fcurrent()
+}
+initialize()
+
+print axonD
+
+objref fih
+fih = new FInitializeHandler(0, "set_e_ext(0)")
+
+//the following procedure only gets called at t=0, t=delay, t=delay+pulsewidth//
+// changes extracellular stimulation values at the beginning of of the test and at the beginning and end of the stimulation pulse
+proc set_e_ext() {
+
+    // beginning of the test
+	// extracellular voltage is zero, wait for t = delay to start pulse
+        
+	if ($1 == 0) {
+		forall e_extracellular = 0//set extracellular voltage source to ground
+		cvode.event(delay, "set_e_ext(1)")  // when to turn on
+
+    // during the stimulation pulse
+	// set extracellular voltage to values determined by MAXWELL
+	// wait for the end of the pulse (t = delay + pw)
+
+	}else if ($1 == 1) {
+		for i=0,axonnodes-1 {
+			node[i]{
+			e_extracellular = node_volt.x[i]					
+				}
+		}
+			
+		for i=0, paranodes1-1 {
+			MYSA[i]{	
+			e_extracellular = mysa_volt.x[i]
+				}
+		}
+
+		for i=0, paranodes2-1 {
+			FLUT[i]{
+			e_extracellular = flut_volt.x[i]	
+				}
+		}
+
+		for i=0, axoninter-1 {
+			STIN[i]{
+			e_extracellular = stin_volt.x[i]	
+				}
+		}			
+
+		cvode.event(delay + pw, "set_e_ext(2)")
+
+    // end of the stimulation pulse
+	// reset extracellular stimulation to zero
+	// wait for the beginning of a new test
+
+	}else if ($1 == 2) {
+		forall e_extracellular = 0
+		cvode.event(0, "set_e_ext(0)")
+	}
+}
+
+m=2  // the axon has not fired
+
+// if the voltage is ever higher than 0 V at node 31, call the process "handle1()"
+objref nc, nil
+node[31] nc = new NetCon(&v(.5), nil)
+nc.threshold = 0 // watch out! only one threshold per presyn location
+nc.record("handle1()")
+
+proc handle1() {
+	print "called handle1() at time ", t, " when node.v = ", node[31].v(.5)
+        m=3
+        print m
+	cvode.event(t+1e-6) 
+}
+
+// Graphs
+objectvar save_window_, rvp_
+objectvar scene_vector_[4]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{pwman_place(0,0,0)}
+
+// Voltage graph
+// displays voltage trace at node 31
+{
+save_window_ = new Graph(0)
+save_window_.size(0,350,-80,0)
+scene_vector_[2] = save_window_
+{save_window_.view(0, -100, 350, 40, 347, 280, 300.48, 200.32)}
+graphList[0].append(save_window_)
+save_window_.save_name("graphList[0].")
+save_window_.addexpr("node[31].v( 0.5 )", 2, 1, 0.637061, 1.01022, 2)   //Where in the axon voltage is graphed
+}
+
+/*
+//Graph of mp node
+// displays percentage of mp gates that are open at the point 50% of the way through node 31
+{
+save_window_ = new Graph(0)
+save_window_.size(0,350,0,1)
+scene_vector_[2] = save_window_
+{save_window_.view(119, 0, 4, 1, 347, 280, 300.48, 200.32)}
+graphList[2].append(save_window_)
+save_window_.save_name("graphList[2].")
+save_window_.addexpr("node[31].mp_node_sensory_9( 0.5 )", 2, 1, 0.637061, 1.01022, 2)
+}
+*/
+
+/*
+// Displays parameters in a window
+{
+xpanel("RunControl", 0)
+xvalue("Init","v_init", 1,"stdinit()", 1, 1 )
+xbutton("Init & Run","run()")
+xbutton("Stop","stoprun=1")
+runStopAt = 5
+xvalue("Continue til","runStopAt", 1,"{continuerun(runStopAt) stoprun=1}", 1, 1 )
+runStopIn = 1
+xvalue("Continue for","runStopIn", 1,"{continuerun(t + runStopIn) stoprun=1}", 1, 1 )
+xbutton("Single Step","steprun()")
+t = 0
+xvalue("t","t", 2 )
+xvalue("Tstop","tstop", 1,"tstop_changed()", 0, 1 )
+dt = 0.005
+xvalue("dt","dt", 1,"setdt()", 0, 1 )
+steps_per_ms = 40
+xvalue("Points plotted/ms","steps_per_ms", 1,"setdt()", 0, 1 )
+xcheckbox("Quiet",&stdrun_quiet,"")
+realtime = 0
+xvalue("Real Time","realtime", 0,"", 0, 1 )
+xpanel(57,280)
+}
+objectvar scene_vector_[1]
+{doNotify()}
+*/
+
+//cvode_active(1) // optional. but fixed step will probably do one extra time step
+//cvode.condition_order(2) // optional. but much more accurate event time evaluation.
+
+objref p
+
+// save voltage and time at each time-step in node 100
+objref vvec, tvec
+tvec = new Vector()
+vvec = new Vector()
+tvec.record(&t, dt) // record time
+vvec.record(&node[100].v(0.5), dt)
+
+run()
+
+objref f7, f19
+
+f7 = new File()
+f19 = new File()
+
+f7.wopen("tvec.dat")
+f19.wopen("vvec.dat")
+
+tvec.printf(f7)
+vvec.printf(f19)
+
+f7.close()
+f19.close()
+
+//print "end voltage: "
+//print v
+runStopAt = 5
+runStopIn = 1
+t = 0  // reset time variable
+
+print m
+if (m==3){      // the axon fired
+print "node 10 peak 1"}
+if (m==2){      // the axon did not fire
+print "node 10 no peak 0"}
+quit()
