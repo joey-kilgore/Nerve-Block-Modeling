@@ -14,7 +14,7 @@ Diameters[5] = 12.8
 Diameters[6] = 14.0
 Diameters[7] = 15.0
 Diameters[8] = 16.0
-Diameter_SelectedYesOrNo[8] = 1  //Set the default diameter to 10um (in this case so it appears correctly in the GUI panel)
+Diameter_SelectedYesOrNo[3] = 1  //Set the default diameter to 10um (in this case so it appears correctly in the GUI panel)
 
 objref DiamPanel		//define object reference pointer for Diameter panel
 DiamPanel = new VBox()  //create a new vertical box for the Diameter Panel (2=light grey bckgnd)
