@@ -3,6 +3,7 @@
 //Setup some variables for use with Diameter selector
 double Diameters[9]		//Define an array (hence the double), that stores the values of the various diameters in um
 double Diameter_SelectedYesOrNo[9]  //Define an array for storing whether or not a diameter has been selected (initialized to 0's by default)
+selectedDiam = 3
 
 //Define each of the elements in the Diameters array as one of the possible diameters
 Diameters[0] = 5.7
@@ -15,6 +16,10 @@ Diameters[6] = 14.0
 Diameters[7] = 15.0
 Diameters[8] = 16.0
 Diameter_SelectedYesOrNo[3] = 1  //Set the default diameter to 10um (in this case so it appears correctly in the GUI panel)
+
+double Model_SelectedYesOrNo[2] // {MRG, Sensory}
+Model_SelectedYesOrNo[0] = 1    // Set the default model type to MRG 
+selectedModel = 0
 
 objref DiamPanel		//define object reference pointer for Diameter panel
 DiamPanel = new VBox()  //create a new vertical box for the Diameter Panel (2=light grey bckgnd)
@@ -44,6 +49,11 @@ proc DrawDiamPanel(){
     xlabel("Warning: Altering diameter re-initializes program variables.")
     
 	xpanel()			//exit xpanel mode
+    xpanel("Select Model Type")
+    xlabel("Select the model used to generate the simulation, default = MRG")
+    xcheckbox("MRG",&Model_SelectedYesOrNo[0], "changeModel(0)")
+    xcheckbox("Sensory", &Model_SelectedYesOrNo[1], "changeModel(1)")
+    xpanel()
     DiamPanel.intercept(0)  //exit intercept mode
     DiamPanel.map("Choose a diameter", 33, 919, -1, -1)
 }
@@ -54,6 +64,7 @@ proc changeDiam(){  local i
 		if (i != $1) {
 			Diameter_SelectedYesOrNo[i]=0   //ensure that the Diameter_SelectedYesOrNo is set properly	
 		} else {
+            selectedDiam = i
 			Diameter_SelectedYesOrNo[i]=1   //ensure that the Diameter_SelectedYesOrNo is set properly
 		}	
     }
@@ -68,7 +79,23 @@ proc changeDiam(){  local i
 		change_pos()
 	}
 
-    initialize(0)	//recall the initialize function to reset all of the section geometric props for the new fiberD
+    initialize(1)	//recall the initialize function to reset all of the section geometric props for the new fiberD
+}
+
+proc changeModel(){
+    for (i=0; i<2; i= i+1){ //iterate through each selection
+		if (i != $1) {
+			Model_SelectedYesOrNo[i]=0   //ensure that the changeModel_SelectedYesOrNo is set properly	
+		} else {
+            selectedModel=i
+			Model_SelectedYesOrNo[i]=1   //ensure that the changeModel_SelectedYesOrNo is set properly
+		}	
+    }
+
+    // set the modelType value
+    modelType = selectedModel
+
+    changeDiam(selectedDiam)
 }
 
 //***************************************************************
@@ -76,7 +103,7 @@ proc changeDiam(){  local i
 //***************************************************************
 DrawDiamPanel()
 xypos()
-
+changeDiam(selectedDiam)
 
 
 
