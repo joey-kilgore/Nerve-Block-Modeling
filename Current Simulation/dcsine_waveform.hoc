@@ -1,0 +1,136 @@
+
+//***************************************************************
+//  variables
+//***************************************************************
+
+/*Create and initialize sections and point processes*/
+create dcsineelec
+objref dcsineClmp
+
+dcsineClmp = new IDCSineClamp() 
+
+// Sine waveform boxes
+objref dcsineBox
+dcsineBox = new VBox()
+
+
+//***************************************************************
+//  procedures
+//***************************************************************
+
+
+
+//*********************************************************************
+//  sine waveform and their handling routines
+//*********************************************************************
+
+proc setoffset(){
+	offset = $1
+	dcsinestim()
+}
+
+dcamp = 1000000
+dconset = 10
+dcdur = 100
+sineamp = 600000
+sinef = 20000
+sineonset = 110
+sinedur = 90
+
+proc dcsinebox_Vbox() {
+
+	dcsineBox.intercept(1)
+	xpanel("DC Values")
+    xlabel("DC VALUES")
+	xvalue("DC Amplitude(nA)","dcamp",1,"dcsinestim()",1)
+	xvalue("Pulse Train Onset(ms)", "dconset",1,"dcsinestim()",1)
+	xvalue("Pulse Train Duration(ms)","dcdur",1,"dcsinestim()",1)
+	xpanel()
+    xpanel("Sine Values")
+    xlabel("SINE VALUES")
+	xvalue("Sine Amplitude (nA)","sineamp",1,"dcsinestim()",1)
+	xvalue("Frequency(1/s)","sinef",1,"dcsinestim()",1)
+	xvalue("Pulse Train Onset(ms)", "sineonset",1,"dcsinestim()",1)
+	xvalue("Pulse Train Duration(ms)","sinedur",1,"dcsinestim()",1)
+	xpanel()
+	dcsineBox.intercept(0)
+}
+
+proc dcsin_panel(){
+
+	if(dcsineBox.ismapped() == 0) {
+		dcsineBox.map("DC Sine", 30, 465, -1, -1)
+	}
+
+	dcsinestim()
+
+}
+
+
+
+// update dcsine parameters for the different electrode types
+proc dcsinestim(){ local i
+	// one point source or FEM
+	dcsineelec {
+		dcsineClmp.loc(0.5)
+		dcsineClmp.dcdel=dconset
+		dcsineClmp.dcamp=dcamp
+		dcsineClmp.dcdur=dcdur
+
+        dcsineClmp.sineamp = sineamp
+        dcsineClmp.sinef = sinef
+        dcsineClmp.sinedel = sineonset
+        dcsineClmp.sinedur = sinedur
+	}	
+}
+
+proc dcsineadvance() {
+//		position_move()
+
+		a = 0
+    	for (i=0;i<=axontotal-1;i=i+stinnum+5) {	
+    		node[a].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i]*1e-6) //mV//
+    		a = a+1
+    	}
+
+    	b=0 
+    	for (i=1;i<=axontotal-1;i=i+stinnum+5) {
+    		MYSA[b].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i]*1e-6) //mV//
+    		b=b+2
+    	}
+    	
+		c=0 
+    	for (i=2;i<=axontotal-1;i=i+stinnum+5) {
+    		FLUT[c].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i]*1e-6) //mV//
+    		c=c+2
+    	}
+
+		for (j = 0;j<=stinnum-1;j=j+1) {
+			d=j 
+			for (i=3;i<=axontotal-1;i=i+stinnum+5) {
+    				STIN[d].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i]*1e-6) //mV//
+				d=d+stinnum
+			}
+		}
+
+    	k=1 
+    	for (i=9;i<=axontotal-2;i=i+stinnum+5) {
+    		FLUT[k].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i]*1e-6) //mV//
+    		k=k+2
+    	}
+    	
+		l=1
+    	for (i=10;i<=axontotal-2;i=i+stinnum+5) {
+    		MYSA[l].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i]*1e-6)
+    		l=l+2
+    	}
+
+}
+
+//***************************************************************
+//  main
+//***************************************************************
+
+dcsin_panel()
+dcsinestim()
+
