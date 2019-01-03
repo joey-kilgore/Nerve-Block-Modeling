@@ -6,7 +6,7 @@
 //***************************************************************
 //  variables
 //***************************************************************
-double wavesel[4]			// selection flag to pick square, sine, triangle
+double wavesel[5]			// selection flag to pick square, sine, triangle
 
 //Initialize state variables to sine wave
 wavesel[0] = 0	//square wave
