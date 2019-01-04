@@ -126,3 +126,42 @@ proc changeGnabarFromCenter(){
         findThreshold(400000,600000,0,10,50,.1,1,2000)
     }
 }
+
+proc onsetDCSine(){
+    // Set the waveform to sine wave
+    waveform_sel(4)
+
+    // First the setup needs to determine what the DC block threshold is
+    dconset = 10
+    dcdur = 200
+    sineonset = 0
+    sinedur = 0
+    dcsinestim()
+    // Now the block threshold for a purely DC current is calculated
+    dcblock = findThreshold(-400000, -200000, 0, 10, 50, .1, 1, 1000)
+
+    // Second the setup needs to determing the sine block threshold
+    dconset = 0
+    dcdur = 0
+    sineonset = 10
+    sinedur = 200
+    sinef = 10000
+    dcsinestim()
+    // Now the block threshold for a purely Sinusoidal current is calculated
+    sineblock = findThreshold(500000, 600000, 0, 10, 50, .1, 1, 1000)
+
+    // Test what happens with double block
+    dconset = 10
+    dcdur = 90
+    dcamp = dcblock*2
+    sineonset = 100
+    sinedur = 100
+    sinef = 10000
+    sineamp = sineblock
+    dcsinestim()
+    tstop = 150
+    setStim(0,0,0)
+    run()
+
+
+}
