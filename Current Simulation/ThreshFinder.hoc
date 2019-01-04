@@ -189,10 +189,6 @@ func findThreshold(){
         continue_dialog("Error: Invalid range")
         return
     }
-    if(lower<0 || upper<0){
-        continue_dialog("Error: Negative range not allowed")
-        return
-    }
 
     // connect the APCounters to the model
     APC_connect()
@@ -216,36 +212,70 @@ func findThreshold(){
     // print the output header to be able to know exactly what was recorded
     printOutputHeader()
 
-    // begin binary search
-    while(abs(lower-upper) > resolution && stop_flag==0){
-        // find the midpoint of the two amplitudes
-        level = (lower+upper)/2
+    if(lower>=0){
+        // begin positive binary search
+        while(abs(lower-upper) > resolution && stop_flag==0){
+            // find the midpoint of the two amplitudes
+            level = (lower+upper)/2
 
-        // run the simulation passing level as the amplitude
-        blocked = testWaveForm(stimAmp, stimDel, stimDur, level, waveCo)
-    
-        // depending on whether the AP was blocked or not
-        //  move the above or below the midpoint
-        if(blocked == 1){
-            // if the AP was blocked, move the search below the current level
-            upper = level
-        }else{
-            // if the AP was not blocked move the search above the current level
-            lower = level
+            // run the simulation passing level as the amplitude
+            blocked = testWaveForm(stimAmp, stimDel, stimDur, level, waveCo)
+        
+            // depending on whether the AP was blocked or not
+            //  move the above or below the midpoint
+            if(blocked == 1){
+                // if the AP was blocked, move the search below the current level
+                upper = level
+            }else{
+                // if the AP was not blocked move the search above the current level
+                lower = level
+            }
+
+            // set flags for whether a steady state was reached, or if blocking or passing occured
+            if(blocked != -1){
+                // a steady state has occured, so the flag can be set to true
+                if(hasSteady == 0) hasSteady = 1
+
+                // check for blocking or passing, and make sure the flags 
+                //  are set to the appropriate value
+                if(blocked == 1 && hasBlocked == 0) hasBlocked = 1
+                if(blocked == 0 && hasPassed == 0) hasPassed = 1
+            }
+
+            if(stop_flag == 1) return 0
         }
+    } else{
+        //begin negative binary search
+        while(abs(lower-upper) > resolution && stop_flag==0){
+            // find the midpoint of the two amplitudes
+            level = (lower+upper)/2
 
-        // set flags for whether a steady state was reached, or if blocking or passing occured
-        if(blocked != -1){
-            // a steady state has occured, so the flag can be set to true
-            if(hasSteady == 0) hasSteady = 1
+            // run the simulation passing level as the amplitude
+            blocked = testWaveForm(stimAmp, stimDel, stimDur, level, waveCo)
+        
+            // depending on whether the AP was blocked or not
+            //  move the above or below the midpoint
+            if(blocked == 1){
+                // if the AP was blocked, move the search above the current level
+                lower = level
+            }else{
+                // if the AP was not blocked move the search below the current level
+                upper = level
+            }
 
-            // check for blocking or passing, and make sure the flags 
-            //  are set to the appropriate value
-            if(blocked == 1 && hasBlocked == 0) hasBlocked = 1
-            if(blocked == 0 && hasPassed == 0) hasPassed = 1
+            // set flags for whether a steady state was reached, or if blocking or passing occured
+            if(blocked != -1){
+                // a steady state has occured, so the flag can be set to true
+                if(hasSteady == 0) hasSteady = 1
+
+                // check for blocking or passing, and make sure the flags 
+                //  are set to the appropriate value
+                if(blocked == 1 && hasBlocked == 0) hasBlocked = 1
+                if(blocked == 0 && hasPassed == 0) hasPassed = 1
+            }
+
+            if(stop_flag == 1) return 0
         }
-
-        if(stop_flag == 1) return 0
     }
 
     // check that blocking, passing, and steady states have occured
@@ -327,8 +357,9 @@ proc drawThreshFinder(){
 
     xpanel("Test Pulse Stimulus Parameters")
     xpvalue("Stimulus amperage (nA): ", &stimamp)
-    xpvalue("Stimulus duration (ms): ", &stimdur)
     xpvalue("Stimulus delay (ms): ", &stimdel)
+    xpvalue("Stimulus duration (ms): ", &stimdur)
+    xbutton("Update stimulus values", "setStim(stimamp, stimdel, stimdur)")
     xpanel()
 
     xpanel("Waveform Parameters")
