@@ -56,14 +56,12 @@ proc dcsinebox_Vbox() {
 	dcsineBox.intercept(0)
 }
 
-proc dcsin_panel(){
-
+proc dcsine_panel(){
 	if(dcsineBox.ismapped() == 0) {
 		dcsineBox.map("DC Sine", 30, 465, -1, -1)
 	}
 
 	dcsinestim()
-
 }
 
 
@@ -131,6 +129,6 @@ proc dcsineadvance() {
 //  main
 //***************************************************************
 
-dcsin_panel()
+dcsinebox_Vbox()
 dcsinestim()
 
