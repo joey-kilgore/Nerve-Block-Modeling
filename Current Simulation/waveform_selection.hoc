@@ -80,6 +80,7 @@ proc waveform_sel(){
 	}
 	if ($1!=4){	// not dcsine wave
 		wavesel[4] = 0
+		state_dcsin = 0
 		dcsineBox.unmap()
 	}
 
@@ -107,6 +108,7 @@ proc waveform_sel(){
 	}
 	if ($1==4){
 		wavesel[4] = 1
+		state_dcsine = 1
 		dcsine_panel()
 	}
 }

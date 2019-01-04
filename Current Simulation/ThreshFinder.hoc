@@ -77,7 +77,15 @@ proc setAmps(){
                     tri_val()
 
                     // no wave was specified alert the error on the console
-                }else print "Error: No waveform specified.\n" 
+                }else{
+                    if (state_dcsine==1){
+                        dcamp = $1
+                        sineamp = $1
+                        dcsinestim()
+                    }else{
+                        print "Error: No waveform specified.\n" 
+                    }
+                } 
             }
         }
     }
