@@ -73,3 +73,11 @@ func APC_getTime(){
     // if the index isnt 1 or 0 return -1
     return -1
 }
+
+proc APC_setVectors(){
+    // APC_setVectors(vector obj, vector obj)
+    // sets the two vector objs to record the firing times
+    //  on each of the APCount objs respectively
+    apcDistal.record($1)
+    apcProximal.record($2)
+}
