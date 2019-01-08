@@ -25,6 +25,9 @@ proc advance(){
     }else if (wavesel[3]) {
 	    trajAdvance() 
 	    fadvance()   
+	}else if (wavesel[4]) {
+	    dcsineadvance() 
+	    fadvance()   
 	}
 
 	apfreq.resize(apvec.size)

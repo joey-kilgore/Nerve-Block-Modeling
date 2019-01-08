@@ -6,20 +6,21 @@
 //***************************************************************
 //  variables
 //***************************************************************
-double wavesel[4]			// selection flag to pick square, sine, triangle
+double wavesel[5]			// selection flag to pick square, sine, triangle
 
 //Initialize state variables to sine wave
 wavesel[0] = 0	//square wave
 wavesel[1] = 1	//sine wave
 wavesel[2] = 0	//triangle wave
 wavesel[3] = 0	//sine ramp
-
+wavesel[4] = 0	//dcsine wave
 //***************************************************************
 //  external files
 //***************************************************************
 load_file("sine_waveform.hoc")					// select waveform
 load_file("triangle_waveform.hoc")					// select waveform
 load_file("square_waveform.hoc")					// select waveform
+load_file("dcsine_waveform.hoc")		
 
 //***************************************************************
 //  procedures
@@ -27,11 +28,11 @@ load_file("square_waveform.hoc")					// select waveform
 proc Selec_waveform(){
 	selectbox.intercept(1)
 	xpanel("Choose Waveform Type")
-	
 	xcheckbox("Square",&wavesel[0], "waveform_sel(0)")
 	xcheckbox("Sine",&wavesel[1], "waveform_sel(1)")
 	xcheckbox("Triangle",&wavesel[2], "waveform_sel(2)")
 	xcheckbox("Sine Ramp",&wavesel[3], "waveform_sel(3)")
+	xcheckbox("DC Sine", &wavesel[4], "waveform_sel(4)")
 	xpanel()
 	selectbox.intercept(0)
 	selectbox.map("Choose Waveform Type",24, 156, -1, -1)
@@ -42,8 +43,8 @@ proc waveform_sel(){
 	// unmap and uncheck the unused electrodes
 	if ($1!=0){  // not square
 		wavesel[0] = 0
-     		state_unbal=0
-     		state_bal=0
+     	state_unbal=0
+     	state_bal=0
 
 		// unmap all the square waveform boxes
 		unbalbox1.unmap()
@@ -56,7 +57,6 @@ proc waveform_sel(){
 		indebox2.unmap()
 		indebox3.unmap()
 		Squarewave.unmap()
-
 	}
 	if ($1!=1){  // not sine
 		wavesel[1] = 0
@@ -78,16 +78,19 @@ proc waveform_sel(){
 	if ($1!=3){  // not sine ramp
 		wavesel[3] = 0
 	}
+	if ($1!=4){	// not dcsine wave
+		wavesel[4] = 0
+		state_dcsin = 0
+		dcsineBox.unmap()
+	}
 
 	// map and check the used electrodes
 	if ($1==0){  // square
 		wavesel[0] = 1
 		Squarewave_proc()
-
 		// open tied onset window
 		Tied_onset()
 		balance_proc()
-
 	}
 	if ($1==1){  // sine
 		wavesel[1] = 1
@@ -103,9 +106,11 @@ proc waveform_sel(){
 		wavesel[3] = 1
 		traj_panel()
 	}
-
-
-
+	if ($1==4){
+		wavesel[4] = 1
+		state_dcsine = 1
+		dcsine_panel()
+	}
 }
 
 
