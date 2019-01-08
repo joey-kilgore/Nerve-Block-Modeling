@@ -103,6 +103,8 @@ proc init_point_sources() {
 	
 	state_tri=0
 	first_tri=1
+
+	state_dcsine = 0
 }
 
 

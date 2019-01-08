@@ -126,3 +126,60 @@ proc changeGnabarFromCenter(){
         findThreshold(400000,600000,0,10,50,.1,1,2000)
     }
 }
+
+objref apVector1
+objref apVector2
+proc onsetDCSine(){
+    // Set the waveform to DC sine wave
+    waveform_sel(4)
+
+    // First the setup needs to determine what the DC block threshold is
+    dconset = 10
+    dcdur = 200
+    sineonset = 0
+    sinedur = 0
+    dcsinestim()
+    // Now the block threshold for a purely DC current is calculated
+    dcblock = findThreshold(-307812.5, -300000, 0, 10, 50, .1, 1, 1000)
+
+    // Second the setup needs to determing the sine block threshold
+    dconset = 0
+    dcdur = 0
+    sineonset = 10
+    sinedur = 200
+    sinef = 20000
+    dcsinestim()
+    // Now the block threshold for a purely Sinusoidal current is calculated
+    sineblock = findThreshold(637500, 640625, 0, 10, 50, .1, 1, 1000)
+
+    apVector1 = new Vector()
+    apVector2 = new Vector()
+    apcDistal.record(apVector1)
+    apcProximal.record(apVector2)
+
+    for(newDur=10; newDur<=100; newDur+=10){
+        print "DC Duration,", newDur
+        for mult=0, 5{
+            dconset = 10
+            dcdur = newDur
+            dcamp = dcblock*mult
+            sineonset = dconset+dcdur
+            sinedur = 300
+            sinef = 10000
+            sineamp = sineblock
+            dcsinestim()
+            tstop = 200
+            setStim(0,0,0)
+            run()
+            print dcamp, dcdur, sineonset
+            print "Distal (left)"
+            for i=0, apVector1.size()-1{
+                print apVector1.x[i]
+            }
+            print "Proximal (right)"
+            for i=0, apVector2.size()-1{
+                print apVector2.x[i]
+            }
+        }
+    }
+}
