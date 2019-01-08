@@ -150,7 +150,7 @@ proc onsetDCSine(){
     sinef = 20000
     dcsinestim()
     // Now the block threshold for a purely Sinusoidal current is calculated
-    sineblock = findThreshold(628125, 631250, 0, 10, 50, .1, 1, 1000)
+    sineblock = findThreshold(637500, 640625, 0, 10, 50, .1, 1, 1000)
 
     apVector1 = new Vector()
     apVector2 = new Vector()
