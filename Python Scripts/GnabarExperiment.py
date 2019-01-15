@@ -14,10 +14,8 @@ print('Gnabar value,' + str(gnabarValue))
 
 h = neuron.hoc.HocObject()
 
-h('chdir("C:/Users/Joey/Desktop/Stuff/Code/NEURON/Current Simulation/")')
-h('getcwd()')
-h('nrn_load_dll("nrnmech.dll")')
-h('load_file("CNOW_run.hoc")')
+h('nrn_load_dll("C:/Users/Joey/Desktop/Stuff/Code/Nerve-Block-Modeling/Current Simulation/models/nrnmech.dll")')
+h('load_file("C:/Users/Joey/Desktop/Stuff/Code/Nerve-Block-Modeling/Current Simulation/CNOW_run.hoc")')
 
 hocCommand = "changeGnabarFromCenter(" + str(gnabarValue) + ")"
 
