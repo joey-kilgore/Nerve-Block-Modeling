@@ -34,17 +34,17 @@ UNITS {
 
 PARAMETER {
 
-	gnapbar = 0.01	(mho/cm2)
-	gnabar	= 3.0	(mho/cm2)
-	gkbar   = 0.08 	(mho/cm2)
-	gl	= 0.007 (mho/cm2)
-	ena     = 50.0  (mV)
-	ek      = -90.0 (mV)
-	el	= -90.0 (mV)
+	gnapbar = 0.01	(mho/cm2)	: Maximum persistent Na conductance
+	gnabar	= 3.0	(mho/cm2)	: Maximum fast Na conductance
+	gkbar   = 0.08 	(mho/cm2)	: Maximum slow K conductance
+	gl	= 0.007 (mho/cm2)	: Nodal leadage conductance
+	ena     = 50.0  (mV)	: Na Nernst potential
+	ek      = -90.0 (mV)	: K Nernst potential
+	el	= -90.0 (mV)	: Leakage reversal potential
 	celsius		(degC)
 	dt              (ms)
 	v               (mV)
-	vtraub=-80
+	vtraub=-80	
 	ampA = 0.01
 	ampB = 27
 	ampC = 10.2

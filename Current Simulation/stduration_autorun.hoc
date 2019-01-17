@@ -51,7 +51,7 @@ proc stduration_autorun_loop() {
 	initialize(0)
 
 	// zero out the stimulation parameters
-	setstim(0,0,0)
+	setStim(0,0,0)
 
 	// extract the parameters from the "Strength Duration Control Panel"
 	high_amp = $1

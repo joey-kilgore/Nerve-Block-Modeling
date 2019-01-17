@@ -61,7 +61,7 @@ proc init_point_sources() {
 	amp2 = 0
 	amp3 = 0
 	freq = 10000
-	offset = 1e6
+	offset = 0
 	
 	triamp=0
 	
