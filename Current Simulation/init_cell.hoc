@@ -361,5 +361,4 @@ proc sensoryInit(){
 }// End sensoryInit()
 
 // Main
-change_morphological()
-initialize(0)
+// initialization of the cell occurs in diameter.hoc
