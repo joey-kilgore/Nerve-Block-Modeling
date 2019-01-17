@@ -38,7 +38,7 @@ print total_axon_length
     save_window1_ = new Graph(0)
     save_window1_.size(0,total_axon_length ,-80,110)
     //scene_vector_[5] = save_window_
-    {save_window1_.view(0, -80, total_axon_length , 120, 1401, 376, 300.6, 200.8)}
+    {save_window1_.view(0, 0, total_axon_length , 1, 1401, 376, 300.6, 200.8)}
     flush_list.append(save_window1_)
     save_window1_.save_name("flush_list.")
     objectvar rvp_
@@ -58,7 +58,7 @@ print total_axon_length
 {
     save_window2_ = new Graph(0)
     save_window2_.size(0,total_axon_length ,-80,110)
-    {save_window2_.view(0, -80, total_axon_length , 120, 1401, 376, 300.6, 200.8)}
+    {save_window2_.view(0, 0, total_axon_length , 1, 1401, 376, 300.6, 200.8)}
     flush_list.append(save_window2_)
     save_window2_.save_name("flush_list.")
     objectvar rvp_
