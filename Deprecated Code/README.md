@@ -1,1 +1,1 @@
-Depricated code is a compilation of old code that was created in the past, but its use has since been lost, or new code has replaced it. In order to give credit to people that have contributed (directly or indirectly) the code has been left here.  
+Deprecated code is a compilation of old code that was created in the past, but its use has since been lost, or new code has replaced it. In order to give credit to people that have contributed (directly or indirectly) the code has been left here.  
