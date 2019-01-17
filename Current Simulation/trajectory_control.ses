@@ -88,7 +88,7 @@ proc trajAdvance() {
 	for (j = 0;j<=stinnum-1;j=j+1) {
 		d=j 
 		for (i=3;i<=axontotal-1;i=i+stinnum+5) {
-			STIN[d].e_extracellular(0.5) = traj.i*ext1.x[i]*1e-6 //mV//
+			STIN[d].e_extracellular(0.5) = traj.i*ext1.x[i+j]*1e-6 //mV//
 
 			d=d+stinnum
 		}

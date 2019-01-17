@@ -140,7 +140,7 @@ proc onsetDCSine(){
     sinedur = 0
     dcsinestim()
     // Now the block threshold for a purely DC current is calculated
-    dcblock = findThreshold(-307812.5, -300000, 0, 10, 50, .1, 1, 1000)
+    dcblock = findThreshold(1050000, 1100000, 0, 10, 50, .1, 1, 1000)
 
     // Second the setup needs to determing the sine block threshold
     dconset = 0
@@ -165,7 +165,7 @@ proc onsetDCSine(){
             dcamp = dcblock*mult
             sineonset = dconset+dcdur
             sinedur = 300
-            sinef = 10000
+            sinef = 20000
             sineamp = sineblock
             dcsinestim()
             tstop = 200
