@@ -55,7 +55,7 @@ proc DrawDiamPanel(){
     xcheckbox("Sensory", &Model_SelectedYesOrNo[1], "changeModel(1)")
     xpanel()
     DiamPanel.intercept(0)  //exit intercept mode
-    DiamPanel.map("Choose a diameter", 33, 919, -1, -1)
+    DiamPanel.map("Choose a diameter", 1000, 600, -1, -1)
 }
 
 //Procedure for changing the diameter of the fiber when a new one is selected from the GUI panel

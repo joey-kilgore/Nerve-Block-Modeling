@@ -50,7 +50,7 @@ proc mechpanel() {
 	xcheckbox("Nakpump", &mechsel[11], "initialize(12)")
 
 	// xpanel sets the initial screen position
-	xpanel(516,916)
+	xpanel(1400,680)
 }
 
 //***************************************************************

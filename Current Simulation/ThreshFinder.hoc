@@ -392,7 +392,7 @@ proc drawThreshFinder(){
     xpvalue("Current HFAC test amplitude: ", &level)
     xpanel()
     thresholdbox.intercept(0)
-    thresholdbox.map("Threshold detector", 28, 591, -1, -1)
+    thresholdbox.map("Threshold detector", 550, 375, -1, -1)
 }
 setInitThreshParams()
 drawThreshFinder()

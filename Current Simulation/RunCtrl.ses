@@ -25,7 +25,7 @@ screen_update_invl = 0.05
 xvalue("Scrn update invl","screen_update_invl", 1,"", 0, 1 )
 realtime = 0
 xvalue("Real Time","realtime", 0,"", 0, 1 )
-xpanel(1053,406)
+xpanel(700,30)
 }
 objectvar scene_vector_[1]
 {doNotify()}

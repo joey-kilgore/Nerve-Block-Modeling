@@ -91,7 +91,7 @@ proc Selec_elec(){
 	xcheckbox("Electrode from file (FEM)",&electsel[4], "elec_pos(4)")
 	xpanel()
 	selectbox.intercept(0)
-	selectbox.map("Choose Number of Electrodes",25, 156, -1, -1)
+	selectbox.map("Choose Number of Electrodes", 0, 800, -1, -1)
 }
 
 // elec_pos displays the appropriate electrode position windows depending on the number

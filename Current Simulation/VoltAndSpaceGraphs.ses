@@ -8,7 +8,7 @@ objectvar ocbox_, ocbox_list_, scene_, scene_list_
     save_window_ = new Graph(0)
     save_window_.size(0,110,-80,110)
     scene_vector_[2] = save_window_
-    {save_window_.view(0, -80, 110, 120, 1408, 31, 300.6, 200.8)}
+    {save_window_.view(0, -80, 110, 120, 1400, 30, 300, 200)}
     graphList[0].append(save_window_)
     save_window_.save_name("graphList[0].")
     save_window_.addexpr("node[axonnodes-1].v( 0.5 )", 1, 1, 0.677246, 1.01205, 2)
@@ -18,7 +18,7 @@ objectvar ocbox_, ocbox_list_, scene_, scene_list_
     save_window_ = new Graph(0)
     save_window_.size(0,total_axon_length ,-80,110)
     scene_vector_[5] = save_window_
-    {save_window_.view(0, -80, total_axon_length , 120, 1401, 376, 300.6, 200.8)}
+    {save_window_.view(0, -80, total_axon_length , 120, 1400, 350, 300, 200)}
     flush_list.append(save_window_)
     save_window_.save_name("flush_list.")
     objectvar rvp_
@@ -38,7 +38,7 @@ print total_axon_length
     save_window1_ = new Graph(0)
     save_window1_.size(0,total_axon_length ,-80,110)
     //scene_vector_[5] = save_window_
-    {save_window1_.view(0, 0, total_axon_length , 1, 1401, 376, 300.6, 200.8)}
+    {save_window1_.view(0, 0, total_axon_length , 1, 1000, 30, 300, 200)}
     flush_list.append(save_window1_)
     save_window1_.save_name("flush_list.")
     objectvar rvp_
@@ -58,7 +58,7 @@ print total_axon_length
 {
     save_window2_ = new Graph(0)
     save_window2_.size(0,total_axon_length ,-80,110)
-    {save_window2_.view(0, 0, total_axon_length , 1, 1401, 376, 300.6, 200.8)}
+    {save_window2_.view(0, 0, total_axon_length , 1, 1000, 350, 300, 200)}
     flush_list.append(save_window2_)
     save_window2_.save_name("flush_list.")
     objectvar rvp_
