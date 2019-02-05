@@ -42,7 +42,7 @@ proc drawVaryParams(){
     xpanel()
 
     varyParamsBox.intercept(0)
-    varyParamsBox.map("Vary Parameters", 128, 391, -1, -1)
+    varyParamsBox.map("Vary Parameters", 450, 30, -1, -1)
 }
 
 proc setInitVaryParams(){
