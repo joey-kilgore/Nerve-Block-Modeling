@@ -140,7 +140,7 @@ proc onsetDCSine(){
     sinedur = 0
     dcsinestim()
     // Now the block threshold for a purely DC current is calculated
-    dcblock = findThreshold(1050000, 1100000, 0, 10, 50, .1, 1, 1000)
+    dcblock = findThreshold(-500000, -100000, 0, 10, 50, .1, 1, 1000)
 
     // Second the setup needs to determing the sine block threshold
     dconset = 0
@@ -150,7 +150,7 @@ proc onsetDCSine(){
     sinef = 20000
     dcsinestim()
     // Now the block threshold for a purely Sinusoidal current is calculated
-    sineblock = findThreshold(637500, 640625, 0, 10, 50, .1, 1, 1000)
+    sineblock = findThreshold(300000, 900000, 0, 10, 50, .1, 1, 1000)
 
     apVector1 = new Vector()
     apVector2 = new Vector()
@@ -159,7 +159,7 @@ proc onsetDCSine(){
 
     for(newDur=10; newDur<=100; newDur+=10){
         print "DC Duration,", newDur
-        for mult=0, 5{
+        for (mult=0; mult<=3; mult+=.5){
             dconset = 10
             dcdur = newDur
             dcamp = dcblock*mult
