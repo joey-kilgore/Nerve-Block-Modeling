@@ -183,3 +183,32 @@ proc onsetDCSine(){
         }
     }
 }
+objref blockOnset
+proc findOnsetTime(){
+    // This experiment looks to find the time till block
+    // Using an internal electrode 5 nodes away from center, the onset AP can be blocked,
+    // This allows for testing if the center node is blocking much sooner than having to wait for the AP 
+    //  to travel all the way to the end of the axon.
+    node[40]{
+        blockOnset = new SineRamp(0.5)
+        blockOnset.num_of_pts = 3
+        traj.f = 10000
+		traj.DCAmp_vec[0] = 0
+		traj.HFAC_vec[0] = 0
+		traj.freq_vec[0] = 0
+		traj.Ramptime_vec[0] = 0
+
+        blockOnset.DCAmp_vec[1] = $1
+        blockOnset.HFAC_vec[1] = 0
+        blockOnset.freq_vec[1] = 0
+        blockOnset.Ramptime_vec[1] = 30
+        blockOnset.DCAmp_vec[2] =$1
+        blockOnset.HFAC_vec[2] = 0
+        blockOnset.freq_vec[2] = 0
+        blockOnset.Ramptime_vec[2] = 40
+        state_traj = 1
+        state_sin = 0
+        electrode_velocity = 0
+    }
+    run()
+}
