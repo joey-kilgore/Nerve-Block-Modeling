@@ -127,9 +127,7 @@ proc changeGnabarFromCenter(){
     }
 }
 
-objref apVector1
-objref apVector2
-proc onsetDCSine(){
+proc onsetDCSine(){ localobj apVector1, apVector2
     // Set the waveform to DC sine wave
     waveform_sel(4)
 
@@ -183,32 +181,69 @@ proc onsetDCSine(){
         }
     }
 }
-objref blockOnset
-proc findOnsetTime(){
-    // This experiment looks to find the time till block
-    // Using an internal electrode 5 nodes away from center, the onset AP can be blocked,
-    // This allows for testing if the center node is blocking much sooner than having to wait for the AP 
-    //  to travel all the way to the end of the axon.
-    node[40]{
-        blockOnset = new SineRamp(0.5)
-        blockOnset.num_of_pts = 3
-        traj.f = 10000
-		traj.DCAmp_vec[0] = 0
-		traj.HFAC_vec[0] = 0
-		traj.freq_vec[0] = 0
-		traj.Ramptime_vec[0] = 0
 
-        blockOnset.DCAmp_vec[1] = $1
-        blockOnset.HFAC_vec[1] = 0
-        blockOnset.freq_vec[1] = 0
-        blockOnset.Ramptime_vec[1] = 30
-        blockOnset.DCAmp_vec[2] =$1
-        blockOnset.HFAC_vec[2] = 0
-        blockOnset.freq_vec[2] = 0
-        blockOnset.Ramptime_vec[2] = 40
-        state_traj = 1
-        state_sin = 0
-        electrode_velocity = 0
+proc findBlockTime(){ local blocked, stimDelTime localobj newStim, apcTest, apcVec
+    // This experiment looks to find the time till block
+    // Set the waveform to sine wave
+    waveform_sel(1)
+    // Set the offset to 0
+    setoffset(0)
+    // set frequency
+    freq = 10000
+    // set the amplitude just above block for 10um axon
+    amp1 = 600000
+    // set the pulse train onset
+    onset1 = 10
+    // set the pulse train duration
+    dur1 = 300
+    // update sine parameters
+    sinestim()
+    // turn off threshfinder stim
+    setStim(0,0,0)
+    tstop = 50
+    // a test pulse will be sent immediately after the last onset AP
+    //  there is a period of time after the last AP within which there is no block
+    minTestPulseDel = 0
+    numAPs = 0
+    resolution = .01    // resolution of search for min time, in ms
+    APC_reset()
+    for testNode = 30, 40{
+        print testNode
+        if(testNode == 30){
+            // setup APCount object at the test site
+            node[testNode] apcTest = new APCount(.5)
+            apcVec = new Vector()
+            apcTest.record(apcVec)
+            run()
+            minTestPulseDel = apcVec.x[apcVec.size()-1]
+            numAPs = apcTest.n
+            print minTestPulseDel
+            print numAPs
+        } 
+        node[testNode] newStim = new IClamp(.5)
+        newStim.amp = 30
+        newStim.dur = .1
+        upper = minTestPulseDel + 3
+        print "Upper,", upper
+        lower = minTestPulseDel + .5
+        print "Lower,", lower
+        while(abs(upper-lower)>resolution){
+            APC_reset()
+            testDel = (upper + lower)/2
+            print "testDel,",testDel
+            newStim.del = testDel
+            run()
+            if(APC_getCount(1) == numAPs){
+                // there was a block, and the time can be reduced
+                upper = testDel
+            } else if(APC_getCount(1) > numAPs){
+                // there was no block, and the time should be increased
+                lower = testDel
+            } else if(APC_getCount(1)<numAPs){
+                // something very wrong has occured, there are more APs on the side without stimulus
+                break
+            }
+        }
+        print upper
     }
-    run()
 }
