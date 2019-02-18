@@ -247,3 +247,7 @@ proc findBlockTime(){ local blocked, stimDelTime localobj newStim, apcTest, apcV
         print upper
     }
 }
+
+proc setNode(){
+    node[50].e_extracellular(.5) = $1
+}
