@@ -28,6 +28,8 @@ proc advance(){
 	}else if (wavesel[4]) {
 	    dcsineadvance() 
 	    fadvance()   
+	}else{
+		fadvance()
 	}
 
 	apfreq.resize(apvec.size)
