@@ -17,7 +17,7 @@ Diameters[7] = 15.0
 Diameters[8] = 16.0
 Diameter_SelectedYesOrNo[3] = 1  //Set the default diameter to 10um (in this case so it appears correctly in the GUI panel)
 
-double Model_SelectedYesOrNo[2] // {MRG, Sensory}
+double Model_SelectedYesOrNo[3] // {MRG, Sensory, MRG Freq-Dep}
 Model_SelectedYesOrNo[0] = 1    // Set the default model type to MRG 
 selectedModel = 0
 
@@ -53,6 +53,7 @@ proc DrawDiamPanel(){
     xlabel("Select the model used to generate the simulation, default = MRG")
     xcheckbox("MRG",&Model_SelectedYesOrNo[0], "changeModel(0)")
     xcheckbox("Sensory", &Model_SelectedYesOrNo[1], "changeModel(1)")
+    xcheckbox("MRG Freq-Dep", &Model_SelectedYesOrNo[2], "changeModel(2)")
     xpanel()
     DiamPanel.intercept(0)  //exit intercept mode
     DiamPanel.map("Choose a diameter", 1000, 600, -1, -1)
@@ -83,7 +84,7 @@ proc changeDiam(){  local i
 }
 
 proc changeModel(){
-    for (i=0; i<2; i= i+1){ //iterate through each selection
+    for (i=0; i<3; i= i+1){ //iterate through each selection
 		if (i != $1) {
 			Model_SelectedYesOrNo[i]=0   //ensure that the changeModel_SelectedYesOrNo is set properly	
 		} else {

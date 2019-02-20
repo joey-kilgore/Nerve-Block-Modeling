@@ -64,7 +64,7 @@ PARAMETER {
 	bsB = 10
 	bsC = -1
 	cdelta = .9
-	ctau = .00001591549
+	ctau = 15.91549
 }
 
 STATE {
@@ -73,7 +73,7 @@ STATE {
 
 ASSIGNED {
 	inap    (mA/cm2)
-	ina	(mA/cm2)
+	ina		(mA/cm2)
 	ik      (mA/cm2)
 	il      (mA/cm2)
 	icf		(mA/cm2)
@@ -122,6 +122,7 @@ INITIAL {
 	m = m_inf
 	h = h_inf
 	s = s_inf
+	vcd = v
 }
 
 PROCEDURE evaluate_fct(v(mV)) { LOCAL a,b,v2
