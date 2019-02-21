@@ -259,6 +259,7 @@ proc conductionVelocity(){ local testNodeNum localobj APCounter, APCVec, newStim
     newStim.amp = 10
     setStim(0,0,0)
     tstop = 40
+    dt = .005
     run()
     tstop = 100
     dt = dt/20
