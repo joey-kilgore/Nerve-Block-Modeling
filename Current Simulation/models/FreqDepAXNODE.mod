@@ -64,7 +64,7 @@ PARAMETER {
 	bsB = 10
 	bsC = -1
 	cdelta = .9
-	ctau = 15.91549
+	ctau = 159.1549
 }
 
 STATE {
