@@ -1,0 +1,363 @@
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+	1 
+	1 
+	1 
+115000 
+115000 
+115000 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+	1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+MRG MODEL!!!
+FREQUENCY,17000
+Changed dt
+Outputs are given in the order :
+1. Testing Amplitude
+2. Was a stable state reached (0 for no, 1 for yes)
+3. Count proximal spikes with stimulus (Left)
+4. Time of last proximal spike (Left)
+5. Count distal spikes with stimulus (Right)
+6. Time of last distal spike (Right)
+7. Count of distal spikes without stimulus (Right)
+8. Was there a block (0 for no, 1 for yes)
+625000 ,1,5 ,50.125 ,4 ,18.14 ,4 ,1 
+562500 ,1,5 ,50.125 ,5 ,52.365 ,4 ,0 
+593750 ,1,5 ,50.125 ,5 ,52.48 ,4 ,0 
+609375 ,1,5 ,50.125 ,5 ,52.605 ,4 ,0 
+617187.5 ,1,5 ,50.125 ,5 ,52.785 ,4 ,0 
+621093.75 ,1,5 ,50.125 ,4 ,18.125 ,4 ,1 
+619140.63 ,1,5 ,50.125 ,5 ,52.95 ,4 ,0 
+620117.19 ,1,5 ,50.125 ,4 ,18.125 ,4 ,1 
+Threshold for block = 620117.19 
+	620117.19 
+FREQUENCY,18000
+Changed dt
+Outputs are given in the order :
+1. Testing Amplitude
+2. Was a stable state reached (0 for no, 1 for yes)
+3. Count proximal spikes with stimulus (Left)
+4. Time of last proximal spike (Left)
+5. Count distal spikes with stimulus (Right)
+6. Time of last distal spike (Right)
+7. Count of distal spikes without stimulus (Right)
+8. Was there a block (0 for no, 1 for yes)
+625000 ,1,5 ,50.125 ,5 ,52.905 ,4 ,0 
+687500 ,1,4 ,50.12 ,3 ,15.77 ,3 ,1 
+656250 ,1,5 ,50.125 ,4 ,18.31 ,4 ,1 
+640625 ,1,5 ,50.125 ,4 ,18.225 ,4 ,1 
+632812.5 ,1,5 ,50.125 ,4 ,18.195 ,4 ,1 
+628906.25 ,1,5 ,50.125 ,4 ,18.18 ,4 ,1 
+626953.13 ,1,5 ,50.125 ,4 ,18.175 ,4 ,1 
+625976.56 ,1,5 ,50.125 ,4 ,18.17 ,4 ,1 
+Threshold for block = 625976.56 
+	625976.56 
+FREQUENCY,19000
+Changed dt
+Outputs are given in the order :
+1. Testing Amplitude
+2. Was a stable state reached (0 for no, 1 for yes)
+3. Count proximal spikes with stimulus (Left)
+4. Time of last proximal spike (Left)
+5. Count distal spikes with stimulus (Right)
+6. Time of last distal spike (Right)
+7. Count of distal spikes without stimulus (Right)
+8. Was there a block (0 for no, 1 for yes)
+625000 ,1,5 ,50.125 ,5 ,52.65 ,4 ,0 
+687500 ,1,4 ,50.12 ,3 ,15.775 ,3 ,1 
+656250 ,1,5 ,50.125 ,4 ,18.33 ,4 ,1 
+640625 ,1,5 ,50.125 ,4 ,18.245 ,4 ,1 
+632812.5 ,1,5 ,50.125 ,4 ,18.215 ,4 ,1 
+628906.25 ,1,5 ,50.125 ,5 ,52.745 ,4 ,0 
+630859.38 ,1,5 ,50.125 ,5 ,52.845 ,4 ,0 
+631835.94 ,1,5 ,50.125 ,5 ,52.95 ,4 ,0 
+Threshold for block = 632812.5 
+	632812.5 
+FREQUENCY-DEPENDENT MRG MODEL!!!
+FREQUENCY,17000
+Changed dt
+Outputs are given in the order :
+1. Testing Amplitude
+2. Was a stable state reached (0 for no, 1 for yes)
+3. Count proximal spikes with stimulus (Left)
+4. Time of last proximal spike (Left)
+5. Count distal spikes with stimulus (Right)
+6. Time of last distal spike (Right)
+7. Count of distal spikes without stimulus (Right)
+8. Was there a block (0 for no, 1 for yes)
+625000 ,1,4 ,50.105 ,3 ,15.57 ,3 ,1 
+562500 ,1,4 ,50.105 ,4 ,52.135 ,3 ,0 
+593750 ,1,4 ,50.105 ,4 ,52.325 ,3 ,0 
+609375 ,1,4 ,50.105 ,3 ,15.545 ,3 ,1 
+601562.5 ,1,4 ,50.105 ,4 ,52.515 ,3 ,0 
+605468.75 ,1,4 ,50.105 ,3 ,15.54 ,3 ,1 
+603515.63 ,1,4 ,50.105 ,4 ,52.86 ,3 ,0 
+604492.19 ,1,4 ,50.105 ,3 ,15.54 ,3 ,1 
+Threshold for block = 604492.19 
+	604492.19 
+FREQUENCY,18000
+Changed dt
+Outputs are given in the order :
+1. Testing Amplitude
+2. Was a stable state reached (0 for no, 1 for yes)
+3. Count proximal spikes with stimulus (Left)
+4. Time of last proximal spike (Left)
+5. Count distal spikes with stimulus (Right)
+6. Time of last distal spike (Right)
+7. Count of distal spikes without stimulus (Right)
+8. Was there a block (0 for no, 1 for yes)
+625000 ,1,4 ,50.105 ,3 ,15.59 ,3 ,1 
+562500 ,1,4 ,50.105 ,4 ,52.12 ,3 ,0 
+593750 ,1,4 ,50.105 ,4 ,52.275 ,3 ,0 
+609375 ,1,4 ,50.105 ,3 ,15.565 ,3 ,1 
+601562.5 ,1,4 ,50.105 ,4 ,52.375 ,3 ,0 
+605468.75 ,1,4 ,50.105 ,4 ,52.485 ,3 ,0 
+607421.88 ,1,4 ,50.105 ,4 ,52.63 ,3 ,0 
+608398.44 ,1,4 ,50.105 ,3 ,15.565 ,3 ,1 
+Threshold for block = 608398.44 
+	608398.44 
+FREQUENCY,19000
+Changed dt
+Outputs are given in the order :
+1. Testing Amplitude
+2. Was a stable state reached (0 for no, 1 for yes)
+3. Count proximal spikes with stimulus (Left)
+4. Time of last proximal spike (Left)
+5. Count distal spikes with stimulus (Right)
+6. Time of last distal spike (Right)
+7. Count of distal spikes without stimulus (Right)
+8. Was there a block (0 for no, 1 for yes)
+625000 ,1,4 ,50.105 ,3 ,15.61 ,3 ,1 
+562500 ,1,4 ,50.105 ,4 ,52.105 ,3 ,0 
+593750 ,1,4 ,50.105 ,4 ,52.24 ,3 ,0 
+609375 ,1,4 ,50.105 ,4 ,52.46 ,3 ,0 
+617187.5 ,1,4 ,50.105 ,3 ,15.6 ,3 ,1 
+613281.25 ,1,4 ,50.105 ,3 ,15.595 ,3 ,1 
+611328.13 ,1,4 ,50.105 ,4 ,52.57 ,3 ,0 
+612304.69 ,1,4 ,50.105 ,4 ,52.73 ,3 ,0 
+Threshold for block = 613281.25 
+	613281.25 
