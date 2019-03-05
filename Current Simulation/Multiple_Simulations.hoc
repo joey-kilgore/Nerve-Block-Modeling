@@ -251,3 +251,28 @@ proc findBlockTime(){ local blocked, stimDelTime localobj newStim, apcTest, apcV
 proc setNode(){
     node[50].e_extracellular(.5) = $1
 }
+
+proc conductionVelocity(){ local testNodeNum localobj APCounter, APCVec, newStim
+    node[0] newStim = new IClamp(.5)
+    newStim.dur = .1
+    newStim.del = 40.05
+    newStim.amp = 10
+    setStim(0,0,0)
+    tstop = 40
+    dt = .005
+    run()
+    tstop = 100
+    dt = dt/20
+    for testNodeNum=4, axonnodes-1{      
+        if(testNodeNum<45 || testNodeNum>55){
+            node[testNodeNum] APCounter = new APCount(.5)
+            APCounter.thresh = 0
+            APCVec = new Vector()
+            APCounter.record(APCVec)
+            while(APCounter.n == 0){
+                steprun()
+            }
+            print testNodeNum, ",",APCVec.x[0]
+        }     
+    }
+}
