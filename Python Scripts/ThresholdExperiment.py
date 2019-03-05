@@ -21,23 +21,21 @@ h('setoffset(0)')
 h('onset1 = 10')
 h('dur1 = 300')
 h('sinestim()')
+#h('changeDiam(7)')
+h('setStim(10,40,.1)')
 
 h('changeModel(0)') # set MRG MODEL
 print("MRG MODEL!!!")
 for i in range(startingFreq,startingFreq+freqRange+1000,1000):
     print('FREQUENCY,'+str(i))
-    h('dt='+str(1/(i/1000)/12)) # set dt to 1/12 the length of one period
-    h('setdt()')
     h('freq = '+str(i))
     h('sinestim()')
-    h('findThreshold(500000,750000,0,10,50,.1,1,1000)')
+    h('findThreshold(450000,650000,0,10,50,.1,1,1000)')
 
-h('changeModel(2)') # set freq-dep MRG MODEL
+h('insert_cf()') # set freq-dep MRG MODEL
 print("FREQUENCY-DEPENDENT MRG MODEL!!!")
 for i in range(startingFreq,startingFreq+freqRange+1000,1000):
     print('FREQUENCY,'+str(i))
-    h('dt='+str(1/(i/1000)/12)) # set dt to 1/12 the length of one period
-    h('setdt()')
     h('freq = '+str(i))
     h('sinestim()')
-    h('findThreshold(500000,750000,0,10,50,.1,1,1000)')
+    h('findThreshold(450000,650000,0,10,50,.1,1,1000)')
