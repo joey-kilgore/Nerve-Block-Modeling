@@ -251,3 +251,48 @@ proc findBlockTime(){ local blocked, stimDelTime localobj newStim, apcTest, apcV
 proc setNode(){
     node[50].e_extracellular(.5) = $1
 }
+
+proc findNoBlockTime(){ local curThreshold, testDel, numTrials, minDel, maxDel, blockTest, testAmp
+    // I noticed that while testing, if the test pulse is
+    //  late enough (while testing at block threshold) the
+    //  test pulse will not be blocked.
+
+    // Set the waveform to sine wave
+    waveform_sel(1)
+    // Set the offset to 0
+    setoffset(0)
+    // set the pulse train onset
+    onset1 = 10
+    // set the pulse train duration
+    dur1 = 300
+    // update sine parameters
+    sinestim()
+
+    testDel = 40
+
+    curThreshold = findThreshold(550000,600000,0,10,testDel,.1,1,1000)
+
+    amp1 = curThreshold
+    sinestim()
+    numTrials = 0
+    while(numTrials<5){
+        testAmp = curThreshold+numTrials*3000
+        print "CURRENT AMP,", testAmp
+        minDel = 40
+        maxDel = 70
+        while(abs(minDel-maxDel)>.5){
+            testDel = (minDel+maxDel)/2
+            amp1 = testAmp
+            sinestim()
+            blockTest = testWaveForm(10,testDel,.1,testAmp,1)
+            if(blockTest == 1){
+                minDel = testDel
+            }else{
+                maxDel = testDel
+            }
+        }
+        print "NO BLOCK AFTER,", maxDel
+        numTrials+=1
+    }
+    
+}
