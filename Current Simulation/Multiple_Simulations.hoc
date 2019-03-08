@@ -351,7 +351,8 @@ proc conductionVelocity(){ local testNodeNum,totalVelocity,prevTime localobj APC
             if(prevTime == 0){
                 prevTime = APCVec.x[0]
             }else{
-                totalVelocity += 1150/(APCVec.x[0] - prevTime)/1000
+                totalVelocity += (deltax/(APCVec.x[0] - prevTime)/1000)
+                prevTime = APCVec.x[0]
             }
         }
         totalVelocity = totalVelocity/61
