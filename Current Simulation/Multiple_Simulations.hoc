@@ -296,19 +296,50 @@ proc findNoBlockTime(){ local curThreshold, testDel, numTrials, minDel, maxDel, 
     }
 }
     
-proc conductionVelocity(){ local testNodeNum localobj APCounter, APCVec, newStim
-    node[0] newStim = new IClamp(.5)
-    newStim.dur = .1
-    newStim.del = 40.05
-    newStim.amp = 10
-    setStim(0,0,0)
-    tstop = 40
-    dt = .005
-    run()
-    tstop = 100
-    dt = dt/20
-    for testNodeNum=4, axonnodes-1{      
-        if(testNodeNum<45 || testNodeNum>55){
+proc conductionVelocity(){ local testNodeNum,totalVelocity,prevTime localobj APCounter, APCVec, newStim
+    // conductionVelocity(testNum) has two seperate tests it can perform.
+    // $1 == 0
+    // The first finds the conduction velocity at each node, and is used for measuring velocities
+    //  during HFAC block
+    //
+    // $1 == 1
+    // The Second finds the velocity of a single action potential across the entire axon
+    if($1 == 0){
+        node[0] newStim = new IClamp(.5)
+        newStim.dur = .1
+        newStim.del = 40.05
+        newStim.amp = 10
+        setStim(0,0,0)
+        tstop = 40
+        dt = .005
+        run()
+        tstop = 100
+        dt = dt/20
+        for testNodeNum=4, axonnodes-1{      
+            if(testNodeNum<45 || testNodeNum>55){
+                node[testNodeNum] APCounter = new APCount(.5)
+                APCounter.thresh = 0
+                APCVec = new Vector()
+                APCounter.record(APCVec)
+                while(APCounter.n == 0){
+                    steprun()
+                }
+                print testNodeNum, ",",APCVec.x[0]
+            }     
+        }
+    } else{
+        node[0] newStim = new IClamp(.5)
+        newStim.dur = .25
+        newStim.del = 5
+        newStim.amp = 10
+        tstop = 5
+        dt = .005
+        run()
+        tstop = 100
+        dt = dt/20
+        prevTime = 0
+        totalVelocity = 0
+        for testNodeNum=20, 80{      
             node[testNodeNum] APCounter = new APCount(.5)
             APCounter.thresh = 0
             APCVec = new Vector()
@@ -317,6 +348,13 @@ proc conductionVelocity(){ local testNodeNum localobj APCounter, APCVec, newStim
                 steprun()
             }
             print testNodeNum, ",",APCVec.x[0]
-        }     
+            if(prevTime == 0){
+                prevTime = APCVec.x[0]
+            }else{
+                totalVelocity += 1150/(APCVec.x[0] - prevTime)/1000
+            }
+        }
+        totalVelocity = totalVelocity/61
+        print "AVG Velocity,", totalVelocity
     }
 }
