@@ -248,10 +248,6 @@ proc findBlockTime(){ local blocked, stimDelTime localobj newStim, apcTest, apcV
     }
 }
 
-proc setNode(){
-    node[50].e_extracellular(.5) = $1
-}
-
 proc findNoBlockTime(){ local curThreshold, testDel, numTrials, minDel, maxDel, blockTest, testAmp
     // I noticed that while testing, if the test pulse is
     //  late enough (while testing at block threshold) the
