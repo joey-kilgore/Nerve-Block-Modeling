@@ -76,3 +76,10 @@ proc electrode_api_change_pos(){
 		ext3.x[i]=(rhoe)/(4*PI*sqrt((yelec^2)+((xelec[2]-x.x[i])^2)))	//nV//
 	}
 }
+
+proc electrode_api_setup(){
+    amp1 = 0
+    sinestim()
+    setStim(0,0,0)
+    wavesel[1] = 0
+}
