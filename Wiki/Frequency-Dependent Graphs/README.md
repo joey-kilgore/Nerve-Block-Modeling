@@ -1,0 +1,2 @@
+# CREDIT
+The [BlockThesholdOriginal.PNG](https://github.com/joey-kilgore/Nerve-Block-Modeling/blob/master/Wiki/Frequency-Dependent%20Graphs/BlockThresholdOriginal.PNG) and [ConductionVelocityOriginal.PNG](https://github.com/joey-kilgore/Nerve-Block-Modeling/blob/master/Wiki/Frequency-Dependent%20Graphs/ConductionVelocityOriginal.PNG) were taken from [Howell, Medina, and Grill](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4582421/)
