@@ -80,6 +80,6 @@ proc electrode_api_change_pos(){
 proc electrode_api_setup(){
     amp1 = 0
     sinestim()
-    setStim(0,0,0)
+    setstim(0,0,0)
     wavesel[1] = 0
 }
