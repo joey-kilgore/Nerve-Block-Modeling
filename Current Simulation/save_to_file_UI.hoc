@@ -9,7 +9,7 @@ strdef filePathSGate
 strdef filePathINa
 strdef filePathIK
 strdef filePathIL
-strdef filePathNGate
+strdef filePathMPGate
 
 // Creating the file objects for each selection
 objref fileMGate    // Checkbox 0
@@ -19,7 +19,7 @@ objref fileSGate    // Checkbox 3
 objref fileINa      // Checkbox 4
 objref fileIK       // Checkbox 5
 objref fileIL       // Checkbox 6
-objref fileNGate    // checkbox 7
+objref fileMPGate    // checkbox 7
 
 // Creating the VBox for all the components
 objref saveValueToFileVBox
@@ -44,7 +44,7 @@ proc DrawSaveFileVBox(){
     xcheckbox("iNa", &valueToSaveSelected[4], "inputFilePath(4)")   // checkbox to save iNa
     xcheckbox("iK", &valueToSaveSelected[5], "inputFilePath(5)")   // checkbox to save iK
     xcheckbox("iL", &valueToSaveSelected[6], "inputFilePath(6)")   // checkbox to save iL
-    xcheckbox("n gate", &valueToSaveSelected[7], "inputFilePath(7)")   // checkbox to save n gate values
+    xcheckbox("mp gate", &valueToSaveSelected[7], "inputFilePath(7)")   // checkbox to save n gate values
 
     xbutton("Commit Selection", "commitFileSelect()")   // commit selection actually creates the file objects  
     xbutton("Close Files", "closeFiles()")  // allows the user to close the file at any point to open it and view
@@ -65,7 +65,7 @@ proc enterFileDirectory(){
     sprint(filePathINa, "%s%s", direc, "INa.csv")
     sprint(filePathIK, "%s%s", direc, "IK.csv")
     sprint(filePathIL, "%s%s", direc, "IL.csv")
-    sprint(filePathNGate, "%s%s", direc, "NGate.csv")
+    sprint(filePathMPGate, "%s%s", direc, "MPGate.csv")
 
     // check all check boxes
     for i=0, 7 {
@@ -93,7 +93,7 @@ proc inputFilePath(){
     
     if(selectedValue == 6) string_dialog("Enter path for iL file: ", filePathIL)
 
-    if(selectedValue == 7) string_dialog("Enter path for n gate file: ", filePathNGate)
+    if(selectedValue == 7) string_dialog("Enter path for mp gate file: ", filePathMPGate)
 }
 
 
@@ -158,9 +158,9 @@ proc commitFileSelect(){
     // the n gate was selected
     if(valueToSaveSelected[7] == 1){
         // Create the fileIL file object
-        fileNGate = new File(filePathNGate)
+        fileMPGate = new File(filePathMPGate)
         // Open the file (set to append)
-        fileNGate.aopen()
+        fileMPGate.aopen()
     }
 }
 
@@ -201,7 +201,7 @@ proc closeFiles(){
     }
 
     if(valueToSaveSelected[7] == 1) {
-        fileNGate.close()   // the iL was selected   
+        fileMPGate.close()   // the iL was selected   
         valueToSaveSelected[7] = 0
     }
 }
