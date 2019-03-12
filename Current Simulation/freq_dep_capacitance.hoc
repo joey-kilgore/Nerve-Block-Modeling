@@ -1,0 +1,124 @@
+begintemplate FDCapacitance
+  public _lm
+  objref this, _lm, _c, _g, _b, _y, _y0, _xloc, _srs[1], _sl, _layer
+  proc init() { local a0, a1, b0, b1
+    _n = 3
+    _c = new Matrix(_n,_n,2)
+    _g = new Matrix(_n,_n,2)
+    _b = new Vector(_n)
+    _y = new Vector(_n)
+    _y0 = new Vector(_n)
+    _xloc = new Vector(2)
+    _layer = new Vector(2)
+    
+    objref _srs[3]
+    
+    a0 = $1                   // C_dc          uFarad/cm2      
+    a1 = ($1/1)*.55/(2*PI*10) // C_inf * tau   ms*uFarad/cm2 (Note scaling w/r squid membrane values)
+    b0 = 1                    // unitless
+    b1 = 1/(2*PI*10)          // tau           ms
+    
+    C1 = a1/b1*1e-3 //mFarad/cm2 
+    C2 = (a0/b0 - a1/b1)*1e-3   //mFarad/cm2
+    R2 = b1^2/(a0*b1-a1*b0)*1e3  //Ohm*cm2 
+    
+    _c.x[0][0] =  C1+C2
+    _c.x[0][1] = -C1 
+    _c.x[0][2] = -C2
+    _c.x[1][0] = -C1 
+    _c.x[1][1] = C1
+    _c.x[2][0] = C2
+    _c.x[2][2] = -C2
+    
+    _g.x[1][1] = 1/R2
+    _g.x[1][2] = -1/R2
+    _g.x[2][1] = 1/R2
+    _g.x[2][2] = -1/R2
+      
+
+    _srs[0] = new SectionRef()
+    _xloc.x[0] = 0.5
+    _layer.x[0] = 0  
+    _srs[1] = new SectionRef()
+    _xloc.x[1] = 0.5
+    _layer.x[1] = 1
+        
+    _sl = new SectionList()
+    _srs[0].sec { _sl.append() }
+    _srs[1].sec { _sl.append() }
+                
+    _lm = new LinearMechanism(_c, _g, _y, _y0, _b, _sl, _xloc, _layer)
+  }
+endtemplate FDCapacitance
+
+begintemplate FDCapacitanceIntra
+  public _lm
+  objref this, _lm[1], _c, _g, _b, _y, _y0
+  proc init() { local a0, a1, b0, b1
+    _n = 2
+    _c = new Matrix(_n,_n,2)
+    _g = new Matrix(_n,_n,2)
+    _b = new Vector(_n)
+    _y = new Vector(_n)
+    _y0 = new Vector(_n)
+    
+    a0 = $1                   // C_dc          uFarad/cm2      
+    a1 = ($1/1)*.55/(2*PI*10) // C_inf * tau   ms*uFarad/cm2 (Note scaling w/r squid membrane values)
+    b0 = 1                    // unitless
+    b1 = 1/(2*PI*10)          // tau           ms
+    
+    C1 = a1/b1*1e-3 //mFarad/cm2 
+    C2 = (a0/b0 - a1/b1)*1e-3   //mFarad/cm2
+    R2 = b1^2/(a0*b1-a1*b0)*1e3  //Ohm*cm2 
+    
+    _c.x[0][0] =  C1+C2
+    _c.x[0][1] = -C2 
+    _c.x[1][0] = C2 
+    _c.x[1][1] = -C2
+    
+    _g.x[1][1] = -1/R2  
+    
+    _lm = new LinearMechanism(_c, _g, _y, _y0, _b, .5)
+  }
+endtemplate FDCapacitanceIntra
+
+begintemplate FDCapacitanceIntraNseg
+  public _lm
+  objref this, _lm, _c, _g, _b, _y, _y0, _xloc, _sl
+  proc init() { local a0, a1, b0, b1
+    _n = 2*nseg
+    _c = new Matrix(_n,_n,2)
+    _g = new Matrix(_n,_n,2)
+    _b = new Vector(_n)
+    _y = new Vector(_n)
+    _y0 = new Vector(_n)
+    _xloc = new Vector(nseg)
+    _sl = new SectionList()
+    
+    a0 = $1                   // C_dc          uFarad/cm2      
+    a1 = ($1/1)*.55/(2*PI*10) // C_inf * tau   ms*uFarad/cm2 (Note scaling w/r squid membrane values)
+    b0 = 1                    // unitless
+    b1 = 1/(2*PI*10)          // tau           ms
+    
+    C1 = a1/b1*1e-3 //mFarad/cm2 
+    C2 = (a0/b0 - a1/b1)*1e-3   //mFarad/cm2
+    R2 = b1^2/(a0*b1-a1*b0)*1e3  //Ohm*cm2 
+    
+    for i=0,nseg-1{
+      _c.x[i][i] =  C1+C2
+      _c.x[i][i+nseg] = -C2    
+      _c.x[i+nseg][i] = C2
+      _c.x[i+nseg][i+nseg] = -C2
+      
+      _g.x[i+nseg][i+nseg] = -1/R2            
+    }    
+    
+    i=0
+    for(x,0){ 
+      _xloc.x[i] = x
+      _sl.append()
+      i += 1 
+    }
+    _lm = new LinearMechanism(_c, _g, _y, _y0, _b, _sl, _xloc)
+  }
+endtemplate FDCapacitanceIntraNseg
