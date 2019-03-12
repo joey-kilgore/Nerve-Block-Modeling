@@ -101,11 +101,20 @@ proc xypos(){
 
 proc initialize(){
     // This calls the respective init function depending on the modelType chosen
-    if(modelType == 0){
-        MRGInit($1)
-    } else{
+    if(modelType != 0){
+		removeMRGInit()
+	}
+	if(modelType != 1){
+		removeSensoryInit()
+	}	
+
+	if(modelType == 0){
+		MRGInit($1)
+	}
+	if(modelType == 1){
         sensoryInit()
-    }
+    } 
+	
     //calls finitialize to set the initial voltages in the section. the current default section is node[0]
 	finitialize(v_init)
 	fcurrent()
@@ -122,7 +131,6 @@ proc MRGInit(){
 			Ra=rhoa/10000
 			cm=2
             
-            uninsert node_sensory_9
 			// the selected mechanism is added to the node
 			// the selection is made from the select_mechanism.hoc file
 			// this print statement shows the parameter passed to intialize
@@ -217,7 +225,6 @@ proc MRGInit(){
 
 	for i=0, paranodes1-1 {
 		MYSA[i]{
-            uninsert mysa_sensory_16 
 			nseg=1
 			diam=fiberD
 			L=paralength1
@@ -232,7 +239,6 @@ proc MRGInit(){
 	
 	for i=0, paranodes2-1 {
 		FLUT[i]{
-            uninsert flut_sensory_16
 			nseg=1
 			diam=fiberD
 			L=paralength2
@@ -247,7 +253,6 @@ proc MRGInit(){
 
 	for i=0, axoninter-1 {
 		STIN[i]{
-            uninsert stin_sensory_16
 			nseg=1
 			diam=fiberD
 			L=interlength
@@ -275,6 +280,28 @@ proc MRGInit(){
 		connect node[i+1](0), MYSA[2*i+1](1)	
 	}
 }// End MRGInit()
+proc removeMRGInit(){
+	for i=0,axonnodes-1 {
+		node[i]{
+			uninsert axnode
+		}
+	}
+	for i=0, paranodes1-1 {
+		MYSA[i]{
+			uninsert pas
+		}
+	}
+	for i=0, paranodes2-1 {
+		FLUT[i]{
+			uninsert pas
+		}
+	}
+	for i=0, axoninter-1 {
+		STIN[i]{
+			uninsert pas
+		}
+	}
+}
 
 proc sensoryInit(){
 	
@@ -283,7 +310,6 @@ proc sensoryInit(){
 	
 	for i=0,axonnodes-1 {
 		node[i]{
-            uninsert axnode
 			nseg=1
 			diam=nodeD
 			L=nodelength
@@ -298,7 +324,6 @@ proc sensoryInit(){
 	
 	for i=0, paranodes1-1 {
 		MYSA[i]{
-            uninsert pas
 			nseg=1
 			diam=fiberD
 			L=paralength1
@@ -313,7 +338,6 @@ proc sensoryInit(){
 	
 	for i=0, paranodes2-1 {
 		FLUT[i]{
-            uninsert pas
 			nseg=1
 			diam=fiberD 
 			L=paralength2
@@ -328,7 +352,6 @@ proc sensoryInit(){
 	
 	for i=0, axoninter-1 {
 		STIN[i]{
-            uninsert pas
 			nseg=1
 			diam=fiberD
 			L=interlength
@@ -359,6 +382,58 @@ proc sensoryInit(){
 		connect node[i+1](0), MYSA[2*i+1](1)
 	}
 }// End sensoryInit()
+proc removeSensoryInit(){
+	for i=0,axonnodes-1 {
+		node[i]{
+			uninsert node_sensory_9
+		}
+	}
+	for i=0, paranodes1-1 {
+		MYSA[i]{
+			uninsert mysa_sensory_16
+		}
+	}
+	for i=0, paranodes2-1 {
+		FLUT[i]{
+			uninsert flut_sensory_16 
+		}
+	}
+	for i=0, axoninter-1 {
+		STIN[i]{
+			uninsert stin_sensory_16
+		}
+	}
+}
+
+objref cm_freq[axontotal]
+C_dc = 2  //uF/cm2
+proc insert_cf(){
+	cmFreqNum = 0
+	for cmFreqNum=0,axonnodes-1 {
+		node[cmFreqNum]{
+			cm_freq[cmFreqNum] = new FDCapacitance(C_dc)
+			cm = 0
+		}
+	}
+	for cmFreqNum=0, paranodes1-1 {
+		MYSA[cmFreqNum]{
+			cm_freq[cmFreqNum+axonnodes] = new FDCapacitance(C_dc*paraD1/fiberD)
+			cm = 0
+		}
+	}
+	for cmFreqNum=0, paranodes2-1 {
+		FLUT[cmFreqNum]{
+			cm_freq[cmFreqNum+axonnodes+paranodes1] = new FDCapacitance(C_dc*paraD2/fiberD)
+			cm = 0
+		}
+	}
+	for cmFreqNum=0, axoninter-1 {
+		STIN[cmFreqNum]{
+			cm_freq[cmFreqNum+axonnodes+paranodes1+paranodes2] = new FDCapacitance(C_dc*axonD/fiberD)
+			cm = 0
+		}
+	}
+}
 
 // Main
 // initialization of the cell occurs in diameter.hoc

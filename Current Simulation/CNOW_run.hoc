@@ -10,6 +10,7 @@ load_proc("nrnmainmenu")
 // mechanisms and cell definitions
 //**********************************************************
 load_file("select_mechanism.hoc")	// select mechanism
+load_file("freq_dep_capacitance.hoc")
 load_file("init_cell.hoc")
 
 //**********************************************************
