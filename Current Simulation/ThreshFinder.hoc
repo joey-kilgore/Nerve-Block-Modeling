@@ -296,10 +296,10 @@ func findThreshold(){
     // if there was a successful search (all states were met) print
     //  and return the minimum value for blocking
     if(upper>0){
-        print "Threshold for block = ", upper
+        print "Threshold for block,", upper
         return upper
     } else{
-        print "Threshold for block = ", lower
+        print "Threshold for block,", lower
         return lower
     }
 }

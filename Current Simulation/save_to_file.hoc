@@ -15,7 +15,7 @@ proc saveValuesToFile(){
 
     if(valueToSaveSelected[6] == 1) appendNodeILToFile()
 
-    if(valueToSaveSelected[7] == 1) appendNodeNGateToFile()
+    if(valueToSaveSelected[7] == 1) appendNodeMPGateToFile()
 }
 
 // append the voltages of all nodes to file
@@ -117,15 +117,15 @@ proc appendNodeILToFile(){
 // append the m gate values of all nodes to file
 // note that the file object fil must already have been created
 // and it must be set to append by calling fil.aopen()
-proc appendNodeNGateToFile(){
+proc appendNodeMPGateToFile(){
     // print the time
-    fileNGate.printf("%f,", t)
+    fileMPGate.printf("%f,", t)
 
     // loop through all nodes
     for i=0, axonnodes-1 {
         // Print the node m gate value to file using a comma seperator
-        fileNGate.printf("%f,", node[i].mp_axnode)
+        fileMPGate.printf("%f,", node[i].mp_axnode)
     }
     // put a new line at the end of the list
-    fileNGate.printf("\n")
+    fileMPGate.printf("\n")
 }
