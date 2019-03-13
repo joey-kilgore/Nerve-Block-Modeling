@@ -473,7 +473,7 @@ proc squareadvance() {
 		for (j = 0;j<=stinnum-1;j=j+1) {
 			d=j 
 			for (i=3;i<=axontotal-1;i=i+11) {
-				STIN[d].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6)+ (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6) //mV//
+				STIN[d].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i+j]*1e-6)+ (exIClmp2.i*ext2.x[i+j]*1e-6)+ (exIClmp3.i*ext3.x[i+j]*1e-6) //mV//
 
 				d=d+stinnum
 			}
