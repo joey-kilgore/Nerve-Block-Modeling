@@ -53,6 +53,3 @@ proc setInitVaryParams(){
     amplitudeInc = 50000
     frequencyInc = 500
 }
-
-setInitVaryParams()
-drawVaryParams()

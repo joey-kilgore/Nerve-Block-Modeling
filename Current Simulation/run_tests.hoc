@@ -13,6 +13,7 @@ proc autotestpanel() {
 	xradiobutton("HFAC ramp test", "autotest(6)")
 	xradiobutton("Subthreshold ramp test", "autotest(7)")
 	xradiobutton("Block Threshold Detect", "autotest(8)")
+	xradiobutton("Vary Parameters", "autotest(9)")
 	xpanel(250,750)
 }
 autotestpanel()
@@ -62,6 +63,10 @@ proc autotest() {
 		autotestlabel = "Block Threshold Detect"
 		load_file("HFACBlockThresholdDetect_autorun.hoc")		// load Block Threshold Detect module
 		load_file("HFACBlockThresholdDetect_autorun_control.ses")		// open automated test control panel
+	} else if($1 == 9) {
+		autotestlabel = "Vary Parameters"
+		setInitVaryParams()
+		drawVaryParams()
 	}
 }
 
