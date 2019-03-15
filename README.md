@@ -19,6 +19,10 @@ This is where past code goes after being replaced, or simply just bloat to the m
 Because NEURON can not run multiple simulations at the same time, Python scripts can be used to have multiple simulations running concurrently. There are also some other scripts for getting updates remotely.  
 
 ---
+## R Code  
+The code here is meant to be used as reference of premade code snippets for analyzing the large csv files that can be generated from these simulations.  
+
+---
 ## Wiki
 This stores the images for the wiki pages. It is HIGHLY recommended that you check out the [wiki pages](https://github.com/mrjoeboo123/NEURON/wiki) to get a better understanding of the NEURON code base. 
 
