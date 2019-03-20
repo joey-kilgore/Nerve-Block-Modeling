@@ -13,7 +13,7 @@ procs = []
 numProcesses = 5
 rangePerThread = 2000
 for i in range(numProcesses):
-    argList = [str(5000+(i*(rangePerThread+1000))),str(rangePerThread) , str(i)]
+    argList = [str(i)]
     proc = subprocess.Popen(['python', my_file] + argList)
     procs.append(proc)
 
