@@ -64,14 +64,12 @@ def sineWaveTest():
     block10 = h.block10kHz
     block60 = h.block60kHz
 
-    for i in range(20,60,5):
-        if i == 30:
-            continue
+    for i in range(15,60,5):
         print('FREQUENCY,'+str(i*1000))
         h('freq = '+str(i*1000))
         h('sinestim()')
         setHocTimeStep(i)
-        minAmp = (block60-block10)/50000*i+(block10-(block60-block10)/(50000)) - 100000
+        minAmp = (block60-block10)/50000*i*1000+(block10-(block60-block10)/(50000)) - 100000
         maxAmp = minAmp + 200000
         print("MIN AMP,"+str(minAmp))
         print("MAX AMP,"+str(maxAmp))
@@ -87,12 +85,32 @@ def triWaveTest():
     h('offset = 0')
     h('tristim()')
     print("TRIANGLE WAVE")
-    h('run()')
-    # for i in range(startingFreq,startingFreq+freqRange+1000,1000):
-    #     print('FREQUENCY,'+str(i))
-    #     h('freq = '+str(i))
-    #     h('sinestim()')
-    #     h('findThreshold(450000,650000,0,10,50,.1,1,1000)')
+    # Find 10kHz Block
+    print('FREQUENCY,'+str(10000))
+    h('freq = '+str(10000))
+    h('tristim()')
+    setHocTimeStep(10)
+    h('block10kHz = findThreshold(500000,1000000,0,10,50,.1,1,1000)')
+    # Find 60kHz Block
+    print('FREQUENCY,'+str(60000))
+    h('freq = '+str(60000))
+    h('tristim()')
+    setHocTimeStep(60)
+    h('block60kHz = findThreshold(600000,2000000,0,10,50,.1,1,1000)')
+    block10 = h.block10kHz
+    block60 = h.block60kHz
+
+    for i in range(15,60,5):
+        print('FREQUENCY,'+str(i*1000))
+        h('freq = '+str(i*1000))
+        h('sinestim()')
+        setHocTimeStep(i)
+        minAmp = (block60-block10)/50000*i*1000+(block10-(block60-block10)/(50000)) - 100000
+        maxAmp = minAmp + 200000
+        print("MIN AMP,"+str(minAmp))
+        print("MAX AMP,"+str(maxAmp))
+        command = 'findThreshold('+str(minAmp)+','+str(maxAmp)+',0,10,50,.1,1,1000)'
+        h(command)
 
 def squareWaveTest():
     h('waveform_sel(0)')
@@ -112,4 +130,4 @@ def squareWaveTest():
     h('run()')
 
 hocSetup()
-sineWaveTest()
+triWaveTest()
