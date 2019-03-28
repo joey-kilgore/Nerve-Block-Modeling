@@ -355,3 +355,47 @@ proc conductionVelocity(){ local testNodeNum,totalVelocity,prevTime localobj APC
         print "AVG Velocity,", totalVelocity
     }
 }
+
+proc stdurationFinder(){ local lowAmp, highAmp, ampRes, pulseWidth, testAmp
+    // stdurationFinder(low amplitude, high amplitude, amplitude resolution, pulse width)
+    // This is meant as a way to find the strength duration curve for any waveform
+    // This is usually done with varying pusle widths, but that could also be a pulse
+    //  with a sine or triangular shape as opposed to the normal square wave
+    
+    // read parameters
+    lowAmp = $1
+    highAmp = $2
+    ampRes = $3
+    pulseWidth = $4
+
+    // setup initial parameters
+    dur1 = pulseWidth   // set the pulsewidth
+    onset1 = 0          // set the wave to start at time=0
+    call_procstim()
+    setStim(0,0,0)  // turn off the test stimulus from the threshfinder
+    tstop = 10      // set the simulations to run for 10ms
+    tstop_changed()
+
+    print "LOW, HIGH, TEST, AP? (1 yes 0 no)"
+
+    while(abs(lowAmp - highAmp) > ampRes){  // binary search
+        testAmp = (lowAmp + highAmp)/2      // find the midpoint
+        setAmps(testAmp)    // set amplitude of the waveform to the testing amplitude
+
+        // run the test
+        APC_reset()     // reset the AP count objects
+        run()
+
+        // check if there was an AP
+        if(APC_getCount(0) > 0){
+            // there was an AP so we should lower the amplitude
+            print lowAmp, ",", highAmp, ",", testAmp, ",1"
+            highAmp = testAmp
+        } else{
+            // there was no AP so we should raise the amplitude
+            print lowAmp, ",", highAmp, ",", testAmp, ",0"
+            lowAmp = testAmp
+        }
+    }
+    print "MIN AMP FOR AP,", highAmp
+}
