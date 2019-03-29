@@ -103,7 +103,7 @@ def triWaveTest():
     for i in range(15,60,5):
         print('FREQUENCY,'+str(i*1000))
         h('freq = '+str(i*1000))
-        h('sinestim()')
+        h('tristim()')
         setHocTimeStep(i)
         minAmp = (block60-block10)/50000*i*1000+(block10-(block60-block10)/(50000)) - 100000
         maxAmp = minAmp + 200000
@@ -129,5 +129,55 @@ def squareWaveTest():
     h('bal_val1()')
     h('run()')
 
+
+def activationTest():
+    # this will test all 3 waves because it should be a quick test
+    # first sine wave
+    h('waveform_sel(1)')
+    h('setoffset(0)')
+    h('sinestim()')
+    print("SINE WAVE")
+    for freq in range(10,65,5):
+        print('Frequency,'  + str(freq*1000))
+        print('Pulse Width,' + str(1/(freq*2)))
+        h('freq = '+str(freq*1000))
+        h('sinestim()')
+        setHocTimeStep(freq)
+        command = 'stdurationFinder(0,6000000,1000,1/' + str(freq*2) + ')'
+        h(command)
+
+    # triangle wave
+    h('waveform_sel(2)')
+    h('offset = 0')
+    h('tristim()')
+    print("TRIANGLE WAVE")
+    for freq in range(10,65,5):
+        print('FREQUENCY,'+str(freq*1000))
+        print('Pulse Width,' + str(1/(freq*2)))
+        h('freq = '+str(freq*1000))
+        h('tristim()')
+        setHocTimeStep(freq)
+        command = 'stdurationFinder(0,6000000,1000,1/' + str(freq*2) + ')'
+        h(command)
+
+    # square wave
+    h('waveform_sel(0)')
+    # Set the square wave params to match the frequency print("TRIANGLE WAVE")
+    for freq in range(10,65,5):
+        print('FREQUENCY,'+str(freq*1000))
+        print('Pulse Width,' + str(1/(freq*2)))
+        cathodDuration = 1/freq/2
+        setCathodDur = 'cathod_dur=' + str(cathodDuration)
+        setPostCathodDur = 'postCathod_dur=0'
+        setAnodDur = 'anod_dur=' + str(cathodDuration)
+        setPostAnodDur = 'postAnod_dur=0'
+        h(setCathodDur)
+        h(setPostCathodDur)
+        h(setAnodDur)
+        h(setPostAnodDur)
+        setHocTimeStep(freq)
+        command = 'stdurationFinder(0,6000000,1000,1/' + str(freq*2) + ')'
+        h(command)
+
 hocSetup()
-triWaveTest()
+activationTest()

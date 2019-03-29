@@ -373,7 +373,7 @@ proc stdurationFinder(){ local lowAmp, highAmp, ampRes, pulseWidth, testAmp
     onset1 = 0          // set the wave to start at time=0
     call_procstim()
     setStim(0,0,0)  // turn off the test stimulus from the threshfinder
-    tstop = 10      // set the simulations to run for 10ms
+    tstop = 7      // set the simulations to run for 7ms
     tstop_changed()
 
     print "LOW, HIGH, TEST, AP? (1 yes 0 no)"
