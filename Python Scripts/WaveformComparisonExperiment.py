@@ -1,19 +1,24 @@
-# This is the script instantiated from GnabarMultiThread.py
+# This is the script instantiated from WaveformComparisonMultiThread.py
 import sys
 import os
 import neuron
 
+# get the process id assigned by the master script (WaveformComparisonMultiThread.py)
 processId = int(sys.argv[1])
 
+# create a file for output
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 my_file = os.path.join(THIS_FOLDER, 'file'+str(processId)+'.csv')
 
+# set standard output to the new file
 sys.stdout = open(my_file, 'w')
 
+# setup the ability to use NEURON
 h = neuron.hoc.HocObject()
 
 def hocSetup():
     global processId
+    # Load NEURON with all the models and procedures normally available
     h('nrn_load_dll("L:/Work/GithubRepos/NEURON/Current Simulation/models/nrnmech.dll")')
     h('load_file("L:/Work/GithubRepos/NEURON/Current Simulation/CNOW_run.hoc")')
     # Fiber diameter varies across each process
@@ -52,6 +57,8 @@ def setHocTimeStep(frequency):
     #     print('dt,.001')
 
 def setTotalTime(freq):
+    # this is used within the activation threshold search
+    # large pulse widths (ie low frequencies) require a test simulation with a larger tstop
     if freq > 1:
         h('tstop = 7') 
     elif freq >= .25:
@@ -67,6 +74,11 @@ def setTotalTime(freq):
     h('tstop_changed()')
 
 def sineWaveTest():
+    # find the block threshold (BT) for frequencies 10 to 60 kHz with 5 kHz increments
+    # to narrow the search we can make a guess at what the BT is by observing that
+    #   from 10 to 60 kHz the block threshold is approximately growing linearly
+
+    # inital setup (selecting the sine waveform electrode)
     h('waveform_sel(1)')
     h('onset1 = 10')
     h('dur1 = 300')
@@ -77,23 +89,25 @@ def sineWaveTest():
     # Find 10kHz Block
     print('FREQUENCY,'+str(10000))
     h('freq = '+str(10000))
-    h('sinestim()')
-    setHocTimeStep(10)
+    h('sinestim()') # make sure to update the electrode parameters
+    setHocTimeStep(10)  # dont forget to make sure an appropriate time step is used!
     h('block10kHz = findThreshold(301000,600000,0,10,50,.1,1,1000)')
     # Find 60kHz Block
     print('FREQUENCY,'+str(60000))
     h('freq = '+str(60000))
-    h('sinestim()')
-    setHocTimeStep(60)
+    h('sinestim()') # make sure to update the electrode parameters
+    setHocTimeStep(60)  # dont forget to make sure an appropriate time step is used!
     h('block60kHz = findThreshold(501000,800000,0,10,50,.1,1,1000)')
+
+    # using these two block values we can guess at the BT in between 10 and 60kHz
     block10 = h.block10kHz
     block60 = h.block60kHz
 
     for i in range(15,60,5):
         print('FREQUENCY,'+str(i*1000))
         h('freq = '+str(i*1000))
-        h('sinestim()')
-        setHocTimeStep(i)
+        h('sinestim()') # make sure to update the electrode parameters
+        setHocTimeStep(i)   # dont forget to make sure an appropriate time step is used!
         minAmp = (block60-block10)/50000*i*1000+(block10-(block60-block10)/(50000)) - 100000
         maxAmp = minAmp + 200000
         print("MIN AMP,"+str(minAmp))
@@ -101,37 +115,42 @@ def sineWaveTest():
         command = 'findThreshold('+str(minAmp)+','+str(maxAmp)+',0,10,50,.1,1,1000)'
         h(command)
 
-    
-
-
 def triWaveTest():
+    # find the block threshold (BT) for frequencies 10 to 60 kHz with 5 kHz increments
+    # to narrow the search we can make a guess at what the BT is by observing that
+    #   from 10 to 60 kHz the block threshold is approximately growing linearly
+
+    # select the triangle waveform electrode
     h('waveform_sel(2)')
     h('amp1 = 1500000')
     h('onset1 = 10')
     h('dur1 = 300')
     h('offset = 0')
-    h('tristim()')
+    h('tristim()')  # make sure to update the electrode parameters
     print("TRIANGLE WAVE")
+
     # Find 10kHz Block
     print('FREQUENCY,'+str(10000))
     h('freq = '+str(10000))
     h('tristim()')
-    setHocTimeStep(10)
+    setHocTimeStep(10)  # dont forget to make sure an appropriate time step is used!
     h('block10kHz = findThreshold(500000,1000000,0,10,50,.1,1,1000)')
     # Find 60kHz Block
     print('FREQUENCY,'+str(60000))
     h('freq = '+str(60000))
     h('tristim()')
-    setHocTimeStep(60)
+    setHocTimeStep(60)  # dont forget to make sure an appropriate time step is used!
     h('block60kHz = findThreshold(600000,2000000,0,10,50,.1,1,1000)')
+
+    # using these two variables we can guess the BT for the values in between
     block10 = h.block10kHz
     block60 = h.block60kHz
 
     for i in range(15,60,5):
         print('FREQUENCY,'+str(i*1000))
         h('freq = '+str(i*1000))
-        h('tristim()')
-        setHocTimeStep(i)
+        h('tristim()')  # make sure to update the electrode parameters
+        setHocTimeStep(i)   # dont forget to make sure an appropriate time step is used!
         minAmp = (block60-block10)/50000*i*1000+(block10-(block60-block10)/(50000)) - 100000
         maxAmp = minAmp + 200000
         print("MIN AMP,"+str(minAmp))
@@ -139,35 +158,35 @@ def triWaveTest():
         command = 'findThreshold('+str(minAmp)+','+str(maxAmp)+',0,10,50,.1,1,1000)'
         h(command)
 
+def setSquareWaveParams(frequency):
+    cathodDuration = 1/frequency/2
+    setCathodDur = 'cathod_dur=' + str(cathodDuration)
+    setPostCathodDur = 'postCathod_dur=0'
+    setAnodDur = 'anod_dur=' + str(cathodDuration)
+    setPostAnodDur = 'postAnod_dur=0'
+    h(setCathodDur)
+    h(setPostCathodDur)
+    h(setAnodDur)
+    h(setPostAnodDur)
+
 def squareWaveTest():
+    # find the block threshold (BT) for frequencies 10 to 60 kHz with 5 kHz increments
+    # to narrow the search we can make a guess at what the BT is by observing that
+    #   from 10 to 60 kHz the block threshold is approximately growing linearly
+
+    # select the square wave electrode
     h('waveform_sel(0)')
     # Set the square wave params to match the frequency
      # Find 10kHz Block
     print('FREQUENCY,'+str(10000))
     frequency = 10
-    cathodDuration = 1/frequency/2
-    setCathodDur = 'cathod_dur=' + str(cathodDuration)
-    setPostCathodDur = 'postCathod_dur=0'
-    setAnodDur = 'anod_dur=' + str(cathodDuration)
-    setPostAnodDur = 'postAnod_dur=0'
-    h(setCathodDur)
-    h(setPostCathodDur)
-    h(setAnodDur)
-    h(setPostAnodDur)
+    setSquareWaveParams(frequency)
     setHocTimeStep(10)
     h('block10kHz = findThreshold(100000,1000000,0,10,50,.1,1,1000)')
     # Find 60kHz Block
     print('FREQUENCY,'+str(60000))
     frequency = 60
-    cathodDuration = 1/frequency/2
-    setCathodDur = 'cathod_dur=' + str(cathodDuration)
-    setPostCathodDur = 'postCathod_dur=0'
-    setAnodDur = 'anod_dur=' + str(cathodDuration)
-    setPostAnodDur = 'postAnod_dur=0'
-    h(setCathodDur)
-    h(setPostCathodDur)
-    h(setAnodDur)
-    h(setPostAnodDur)
+    setSquareWaveParams(frequency)
     setHocTimeStep(60)
     h('block60kHz = findThreshold(100000,1000000,0,10,50,.1,1,1000)')
     block10 = h.block10kHz
@@ -176,15 +195,7 @@ def squareWaveTest():
     for i in range(15,60,5):
         print('FREQUENCY,'+str(i*1000))
         frequency = i
-        cathodDuration = 1/frequency/2
-        setCathodDur = 'cathod_dur=' + str(cathodDuration)
-        setPostCathodDur = 'postCathod_dur=0'
-        setAnodDur = 'anod_dur=' + str(cathodDuration)
-        setPostAnodDur = 'postAnod_dur=0'
-        h(setCathodDur)
-        h(setPostCathodDur)
-        h(setAnodDur)
-        h(setPostAnodDur)
+        setSquareWaveParams(frequency)
         setHocTimeStep(i)
         minAmp = (block60-block10)/50000*i*1000+(block10-(block60-block10)/(50000)) - 100000
         maxAmp = minAmp + 200000
@@ -233,17 +244,7 @@ def activationTest():
     for freq in [60,55,50,45,40,35,30,25,20,15,10,9,8,7,6,5,4,3,2,1,.5, .25, .1, .05, .025, .01666]:
         print('FREQUENCY,'+str(freq*1000))
         print('Pulse Width,' + str(1/(freq*2)))
-        cathodDuration = 1/freq/2
-        setCathodDur = 'cathod_dur=' + str(cathodDuration)
-        setPostCathodDur = 'postCathod_dur=0'
-        setAnodDur = 'anod_dur=' + str(cathodDuration)
-        setPostAnodDur = 'postAnod_dur=0'
-        h(setCathodDur)
-        h(setPostCathodDur)
-        h(setAnodDur)
-        setTotalTime(freq)
-        h(setPostAnodDur)
-        setHocTimeStep(freq)
+        setSquareWaveParams(freq)
         command = 'stdurationFinder(0,-1000000,1000,1/(' + str(freq*2) + '))'
         h(command)
 
