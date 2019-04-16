@@ -24,6 +24,7 @@ def hocSetup():
 
 def setHocTimeStep(frequency):
     # Set time step value to be 1/12 the period, or smaller
+    if frequency <= 10:
         h('steps_per_ms = 200')
         h('dt = .005')
         print('dt,.005')
