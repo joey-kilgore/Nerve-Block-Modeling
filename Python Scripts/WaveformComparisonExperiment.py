@@ -17,29 +17,52 @@ def hocSetup():
     h('nrn_load_dll("C:/Users/Joey/Desktop/Stuff/Code/Nerve-Block-Modeling/Current Simulation/models/nrnmech.dll")')
     h('load_file("C:/Users/Joey/Desktop/Stuff/Code/Nerve-Block-Modeling/Current Simulation/CNOW_run.hoc")')
     # Fiber diameter varies across each process
-    setDiam = 'changeDiam(' + str(processId+4) + ')'
+    setDiam = 'changeDiam(' + str(processId) + ')'
     h(setDiam)
     h('setStim(10,40,.1)')
     h('insert_cf()') # set freq-dep MRG MODEL
 
 def setHocTimeStep(frequency):
     # Set time step value to be 1/12 the period, or smaller
-    if frequency <= 15:
         h('steps_per_ms = 200')
         h('dt = .005')
         print('dt,.005')
-    elif frequency <= 20:
-        h('steps_per_ms = 250')
-        h('dt = .004') 
-        print('dt,.004')
-    elif frequency <= 40:
-        h('steps_per_ms = 500')
-        h('dt = .002')
-        print('dt,.002')
-    elif frequency <= 80:
+    else:
         h('steps_per_ms = 1000')
         h('dt = .001')
         print('dt,.001')
+    # Optional time step setting for faster less accurate trials (good for the BT tests which can run for a long time)
+    # if frequency <= 15:
+    #     h('steps_per_ms = 200')
+    #     h('dt = .005')
+    #     print('dt,.005')
+    # elif frequency <= 20:
+    #     h('steps_per_ms = 250')
+    #     h('dt = .004') 
+    #     print('dt,.004')
+    # elif frequency <= 40:
+    #     h('steps_per_ms = 500')
+    #     h('dt = .002')
+    #     print('dt,.002')
+    # elif frequency <= 80:
+    #     h('steps_per_ms = 1000')
+    #     h('dt = .001')
+    #     print('dt,.001')
+
+def setTotalTime(freq):
+    if freq > 1:
+        h('tstop = 7') 
+    elif freq >= .25:
+        h('tstop = 9')
+    elif freq >= .1:
+        h('tstop = 12')
+    elif freq >= .05:
+        h('tstop = 17')
+    elif freq >= .025:
+        h('tstop = 27')
+    elif freq >= .016:
+        h('tstop = 37')
+    h('tstop_changed()')
 
 def sineWaveTest():
     h('waveform_sel(1)')
@@ -137,13 +160,14 @@ def activationTest():
     h('setoffset(0)')
     h('sinestim()')
     print("SINE WAVE")
-    for freq in range(10,65,5):
+    for freq in [60,55,50,45,40,35,30,25,20,15,10,9,8,7,6,5,4,3,2,1,.5, .25, .1, .05, .025, .01666]:
         print('Frequency,'  + str(freq*1000))
         print('Pulse Width,' + str(1/(freq*2)))
         h('freq = '+str(freq*1000))
         h('sinestim()')
+        setTotalTime(freq)
         setHocTimeStep(freq)
-        command = 'stdurationFinder(0,6000000,1000,1/' + str(freq*2) + ')'
+        command = 'stdurationFinder(0,-1000000,1000,1/(' + str(freq*2) + '))'
         h(command)
 
     # triangle wave
@@ -151,19 +175,21 @@ def activationTest():
     h('offset = 0')
     h('tristim()')
     print("TRIANGLE WAVE")
-    for freq in range(10,65,5):
+    for freq in [60,55,50,45,40,35,30,25,20,15,10,9,8,7,6,5,4,3,2,1,.5, .25, .1, .05, .025, .01666]:
         print('FREQUENCY,'+str(freq*1000))
         print('Pulse Width,' + str(1/(freq*2)))
         h('freq = '+str(freq*1000))
         h('tristim()')
+        setTotalTime(freq)
         setHocTimeStep(freq)
-        command = 'stdurationFinder(0,6000000,1000,1/' + str(freq*2) + ')'
+        command = 'stdurationFinder(0,-1000000,1000,1/(' + str(freq*2) + '))'
         h(command)
 
     # square wave
     h('waveform_sel(0)')
+    print("SQUARE WAVE")
     # Set the square wave params to match the frequency print("TRIANGLE WAVE")
-    for freq in range(10,65,5):
+    for freq in [60,55,50,45,40,35,30,25,20,15,10,9,8,7,6,5,4,3,2,1,.5, .25, .1, .05, .025, .01666]:
         print('FREQUENCY,'+str(freq*1000))
         print('Pulse Width,' + str(1/(freq*2)))
         cathodDuration = 1/freq/2
@@ -174,9 +200,10 @@ def activationTest():
         h(setCathodDur)
         h(setPostCathodDur)
         h(setAnodDur)
+        setTotalTime(freq)
         h(setPostAnodDur)
         setHocTimeStep(freq)
-        command = 'stdurationFinder(0,6000000,1000,1/' + str(freq*2) + ')'
+        command = 'stdurationFinder(0,-1000000,1000,1/(' + str(freq*2) + '))'
         h(command)
 
 hocSetup()
