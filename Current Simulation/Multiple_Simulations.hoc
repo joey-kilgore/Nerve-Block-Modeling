@@ -397,3 +397,51 @@ proc stdurationFinder(){ local lowAmp, highAmp, ampRes, pulseWidth, testAmp
     }
     print "MIN AMP FOR AP,", highAmp
 }
+
+proc setSquareWaveFreq(){ local pulseDur
+    freq = $1
+    pulseDur = (1/(freq/1000))/2
+    cathod_dur=pulseDur
+    postCathod_dur=0
+    anod_dur=pulseDur
+    postAnod_dur=0
+}
+
+proc findMinFreq(){ local maxFreq, minFreq, blockThreshold
+    // findMinFreq takes the current setup and tries to 
+    // find the minimum frequency at which block can still occur
+    // The search space will be the range of frequencies from 0 to 10kHz
+    
+    // OPTIONAL ARGUMENT the resolution of the search
+    if (numarg() > 0) {
+        res = $1
+    } else {
+        res = 100
+    }
+
+    // set the initial search boundaries
+    maxFreq = 10000
+    minFreq = 0
+    // begin search
+    while (abs(maxFreq - minFreq) > res){
+        freq = (maxFreq + minFreq)/2       
+        print "TESTING FREQUENCY,", freq
+        if (wavesel[0]){
+            setSquareWaveFreq(freq)
+        }
+
+        // now we find the threshold, note that a larger resolution is used because we simply
+        //  need to have enough trials to state that the threshold exists
+        blockThreshold = findThreshold(0,1000000,0,10,50,.1,1,20000)
+
+        // if there was no block found, then the blockThreshold is set to 0
+        if (blockThreshold > 0){
+            // block occured, the frequency can be lowered
+            maxFreq = freq
+        } else {
+            // block did not occur, the frequency must be raised
+            minFreq = freq
+        }
+    }
+    print "MIN FREQUENCY FOR BLOCK,", maxFreq
+}
