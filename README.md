@@ -4,7 +4,7 @@ This code utilizes the NEURON program to create simulations of High Frequency Al
 
 ---
 ## Main Simulation  
-This is where the current simulation can be found. By running NEURON and loading the CNOW_run.hoc file, the simulation begins. Note that the mod files need to be interpreted to C then compiled, this is done by running mknrndll on the models folder.  
+This is where the current simulation can be found. By running NEURON and loading the models/nrnmech.dll and the CNOW_run.hoc file, the simulation begins. Note that the mod files need to be interpreted to C then compiled, this is done by running mknrndll on the models folder.  
 
 ---
 ## Data  
