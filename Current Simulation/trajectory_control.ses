@@ -127,14 +127,10 @@ proc traj_builder_Vbox() {
 traj_builder_Vbox()
 
 proc traj_panel(){
-
-	load_file("SineRampRig.ses")   			// load the graph and control for the Sine Ramp
-
 	if (traj_builder.ismapped() == 0) {
 		traj_builder.map("Trajectory Builder",125, 18,-1,-1)
 	}
 
 	runtraj()
 	state_traj = 0
-
 }
