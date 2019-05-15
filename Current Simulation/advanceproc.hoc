@@ -19,8 +19,9 @@ proc advance(){
 
     // triangle wave
 	}else if (wavesel[2]) {
-        triAdvance() 
-       
+    	triAdvance() 
+       	fadvance()
+		   
     // trajectory
     }else if (wavesel[3]) {
 	    trajAdvance() 
