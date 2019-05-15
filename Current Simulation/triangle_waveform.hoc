@@ -95,6 +95,46 @@ proc tristim(){
 	}
 }
 
+proc triAdvance() {
+	a = 0
+	for (i=0;i<=axontotal-1;i=i+stinnum+5) {	
+		node[a].e_extracellular(0.5)=(triClmp[0].i*ext1.x[i]*1e-6)+ (triClmp[1].i*ext2.x[i]*1e-6)+ (triClmp[2].i*ext3.x[i]*1e-6) //mV//
+		a = a+1
+	}
+
+	b=0 
+	for (i=1;i<=axontotal-1;i=i+stinnum+5) {
+		MYSA[b].e_extracellular(0.5)=(triClmp[0].i*ext1.x[i]*1e-6)+ (triClmp[1].i*ext2.x[i]*1e-6)+ (triClmp[2].i*ext3.x[i]*1e-6) //mV//
+		b=b+2
+	}
+	
+	c=0 
+	for (i=2;i<=axontotal-1;i=i+stinnum+5) {
+		FLUT[c].e_extracellular(0.5)=(triClmp[0].i*ext1.x[i]*1e-6)+ (triClmp[1].i*ext2.x[i]*1e-6)+ (triClmp[2].i*ext3.x[i]*1e-6) //mV//
+		c=c+2
+	}
+
+	for (j = 0;j<=stinnum-1;j=j+1) {
+		d=j 
+		for (i=3;i<=axontotal-1;i=i+stinnum+5) {
+			STIN[d].e_extracellular(0.5)=(triClmp[0].i*ext1.x[i+j]*1e-6)+ (triClmp[1].i*ext2.x[i+j]*1e-6)+ (triClmp[2].i*ext3.x[i+j]*1e-6) //mV//
+			d=d+stinnum
+		}
+	}
+
+	k=1 
+	for (i=9;i<=axontotal-2;i=i+stinnum+5) {
+		FLUT[k].e_extracellular(0.5)=(triClmp[0].i*ext1.x[i]*1e-6)+ (triClmp[1].i*ext2.x[i]*1e-6)+ (triClmp[2].i*ext3.x[i]*1e-6) //mV//
+		k=k+2
+	}
+	
+	l=1
+	for (i=10;i<=axontotal-2;i=i+stinnum+5) {
+		MYSA[l].e_extracellular(0.5)=(triClmp[0].i*ext1.x[i]*1e-6) + (triClmp[1].i*ext2.x[i]*1e-6)+ (triClmp[2].i*ext3.x[i]*1e-6)
+		l=l+2
+	}
+}
+
 //***************************************************************
 //  main
 //***************************************************************

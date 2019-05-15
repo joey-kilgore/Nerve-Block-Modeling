@@ -70,7 +70,6 @@ proc setAmps(){
             }else{
                 // check for a triangle wave
                 if (state_tri==1){
-                    print "Tri"
                     if (electsel[0]) triamp=$1
                     if (electsel[1]) triamp=$1
                     if (electsel[2]) triamp=$1
@@ -396,26 +395,6 @@ proc drawThreshFinder(){
 }
 setInitThreshParams()
 drawThreshFinder()
-
-proc setInitThreshParams(){
-    lowB = 500000   // lower bound
-    highB = 900000  // upper bound
-    res = 1000  // resolution
-    ap_thresh = -10 // threshold for AP
-
-    stimamp = 10    // test stim amp
-    stimdur = .1    // test stim duration
-    stimdel = 50    // test stim delay
-
-    anode_coeff = 1 //anodic biphasic coefficient
-
-    efficientState = 0  // efficient state flag
-    knownSpikes = 0 //known number of initial spikes (goes with efficient state)
-
-    lower = 0   // bounds and search values are not
-    upper = 0   //  set initially
-    level = 0
-}
 
 proc stopRun(){
     // stop run will allow the user to stop a run if something is going wrong
