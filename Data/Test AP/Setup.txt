@@ -1,0 +1,19 @@
+Model, MRG
+Diameter, 10um
+Tstop,20
+dt,.005
+init,-80
+
+injected current
+CODE USED
+*first setup the mrg model 10um and turn off everything (default electrode off, and default test pulse off)
+
+
+objref inCur
+node[0] inCur = new IClamp(.5)
+inCur.del = 5
+inCur.dur = .1
+inCur.amp = 1
+
+
+C:\Users\Joey\Desktop\TestData\Test AP\
