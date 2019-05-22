@@ -1,3 +1,4 @@
 *.c
 *.o
 *.dll
+.vscode/settings.json
