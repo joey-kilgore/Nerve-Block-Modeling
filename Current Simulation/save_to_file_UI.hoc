@@ -1,7 +1,7 @@
 // Select options for saving data to files with a GUI 
 
 // create the array to hold whether the checkboxes are selected
-double valueToSaveSelected[8] // initialized to 0 (False)
+double valueToSaveSelected[9] // initialized to 0 (False)
 strdef filePathMGate
 strdef filePathHGate
 strdef filePathVoltage
@@ -10,6 +10,7 @@ strdef filePathINa
 strdef filePathIK
 strdef filePathIL
 strdef filePathMPGate
+strdef filePathINaP
 
 // Creating the file objects for each selection
 objref fileMGate    // Checkbox 0
@@ -20,6 +21,7 @@ objref fileINa      // Checkbox 4
 objref fileIK       // Checkbox 5
 objref fileIL       // Checkbox 6
 objref fileMPGate    // checkbox 7
+objref fileINaP     // Checkbox 8
 
 // Creating the VBox for all the components
 objref saveValueToFileVBox
@@ -45,6 +47,7 @@ proc DrawSaveFileVBox(){
     xcheckbox("iK", &valueToSaveSelected[5], "inputFilePath(5)")   // checkbox to save iK
     xcheckbox("iL", &valueToSaveSelected[6], "inputFilePath(6)")   // checkbox to save iL
     xcheckbox("mp gate", &valueToSaveSelected[7], "inputFilePath(7)")   // checkbox to save n gate values
+    xcheckbox("iNaP", &valueToSaveSelected[8], "inputFilePath(8)")   // checkbox to save iNaP
 
     xbutton("Commit Selection", "commitFileSelect()")   // commit selection actually creates the file objects  
     xbutton("Close Files", "closeFiles()")  // allows the user to close the file at any point to open it and view
@@ -66,9 +69,10 @@ proc enterFileDirectory(){
     sprint(filePathIK, "%s%s", direc, "IK.csv")
     sprint(filePathIL, "%s%s", direc, "IL.csv")
     sprint(filePathMPGate, "%s%s", direc, "MPGate.csv")
+    sprint(filePathINaP, "%s%s", direc, "INaP.csv")
 
     // check all check boxes
-    for i=0, 7 {
+    for i=0, 8 {
         valueToSaveSelected[i] = 1
     }
 
@@ -94,6 +98,8 @@ proc inputFilePath(){
     if(selectedValue == 6) string_dialog("Enter path for iL file: ", filePathIL)
 
     if(selectedValue == 7) string_dialog("Enter path for mp gate file: ", filePathMPGate)
+
+    if(selectedValue == 8) string_dialog("Enter path for iNaP file: ", filePathINaP)
 }
 
 
@@ -162,6 +168,14 @@ proc commitFileSelect(){
         // Open the file (set to append)
         fileMPGate.aopen()
     }
+
+    // the iNaP was selected
+    if(valueToSaveSelected[8] == 1){
+        // Create the fileINaP file object
+        fileINaP = new File(filePathINaP)
+        // Open the file (set to append)
+        fileINaP.aopen()
+    }
 }
 
 proc closeFiles(){ 
@@ -203,6 +217,11 @@ proc closeFiles(){
     if(valueToSaveSelected[7] == 1) {
         fileMPGate.close()   // the iL was selected   
         valueToSaveSelected[7] = 0
+    }
+
+    if(valueToSaveSelected[8] == 1) {
+        fileINaP.close()   // the iNaP was selected   
+        valueToSaveSelected[8] = 0
     }
 }
 

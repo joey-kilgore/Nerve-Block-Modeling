@@ -16,6 +16,8 @@ proc saveValuesToFile(){
     if(valueToSaveSelected[6] == 1) appendNodeILToFile()
 
     if(valueToSaveSelected[7] == 1) appendNodeMPGateToFile()
+
+    if(valueToSaveSelected[8] == 1) appendNodeINaPToFile()
 }
 
 // append the voltages of all nodes to file
@@ -129,3 +131,15 @@ proc appendNodeMPGateToFile(){
     // put a new line at the end of the list
     fileMPGate.printf("\n")
 }
+
+proc appendNodeINaPToFile(){
+    // print the time
+    fileINaP.printf("%f,", t)
+
+    for i=0, axonnodes-1 {
+        // Print the node ina value to file using a comma seperator
+        fileINaP.printf("%f,", node[i].inap_axnode)
+    }
+    // put a new line at the end of the list
+    fileINaP.printf("\n")
+} 
