@@ -1,6 +1,6 @@
 # Nerve Block Modeling
 
-This code utilizes the NEURON program to create simulations of High Frequency Alternating Current (HFAC) to block action potentials. The main models here are created from the MRG model. By creating simulations, millions of tests can be ran one after another continously, allowing for testing of multiple different types of waveforms, on different fiber diameters, with different electrodes. Hopefully, this will allow us to get a better insight on the potential of HFAC on nerve block.  
+This code utilizes the NEURON program to create simulations of High Frequency Alternating Current (HFAC) blocking action potentials. The main models here are created from the MRG model. By creating simulations, millions of tests can be run one after another continously, allowing for testing of multiple different types of waveforms, on different fiber diameters, with different electrodes. Hopefully, this will allow us to get a better insight on the potential of HFAC nerve block.  
 
 ---
 ## Main Simulation  
@@ -12,7 +12,7 @@ This is where data from simultions/experiments is put. All raw data is given usu
 
 ---
 ## Deprecated Code  
-This is where past code goes after being replaced, or simply just bloat to the main simulation. The authors of this code have contributed to this codebase, and there code can be used as an excellent (or terrible) example.  
+This is where past code goes after being replaced, or simply just bloatware from the main simulation. The authors of this code have contributed to this codebase, and their code can be used as an excellent (or terrible) example.  
 
 ---
 ## Python Scripts  
@@ -24,5 +24,5 @@ The code here is meant to be used as reference of premade code snippets for anal
 
 ---
 ## Wiki
-This stores the images for the wiki pages. It is HIGHLY recommended that you check out the [wiki pages](https://github.com/mrjoeboo123/NEURON/wiki) to get a better understanding of the NEURON code base. 
+This stores the images for the wiki pages. It is HIGHLY recommended that you check out the [wiki pages](https://github.com/joey-kilgore/Nerve-Block-Modeling/wiki) to get a better understanding of the NEURON code base. 
 
