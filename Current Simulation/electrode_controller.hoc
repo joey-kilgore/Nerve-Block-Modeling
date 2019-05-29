@@ -1,0 +1,81 @@
+// electrode_controller.hoc is used to allow users to create any number of electrode configurations
+
+numElectrodes = 100                 // The maximum number of electrodes allowed in a simulation
+objref electrodes[numElectrodes]    // Array containing all electrodes
+
+
+// This array will be used to keep track of all used and unused
+//  indices in electrodes[]. The unused first unused index will store a value
+//  that corresponds to the index of the next unused index, and so on.
+//  The same will be done with all the currently used indices, each pointing to 
+//  the next. Which will allow for being able to quickly loop through all
+//  currently used indices, and quickly know the next available index.
+//  -1 will denote the end of these chains
+double availableElectrodes[numElectrodes]   
+
+firstElectrodeIndex = -1    // Index of first used electrode
+nextElectrodeIndex = 0      // Next free index in the electrode array
+
+proc initElectrodes(){ local i
+    objref electrodes[numElectrodes]            // clears all electrodes
+    double availableElectrodes[numElectrodes]   // clears the list of indices
+    firstElectrodeIndex = -1    // the first electrode does not exist so -1 is used
+    nextElectrodeIndex = 0      // the first available index is 0
+
+    for i=0,numElectrodes-1{              // loop through the availableElectrodes array
+        availableElectrodes[i] = i+1    // each element points to the next available index
+    }
+    availableElectrodes[numElectrodes-1] = -1   // the last element terminates the chain
+}
+initElectrodes()
+
+proc createElectrode(){ local tempIndex
+    // create Electrode has multiple parameters for creating the electrode
+    // the electrode is created
+    type = $1   // 0=Sine, 1=Triangle, 2=Square, 3=Sine Ramp, 4=DCSine, 5=DC
+    xpos = $2   // x position of the electrode (note that the axon is centered at 0)
+    ypos = $3   // y position of the electrode (note the axon is at y=0)
+
+    // create the electrode
+    electrodes[nextElectrodeIndex] = new Electrode(nextElectrodeIndex, type, xpos, ypos)    
+
+    // change the various index numbers to point to the next correct index
+    tempIndex = nextElectrodeIndex
+    nextElectrodeIndex = availableElectrodes[nextElectrodeIndex]    // set a new index for the next available index
+    availableElectrodes[tempIndex] = firstElectrodeIndex   // make the new electrode the first electrode index
+    firstElectrodeIndex = tempIndex
+}
+
+proc setExtracellular(){ local tempIndex, tempElectrode
+
+    for tempIndex=0, axontotal-1{
+        tempVoltage = 0          // set the initial voltage to 0
+        tempElectrode = firstElectrodeIndex // get index of first electrode
+        while (tempElectrode != -1) {       // while there are still more electrodes
+            tempVoltage += electrodes[tempElectrode].calcVoltage(x.x[tempIndex],0)
+            tempElectrode = availableElectrodes[tempElectrode]  // move to the next electrode
+        }
+
+        // the ordering for segments is
+        // Node - MYSA - FLUT - 6 X STIN - FLUT - MYSA
+        //  which repeats and starts with a node and ends with a node
+        if (tempIndex%(5+stinnum) == 0){
+            node[int(tempIndex/(5+stinnum))].e_extracellular(.5) = tempVoltage
+        
+        }else if(tempIndex%(5+stinnum) == 1){
+            MYSA[int(tempIndex/(5+stinnum))*2].e_extracellular(.5) = tempVoltage
+        
+        }else if(tempIndex%(5+stinnum) == 2){
+            FLUT[int(tempIndex/(5+stinnum))*2].e_extracellular(.5) = tempVoltage
+        
+        }else if(tempIndex%(5+stinnum) < 9){
+            STIN[int(tempIndex/(5+stinnum))*stinnum+(tempIndex%(5+stinnum) -3)].e_extracellular(.5) = tempVoltage
+        
+        }else if(tempIndex%(5+stinnum) == 9){
+            FLUT[int(tempIndex/(5+stinnum))*2 +1].e_extracellular(.5) = tempVoltage
+        
+        }else {
+            MYSA[int(tempIndex/(5+stinnum))*2 +1].e_extracellular(.5) = tempVoltage
+        }
+    }
+}

@@ -1,0 +1,52 @@
+// This object is used in conjunction with the electrode controller
+// allowing for the user to create any type of electrode easily
+
+begintemplate Electrode
+    public calcVoltage
+    public electrodeModel
+    external rhoe
+    create electrodeSection // all point processes need to be within a section
+    objref electrodeModel
+    index = -1
+    xpos = -1
+    ypos = -1
+    
+    proc init(){
+        // electrodes are created with 4 parameters
+        index = $1      // the index of the electrode
+        modelNum = $2   // model type 0=Sine, 1=Triangle, 2=Square, 3=Sine Ramp, 4=DCSine, 5=DC
+        xpos = $3
+        ypos = $4
+        
+        if (modelNum==0){
+            electrodeSection{
+                electrodeModel = new IClampSine(.5)
+                electrodeModel.amp = 1000000
+                electrodeModel.f = 10000
+                electrodeModel.offset = 0
+                electrodeModel.del = 0
+                electrodeModel.dur = 300
+            }
+        }else if (modelNum==1){
+            electrodeSection{
+                electrodeModel = new IClampTri(.5)
+            }
+        }else if (modelNum==2){
+            electrodeSection{
+                electrodeModel = new Bi_trainIClamp(.5)
+            }
+        }else if (modelNum==5){
+            electrodeSection{
+                electrodeModel = new Bi_trainIClamp(.5)
+            }
+        }
+    }
+
+    func calcVoltage(){
+        // calculate the voltage at a particular point from the electrode
+        x = $1
+        y = $2
+        return electrodeModel.i * (rhoe/(4*PI*sqrt((ypos-y)^2 + (xpos-x)^2))) *1e-6
+    }
+    
+endtemplate Electrode
