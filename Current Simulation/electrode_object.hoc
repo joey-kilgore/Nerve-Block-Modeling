@@ -3,6 +3,7 @@
 
 begintemplate Electrode
     public calcVoltage
+    public setAmp
     public electrodeModel
     external rhoe
     create electrodeSection // all point processes need to be within a section
@@ -38,6 +39,13 @@ begintemplate Electrode
         }else if (modelNum==5){
             electrodeSection{
                 electrodeModel = new Bi_trainIClamp(.5)
+                electrodeModel.del = 10
+                electrodeModel.train = 100
+                electrodeModel.cathod_dur = 100
+                electrodeModel.postcathod_dur = 0
+                electrodeModel.anod_dur = 0
+                electrodeModel.postanod_dur = 0
+                electrodeModel.high_amp = -300000
             }
         }
     }
@@ -49,4 +57,13 @@ begintemplate Electrode
         return electrodeModel.i * (rhoe/(4*PI*sqrt((ypos-y)^2 + (xpos-x)^2))) *1e-6
     }
     
+    proc setAmp(){
+        // sets the amplitude of the electrode depending on the electrode type
+        // the amplitude in nA is passed as the only parameter
+        if (modelNum==0){   // sine electrode
+            electrodeModel.amp = $1
+        }else if(modelNum==5){  // DC electrode
+            electrodeModel.high_amp = $1
+        }
+    }
 endtemplate Electrode
