@@ -79,3 +79,13 @@ proc setExtracellular(){ local tempIndex, tempElectrode
         }
     }
 }
+
+proc setAmplitudeElectrodes(){
+    // Sets the amplitude of all electrodes currently in the simulation
+    // the amplitude in nA is passed as the only parameter
+    tempElectrode = firstElectrodeIndex
+    while (tempElectrode != -1) {       // while there are still more electrodes
+        electrodes[tempElectrode].setAmp($1)
+        tempElectrode = availableElectrodes[tempElectrode]  // move to the next electrode
+    }
+}
