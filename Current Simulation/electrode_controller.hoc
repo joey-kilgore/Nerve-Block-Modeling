@@ -47,7 +47,6 @@ proc createElectrode(){ local tempIndex
 }
 
 proc setExtracellular(){ local tempIndex, tempElectrode
-
     for tempIndex=0, axontotal-1{
         tempVoltage = 0          // set the initial voltage to 0
         tempElectrode = firstElectrodeIndex // get index of first electrode
@@ -88,4 +87,35 @@ proc setAmplitudeElectrodes(){
         electrodes[tempElectrode].setAmp($1)
         tempElectrode = availableElectrodes[tempElectrode]  // move to the next electrode
     }
+}
+
+proc outputElectrodeSetup(){local tempElectrode
+    tempElectrode = firstElectrodeIndex
+    while (tempElectrode != -1) {       // while there are still more electrodes
+        electrodes[tempElectrode].printData()
+        print " "
+        tempElectrode = availableElectrodes[tempElectrode]  // move to the next electrode
+    }
+}
+
+proc removeElectrode(){local indexToRemove, tempElectrode, tempPrev
+    // To remove an electrode the user must know what the index is for that electrode
+    indexToRemove = $1
+    
+    // we need to change the list of currently used electrodes to skip over the electrode being removed
+    if(indexToRemove == firstElectrodeIndex){
+        firstElectrodeIndex = availableElectrodes[indexToRemove]
+    }else{
+        tempPrev = -1
+        tempElectrode = firstElectrodeIndex
+        while (tempElectrode != -1 && tempElectrode != indexToRemove) { // loop until we get to the electrode being removed
+            tempPrev = tempElectrode
+            tempElectrode = availableElectrodes[tempElectrode]  // move to the next electrode
+        }
+        availableElectrodes[tempPrev] = availableElectrodes[indexToRemove]  // have the previous electrode skip the current electrode
+    }
+
+    // we need to add to the list of unused electrodes
+    availableElectrodes[indexToRemove] = nextElectrodeIndex
+    nextElectrodeIndex = indexToRemove
 }
