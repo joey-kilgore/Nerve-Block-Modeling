@@ -7,23 +7,24 @@ apfreq = new Vector()
 /*The advance() procedure controls how the program steps through the simulation
 and pretty much makes the whole thing work.*/
 proc advance(){
-	// // square wave
-	// if(wavesel[0]){
-	// 	squareadvance()
-    // // sine wave
-	// }else if (wavesel[1]){
-	//     sineadvance()
-    // // triangle wave
-	// }else if (wavesel[2]) {
-    // 	triAdvance()    
-    // // trajectory
-    // }else if (wavesel[3]) {
-	//     trajAdvance() 
-	// // dc sine wave
-	// }else if (wavesel[4]) {
-	//     dcsineadvance() 
-	// }
-	setExtracellular()
+	// square wave
+	if(wavesel[0]){
+		squareadvance()
+    // sine wave
+	}else if (wavesel[1]){
+	    sineadvance()
+    // triangle wave
+	}else if (wavesel[2]) {
+    	triAdvance()    
+    // trajectory
+    }else if (wavesel[3]) {
+	    trajAdvance() 
+	// dc sine wave
+	}else if (wavesel[4]) {
+	    dcsineadvance() 
+	}else {
+		setExtracellular()
+	}
 	fadvance()
 
 	apfreq.resize(apvec.size)
