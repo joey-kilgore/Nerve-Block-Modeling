@@ -22,7 +22,7 @@ proc advance(){
 	// dc sine wave
 	}else if (wavesel[4]) {
 	    dcsineadvance() 
-	}else {
+	}else if (customElectrodes) {
 		setExtracellular()
 	}
 	fadvance()

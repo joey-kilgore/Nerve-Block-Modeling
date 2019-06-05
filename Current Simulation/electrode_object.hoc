@@ -3,12 +3,16 @@
 
 begintemplate Electrode
     public calcVoltage
+    public calcVoltageCompartment
     public setAmp
     public printData
     public electrodeModel
+    external axontotal
     external rhoe
+    external x
     create electrodeSection // all point processes need to be within a section
     objref electrodeModel
+    objref  ext // store the distance calculation for the electrdoes
     index = -1
     xpos = -1
     ypos = -1
@@ -49,15 +53,32 @@ begintemplate Electrode
                 electrodeModel.high_amp = -300000
             }
         }
+        setPos()
     }
 
     func calcVoltage(){
+    func calcVoltage(){ 
         // calculate the voltage at a particular point from the electrode
         x = $1
         y = $2
         return electrodeModel.i * (rhoe/(4*PI*sqrt((ypos-y)^2 + (xpos-x)^2))) *1e-6
     }
     
+    func calcVoltageCompartment(){
+        // calculates the voltage for a particular compartment (using the indexing in x)
+        //  this is faster than using the calcVoltage
+        //  the index is passed as a parameter
+        return electrodeModel.i * ext.x[$1] 
+    }
+
+    proc setPos(){ local i
+        // do the calculation for all distances to the compartments ahead of time
+        ext = new Vector(axontotal,0)
+        for i=0, axontotal-1{
+            ext.x[i] = (rhoe)/(4*PI*sqrt((ypos^2)+((xpos-x.x[i])^2)))*1e-6	//nV//
+        }
+    }
+
     proc setAmp(){
         // sets the amplitude of the electrode depending on the electrode type
         // the amplitude in nA is passed as the only parameter
