@@ -15,13 +15,20 @@ double availableElectrodes[numElectrodes]
 
 firstElectrodeIndex = -1    // Index of first used electrode
 nextElectrodeIndex = 0      // Next free index in the electrode array
-
+customElectrodes = 0   
 proc turnOnCustomElectrodes(){ local i
     // By calling this procedure, the normal electrode configurations are turned off
     //  see the advanceproc.hoc file to see why turning off the wavesel values turns off the electrodes
     for i=0, 4{
         wavesel[i] = 0
     }
+    customElectrodes = 1
+}
+proc turnOffCustomElectrdoes(){ local i
+    // this proc turns off the custom electrode and turns on the sine electrode
+    //  see the advanceproc.hoc file to see why this works
+    wavesel[1] = 1  // turn on sine electrode
+    customElectrodes = 0
 }
 
 proc initElectrodes(){ local i
@@ -59,7 +66,7 @@ proc setExtracellular(){ local tempIndex, tempElectrode
         tempVoltage = 0          // set the initial voltage to 0
         tempElectrode = firstElectrodeIndex // get index of first electrode
         while (tempElectrode != -1) {       // while there are still more electrodes
-            tempVoltage += electrodes[tempElectrode].calcVoltage(x.x[tempIndex],0)
+            tempVoltage += electrodes[tempElectrode].calcVoltageCompartment(tempIndex)
             tempElectrode = availableElectrodes[tempElectrode]  // move to the next electrode
         }
 
