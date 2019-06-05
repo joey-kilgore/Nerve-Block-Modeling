@@ -16,6 +16,14 @@ double availableElectrodes[numElectrodes]
 firstElectrodeIndex = -1    // Index of first used electrode
 nextElectrodeIndex = 0      // Next free index in the electrode array
 
+proc turnOnCustomElectrodes(){ local i
+    // By calling this procedure, the normal electrode configurations are turned off
+    //  see the advanceproc.hoc file to see why turning off the wavesel values turns off the electrodes
+    for i=0, 4{
+        wavesel[i] = 0
+    }
+}
+
 proc initElectrodes(){ local i
     objref electrodes[numElectrodes]            // clears all electrodes
     double availableElectrodes[numElectrodes]   // clears the list of indices
