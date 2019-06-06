@@ -88,6 +88,7 @@ proc setAmps(){
             }
         }
     }
+    setAmplitudeElectrodes($1)
 }
 
 
