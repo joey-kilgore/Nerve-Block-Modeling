@@ -2,14 +2,21 @@
 // allowing for the user to create any type of electrode easily
 
 begintemplate Electrode
-    public calcVoltage
-    public calcVoltageCompartment
-    public setAmp
+    public calcVoltage              // these are two different ways of calculating extracellular voltage
+    public calcVoltageCompartment   // the compartment version is made to be more efficient
+
+    public setAmp       // setters for various electrode params    
+    public setFreq  
+    public setDur
+    public setDel
     public printData
-    public electrodeModel
-    external axontotal
-    external rhoe
-    external x
+
+    public electrodeModel   // the model is public knowledge
+
+    external axontotal  // external variables needed
+    external rhoe       //  these are used during the distance calculation
+    external x          //   (see setPos())
+
     create electrodeSection // all point processes need to be within a section
     objref electrodeModel
     objref  ext // store the distance calculation for the electrdoes
@@ -56,7 +63,6 @@ begintemplate Electrode
         setPos()
     }
 
-    func calcVoltage(){
     func calcVoltage(){ 
         // calculate the voltage at a particular point from the electrode
         x = $1
@@ -84,8 +90,58 @@ begintemplate Electrode
         // the amplitude in nA is passed as the only parameter
         if (modelNum==0){   // sine electrode
             electrodeModel.amp = $1
+        }else if(modelNum==1){  // tri electrode
+            electrodeModel.amp = $1
+        }else if(modelNum==2){  // square electrode
+            electrodeModel.high_amp = $1
+            electrodeModel.low_amp  = $1
         }else if(modelNum==5){  // DC electrode
             electrodeModel.high_amp = $1
+        }
+    }
+
+    proc setFreq(){
+        // sets the frequency of the elctrode which depends on the electrode type
+        // the frequency in Hz is the only parameter
+        if (modelNum==0){   // sine Electrode
+            electrodeModel.f = $1
+        }else if(modelNum==1){  // tri electrode
+            electrodeModel.freq = $1
+        }else if(modelNum==2){  // square electrode
+            electrodeModel.cathod_dur = 1/($1*1000*2)   // half period in ms
+            electrdoeModel.postcathod_dur = 0
+            electrodeModel.anod_dur = 1/($1*1000*2)
+            electrdoeModel.postanod_dur = 0
+        }else if(modelNum==5){  // DC electrode
+            print "ERROR: CAN NOT SET FREQUENCY OF DC ELECTRODE"
+        }
+    }
+
+    proc setDur(){
+        // sets the duration of the elctrode which depends on the electrode type
+        // the duration in ms is the only parameter
+        if (modelNum==0){   // sine Electrode
+            electrodeModel.dur = $1
+        }else if(modelNum==1){  // tri electrode
+            electrodeModel.dur = $1
+        }else if(modelNum==2){  // square electrode
+            electrodeModel.train = $1
+        }else if(modelNum==5){  // DC electrode
+            electrodeModel.train = $1
+        }
+    }
+
+    proc setDel(){
+        // sets the delay of the elctrode which depends on the electrode type
+        // the delay in ms is the only parameter
+        if (modelNum==0){   // sine Electrode
+            electrodeModel.del = $1
+        }else if(modelNum==1){  // tri electrode
+            electrodeModel.del = $1
+        }else if(modelNum==2){  // square electrode
+            electrodeModel.del = $1
+        }else if(modelNum==5){  // DC electrode
+            electrodeModel.del = $1
         }
     }
 
