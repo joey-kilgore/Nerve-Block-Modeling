@@ -10,28 +10,22 @@ proc advance(){
 	// square wave
 	if(wavesel[0]){
 		squareadvance()
-		fadvance()
-
     // sine wave
 	}else if (wavesel[1]){
 	    sineadvance()
-	    fadvance()
-
     // triangle wave
 	}else if (wavesel[2]) {
-    	triAdvance() 
-       	fadvance()
-		   
+    	triAdvance()    
     // trajectory
     }else if (wavesel[3]) {
 	    trajAdvance() 
-	    fadvance()   
+	// dc sine wave
 	}else if (wavesel[4]) {
 	    dcsineadvance() 
-	    fadvance()   
-	}else{
-		fadvance()
+	}else if (customElectrodes) {
+		setExtracellular()
 	}
+	fadvance()
 
 	apfreq.resize(apvec.size)
 	for (i=1;i<apvec.size;i=i+1) {
