@@ -43,10 +43,26 @@ begintemplate Electrode
         }else if (modelNum==1){
             electrodeSection{
                 electrodeModel = new IClampTri(.5)
+                electrodeModel.amp = 1000000
+                electrodeModel.freq = 10000
+                electrodeModel.offset = 0
+                electrodeModel.del = 0
+                electrodeModel.dur = 300
             }
         }else if (modelNum==2){
             electrodeSection{
                 electrodeModel = new Bi_trainIClamp(.5)
+                electrodeModel.del = 10
+                electrodeModel.train = 100
+                electrodeModel.cathod_dur = .1
+                electrodeModel.postcathod_dur = 0
+                electrodeModel.anod_dur = .1
+                electrodeModel.postanod_dur = 0
+                electrodeModel.high_amp = -300000
+            }
+        }else if (modelNum==3){
+            electrodeSection{
+                electrodeModel = new SineRamp(.5)             
             }
         }else if (modelNum==5){
             electrodeSection{
