@@ -9,6 +9,7 @@ begintemplate Electrode
     public setFreq  
     public setDur
     public setDel
+    public setPos
     public printData
 
     public electrodeModel   // the model is public knowledge
