@@ -111,7 +111,7 @@ begintemplate Electrode
     proc movPos(){
         // change to pos by the amounts passed (change in x, change in y)
         xpos = xpos + $1
-        ypos = ypos + $1
+        ypos = ypos + $2
         setPos()
     }
 
