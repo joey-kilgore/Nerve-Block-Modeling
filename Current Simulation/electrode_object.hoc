@@ -10,6 +10,7 @@ begintemplate Electrode
     public setDur
     public setDel
     public setPos
+    public movPos
     public printData
 
     public electrodeModel   // the model is public knowledge
@@ -96,10 +97,22 @@ begintemplate Electrode
 
     proc setPos(){ local i
         // do the calculation for all distances to the compartments ahead of time
+        // optionally can be used to set the new position of the electrodes by passing x and y as arguments
+        if(numarg() == 2){
+            xpos = $1
+            ypos = $2
+        }
         ext = new Vector(axontotal,0)
         for i=0, axontotal-1{
             ext.x[i] = (rhoe)/(4*PI*sqrt((ypos^2)+((xpos-x.x[i])^2)))*1e-6	//nV//
         }
+    }
+
+    proc movPos(){
+        // change to pos by the amounts passed (change in x, change in y)
+        xpos = xpos + $1
+        ypos = ypos + $1
+        setPos()
     }
 
     proc setAmp(){
