@@ -11,6 +11,7 @@ begintemplate Electrode
     public setDel
     public setPos
     public movPos
+    public oppPolarity
     public printData
 
     public electrodeModel   // the model is public knowledge
@@ -25,6 +26,8 @@ begintemplate Electrode
     index = -1
     xpos = -1
     ypos = -1
+    public polarity
+    public amplitude
     
     proc init(){
         // electrodes are created with 4 parameters
@@ -32,7 +35,8 @@ begintemplate Electrode
         modelNum = $2   // model type 0=Sine, 1=Triangle, 2=Square, 3=Sine Ramp, 4=DCSine, 5=DC
         xpos = $3
         ypos = $4
-        
+        polarity = 1
+
         if (modelNum==0){
             electrodeSection{
                 electrodeModel = new IClampSine(.5)
@@ -42,6 +46,7 @@ begintemplate Electrode
                 electrodeModel.del = 0
                 electrodeModel.dur = 300
             }
+            amplitude = 1000000
         }else if (modelNum==1){
             electrodeSection{
                 electrodeModel = new IClampTri(.5)
@@ -51,6 +56,7 @@ begintemplate Electrode
                 electrodeModel.del = 0
                 electrodeModel.dur = 300
             }
+            amplitude = 1000000
         }else if (modelNum==2){
             electrodeSection{
                 electrodeModel = new Bi_trainIClamp(.5)
@@ -62,6 +68,7 @@ begintemplate Electrode
                 electrodeModel.postanod_dur = 0
                 electrodeModel.high_amp = -300000
             }
+            amplitude = -300000
         }else if (modelNum==3){
             electrodeSection{
                 electrodeModel = new SineRamp(.5)             
@@ -77,6 +84,7 @@ begintemplate Electrode
                 electrodeModel.postanod_dur = 0
                 electrodeModel.high_amp = -300000
             }
+            amplitude = -300000
         }
         setPos()
     }
@@ -118,15 +126,19 @@ begintemplate Electrode
     proc setAmp(){
         // sets the amplitude of the electrode depending on the electrode type
         // the amplitude in nA is passed as the only parameter
+        if(numarg() == 1){
+            amplitude = $1 * polarity
+        }
+        
         if (modelNum==0){   // sine electrode
-            electrodeModel.amp = $1
+            electrodeModel.amp = amplitude
         }else if(modelNum==1){  // tri electrode
-            electrodeModel.amp = $1
+            electrodeModel.amp = amplitude
         }else if(modelNum==2){  // square electrode
-            electrodeModel.high_amp = $1
-            electrodeModel.low_amp  = $1
+            electrodeModel.high_amp = amplitude
+            electrodeModel.low_amp  = amplitude
         }else if(modelNum==5){  // DC electrode
-            electrodeModel.high_amp = $1
+            electrodeModel.high_amp = amplitude
         }
     }
 
@@ -173,6 +185,13 @@ begintemplate Electrode
         }else if(modelNum==5){  // DC electrode
             electrodeModel.del = $1
         }
+    }
+
+    proc oppPolarity(){
+        // flips the polarity of the electrode (neg becomes pos, pos becomes neg)
+        polarity = polarity*-1
+        amplitude = amplitude * -1
+        setAmp()    // sets the amplitude to the new value based on the new polarity
     }
 
     proc printData(){
