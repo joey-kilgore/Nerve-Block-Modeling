@@ -30,14 +30,14 @@ def hocSetup():
 
 def setHocTimeStep(frequency):
     # Set time step value to be 1/12 the period, or smaller
-    if frequency <= 10:
-        h('steps_per_ms = 200')
-        h('dt = .005')
-        print('dt,.005')
-    else:
-        h('steps_per_ms = 1000')
-        h('dt = .001')
-        print('dt,.001')
+    # if frequency <= 10:
+    #     h('steps_per_ms = 200')
+    #     h('dt = .005')
+    #     print('dt,.005')
+    # else:
+    #     h('steps_per_ms = 1000')
+    #     h('dt = .001')
+    #     print('dt,.001')
     # Optional time step setting for faster less accurate trials (good for the BT tests which can run for a long time)
     # if frequency <= 15:
     #     h('steps_per_ms = 200')
@@ -55,6 +55,11 @@ def setHocTimeStep(frequency):
     #     h('steps_per_ms = 1000')
     #     h('dt = .001')
     #     print('dt,.001')
+
+    # Set dt to exactly 1/12 the period
+    setSteps = 'steps_per_ms = ' + str(12 * frequency / 1000)
+    h(setSteps)
+    h('dt = 1/steps_per_ms')
 
 def setTotalTime(freq):
     # this is used within the activation threshold search
@@ -249,4 +254,4 @@ def activationTest():
         h(command)
 
 hocSetup()
-activationTest()
+sineWaveTest()
