@@ -182,6 +182,15 @@ def squareWaveTest():
     # select the square wave electrode
     h('waveform_sel(0)')
     # Set the square wave params to match the frequency
+
+    for i in range(3,10,1):
+        print('FREQUENCY,'+str(i*1000))
+        frequency = i
+        setSquareWaveParams(frequency)
+        setHocTimeStep(i)
+        command = 'findThreshold(200000,700000,0,10,50,.1,1,1000)'
+        h(command)
+
      # Find 10kHz Block
     print('FREQUENCY,'+str(10000))
     frequency = 10
@@ -193,7 +202,7 @@ def squareWaveTest():
     frequency = 60
     setSquareWaveParams(frequency)
     setHocTimeStep(60)
-    h('block60kHz = findThreshold(100000,1000000,0,10,50,.1,1,1000)')
+    h('block60kHz = findThreshold(300000,1500000,0,10,50,.1,1,1000)')
     block10 = h.block10kHz
     block60 = h.block60kHz
 
@@ -202,8 +211,8 @@ def squareWaveTest():
         frequency = i
         setSquareWaveParams(frequency)
         setHocTimeStep(i)
-        minAmp = (block60-block10)/50000*i*1000+(block10-(block60-block10)/(50000)) - 100000
-        maxAmp = minAmp + 200000
+        minAmp = (block60-block10)/50000*i*1000+(block10-(block60-block10)/(50000)) - 200000
+        maxAmp = minAmp + 400000
         print("MIN AMP,"+str(minAmp))
         print("MAX AMP,"+str(maxAmp))
         command = 'findThreshold('+str(minAmp)+','+str(maxAmp)+',0,10,50,.1,1,1000)'
