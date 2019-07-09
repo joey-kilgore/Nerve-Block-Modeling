@@ -12,7 +12,7 @@ my_file = os.path.join(THIS_FOLDER, 'WaveformComparisonExperiment.py')
 procs = []
 numProcesses = 5
 rangePerThread = 2000
-for i in range(numProcesses):
+for i in [1,3,5,7,8]:
     argList = [str(i)]
     proc = subprocess.Popen(['python', my_file] + argList)
     procs.append(proc)
