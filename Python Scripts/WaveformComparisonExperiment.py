@@ -57,7 +57,7 @@ def setHocTimeStep(frequency):
     #     print('dt,.001')
 
     # Set dt to exactly 1/12 the period
-    setSteps = 'steps_per_ms = ' + str(12 * frequency / 1000)
+    setSteps = 'steps_per_ms = ' + str(12 * frequency)
     h(setSteps)
     h('dt = 1/steps_per_ms')
 
@@ -91,18 +91,27 @@ def sineWaveTest():
     h('sinestim()')
     print("SINE WAVE")
 
+    # Find <10kHz Block
+    for i in range(3,10,1):
+        print('FREQUENCY,'+str(i*1000))
+        h('freq = '+str(i*1000))
+        h('sinestim()') # make sure to update the electrode parameters
+        setHocTimeStep(i)   # dont forget to make sure an appropriate time step is used!
+        command = 'findThreshold(101000,600000,0,10,50,.1,1,1000)'
+        h(command)
+
     # Find 10kHz Block
     print('FREQUENCY,'+str(10000))
     h('freq = '+str(10000))
     h('sinestim()') # make sure to update the electrode parameters
     setHocTimeStep(10)  # dont forget to make sure an appropriate time step is used!
-    h('block10kHz = findThreshold(301000,600000,0,10,50,.1,1,1000)')
+    h('block10kHz = findThreshold(301000,800000,0,10,50,.1,1,1000)')
     # Find 60kHz Block
     print('FREQUENCY,'+str(60000))
     h('freq = '+str(60000))
     h('sinestim()') # make sure to update the electrode parameters
     setHocTimeStep(60)  # dont forget to make sure an appropriate time step is used!
-    h('block60kHz = findThreshold(501000,800000,0,10,50,.1,1,1000)')
+    h('block60kHz = findThreshold(401000,1300000,0,10,50,.1,1,1000)')
 
     # using these two block values we can guess at the BT in between 10 and 60kHz
     block10 = h.block10kHz
@@ -113,8 +122,8 @@ def sineWaveTest():
         h('freq = '+str(i*1000))
         h('sinestim()') # make sure to update the electrode parameters
         setHocTimeStep(i)   # dont forget to make sure an appropriate time step is used!
-        minAmp = (block60-block10)/50000*i*1000+(block10-(block60-block10)/(50000)) - 100000
-        maxAmp = minAmp + 200000
+        minAmp = (block60-block10)/50000*i*1000+(block10-(block60-block10)/(50000)) - 200000
+        maxAmp = minAmp + 400000
         print("MIN AMP,"+str(minAmp))
         print("MAX AMP,"+str(maxAmp))
         command = 'findThreshold('+str(minAmp)+','+str(maxAmp)+',0,10,50,.1,1,1000)'
@@ -134,12 +143,22 @@ def triWaveTest():
     h('tristim()')  # make sure to update the electrode parameters
     print("TRIANGLE WAVE")
 
+     # Find <10kHz Block
+    for i in range(3,10,1):
+        print('FREQUENCY,'+str(i*1000))
+        h('freq = '+str(i*1000))
+        h('tristim()') # make sure to update the electrode parameters
+        setHocTimeStep(i)   # dont forget to make sure an appropriate time step is used!
+        command = 'findThreshold(301000,1000000,0,10,50,.1,1,1000)'
+        h(command)
+
+
     # Find 10kHz Block
     print('FREQUENCY,'+str(10000))
     h('freq = '+str(10000))
     h('tristim()')
     setHocTimeStep(10)  # dont forget to make sure an appropriate time step is used!
-    h('block10kHz = findThreshold(500000,1000000,0,10,50,.1,1,1000)')
+    h('block10kHz = findThreshold(401000,1000000,0,10,50,.1,1,1000)')
     # Find 60kHz Block
     print('FREQUENCY,'+str(60000))
     h('freq = '+str(60000))
@@ -156,8 +175,8 @@ def triWaveTest():
         h('freq = '+str(i*1000))
         h('tristim()')  # make sure to update the electrode parameters
         setHocTimeStep(i)   # dont forget to make sure an appropriate time step is used!
-        minAmp = (block60-block10)/50000*i*1000+(block10-(block60-block10)/(50000)) - 100000
-        maxAmp = minAmp + 200000
+        minAmp = (block60-block10)/50000*i*1000+(block10-(block60-block10)/(50000)) - 200000
+        maxAmp = minAmp + 400000
         print("MIN AMP,"+str(minAmp))
         print("MAX AMP,"+str(maxAmp))
         command = 'findThreshold('+str(minAmp)+','+str(maxAmp)+',0,10,50,.1,1,1000)'
@@ -263,4 +282,4 @@ def activationTest():
         h(command)
 
 hocSetup()
-sineWaveTest()
+triWaveTest()
