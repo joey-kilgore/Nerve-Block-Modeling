@@ -24,7 +24,7 @@ proc turnOnCustomElectrodes(){ local i
     }
     customElectrodes = 1
 }
-proc turnOffCustomElectrdoes(){ local i
+proc turnOffCustomElectrodes(){ local i
     // this proc turns off the custom electrode and turns on the sine electrode
     //  see the advanceproc.hoc file to see why this works
     wavesel[1] = 1  // turn on sine electrode
@@ -107,7 +107,7 @@ proc setAmplitudeElectrodes(){
 proc outputElectrodeSetup(){local tempElectrode
     tempElectrode = firstElectrodeIndex
     while (tempElectrode != -1) {       // while there are still more electrodes
-        electrodes[tempElectrode].printData()
+        electrodes[tempElectrode].printDataAdvanced()
         print " "
         tempElectrode = availableElectrodes[tempElectrode]  // move to the next electrode
     }

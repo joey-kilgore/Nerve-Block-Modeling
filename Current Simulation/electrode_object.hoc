@@ -12,7 +12,14 @@ begintemplate Electrode
     public setPos
     public movPos
     public oppPolarity
-    public printData
+
+    public getAmp       // getters for various electrode params
+    public getFreq
+    public getDur
+    public getDel
+
+    public printData    // output data
+    public printDataAdvanced
 
     public electrodeModel   // the model is public knowledge
 
@@ -193,10 +200,89 @@ begintemplate Electrode
         amplitude = amplitude * -1
         setAmp()    // sets the amplitude to the new value based on the new polarity
     }
+    
+    func getAmp(){
+        // getter for amp value (nA)
+        if (modelNum==0){   // sine electrode
+            return electrodeModel.amp
+        }else if(modelNum==1){  // tri electrode
+            return electrodeModel.amp
+        }else if(modelNum==2){  // square electrode
+            return electrodeModel.high_amp
+        }else if(modelNum==5){  // DC electrode
+            return electrodeModel.high_amp
+        }
+        return -1   // if unknown modelNum
+    }
+
+    func getFreq(){
+        // getter for freq value (Hz)
+        if (modelNum==0){   // sine Electrode
+            return electrodeModel.f
+        }else if(modelNum==1){  // tri electrode
+            return electrodeModel.freq
+        }else if(modelNum==2){  // square electrode
+            // the frequency must be calculated for square electrodes
+            return 1/(electrodeModel.cathod_dur*2/1000)
+        }else if(modelNum==5){  // DC electrode
+            // print "ERROR: CAN NOT GET FREQUENCY OF DC ELECTRODE"
+            return 0
+        }
+        return -1   // if unknown modelNum
+    }
+
+    func getDur(){
+        // getter for duration value (ms)
+        if (modelNum==0){   // sine Electrode
+            return electrodeModel.dur
+        }else if(modelNum==1){  // tri electrode
+            return electrodeModel.dur
+        }else if(modelNum==2){  // square electrode
+            return electrodeModel.train
+        }else if(modelNum==5){  // DC electrode
+            return electrodeModel.train
+        }
+        return -1   // if unknown modelNum
+    }
+
+    func getDel(){
+        // getter for delay value (ms)
+        if (modelNum==0){   // sine Electrode
+            return electrodeModel.del
+        }else if(modelNum==1){  // tri electrode
+            return electrodeModel.del
+        }else if(modelNum==2){  // square electrode
+            return electrodeModel.del
+        }else if(modelNum==5){  // DC electrode
+            return electrodeModel.del
+        }
+        return -1   // if unknown modelNum
+    }
+
+    func getXPos(){
+        // getter for x position
+        return xpos
+    }
+
+    func getYPos(){
+        // getter for y position
+        return ypos
+    }
 
     proc printData(){
         print "Index, ", index
         print "Electrode Model, ", electrodeModel
         print "xpos, ypos, ", xpos, ",", ypos
+    }    
+    
+    proc printDataAdvanced(){
+        print "Index, ", index
+        print "Electrode Model, ", electrodeModel
+        print "xpos, ypos, ", getXPos(), ",", getYPos()
+        print "Amplitude, ", getAmp()
+        print "Frequency, ", getFreq()
+        print "Duration, ", getDur()
+        print "Delay, ", getDel()
+
     }
 endtemplate Electrode
