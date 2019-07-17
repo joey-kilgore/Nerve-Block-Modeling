@@ -1,0 +1,12 @@
+MRG Freq-Dep 10um
+Electrode 1mm from center node (50)
+square wave
+amplitude, 423437.5nA (1x block threshold)
+(frequency, 10kHz)
+Cathodic duration, .05ms
+post cathodic duration, 0ms
+anodic duration, .05ms
+post anodic duration, 0ms
+delay, 10ms
+duration, 300ms
+dt = .005ms

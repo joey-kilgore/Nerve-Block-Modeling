@@ -1,0 +1,8 @@
+MRG Freq-Dep 10um
+Electrode 1mm from center node (50)
+Sine wave
+amplitude, 564843.75nA (1x block threshold)
+frequency, 10kHz
+delay, 10ms
+duration, 300ms
+dt = .005ms
