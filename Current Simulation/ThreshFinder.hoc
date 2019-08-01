@@ -16,11 +16,6 @@ proc setStim(){
     stimClamp.dur=$3
 }
 
-// the initial setup has the simclamp set with an amplitude of 10nA, a delay of 40ms
-//  and a durationg of .1ms
-setStim(10, 40, .1)
-
-
 proc setAmps(){
     // Sets blocking electrode amperages to proper levels, depending on waveform and
     //  configuration, based on two parameters.  Param 1 is the amplitude of the first
@@ -342,9 +337,9 @@ proc setInitThreshParams(){
     res = 1000  // resolution
     ap_thresh = -10 // threshold for AP
 
-    stimamp = 10    // test stim amp
-    stimdur = .1    // test stim duration
-    stimdel = 50    // test stim delay
+    stimAmp = 10    // test stim amp
+    stimDur = .1    // test stim duration
+    stimDel = 50    // test stim delay
 
     anode_coeff = 1 //anodic biphasic coefficient
 
@@ -354,6 +349,8 @@ proc setInitThreshParams(){
     lower = 0   // bounds and search values are not
     upper = 0   //  set initially
     level = 0
+    
+    setStim(stimAmp, stimDel, stimDur)  // set the stim values to the ones shown
 }
 
 proc drawThreshFinder(){
@@ -367,9 +364,9 @@ proc drawThreshFinder(){
     xpanel()
 
     xpanel("Test Pulse Stimulus Parameters")
-    xpvalue("Stimulus amperage (nA): ", &stimamp)
-    xpvalue("Stimulus delay (ms): ", &stimdel)
-    xpvalue("Stimulus duration (ms): ", &stimdur)
+    xpvalue("Stimulus amperage (nA): ", &stimAmp)
+    xpvalue("Stimulus delay (ms): ", &stimDel)
+    xpvalue("Stimulus duration (ms): ", &stimDur)
     xbutton("Update stimulus values", "setStim(stimamp, stimdel, stimdur)")
     xpanel()
 
