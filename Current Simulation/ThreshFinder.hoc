@@ -375,7 +375,7 @@ proc drawThreshFinder(){
     xpanel()
 
     xpanel("Go!")
-    xbutton("Find threshold", "findThreshold(lowB, highB, ap_thresh, stimamp, stimdel, stimdur, anode_coeff, res)")
+    xbutton("Find threshold", "findThreshold(lowB, highB, ap_thresh, stimAmp, stimDel, stimDur, anode_coeff, res)")
     xbutton("Stop", "stopRun()")
     xcheckbox("Efficient search (will not record # of initial spikes)", &efficientState)
     xpvalue("Number of known Init spikes (for efficient search) : ", &knownSpikes)
