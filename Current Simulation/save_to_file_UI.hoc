@@ -1,7 +1,7 @@
 // Select options for saving data to files with a GUI 
 
 // create the array to hold whether the checkboxes are selected
-double valueToSaveSelected[9] // initialized to 0 (False)
+double valueToSaveSelected[12] // initialized to 0 (False)
 strdef filePathMGate
 strdef filePathHGate
 strdef filePathVoltage
@@ -11,6 +11,9 @@ strdef filePathIK
 strdef filePathIL
 strdef filePathMPGate
 strdef filePathINaP
+strdef filePathMYSA
+strdef filePathFLUT
+strdef filePathSTIN
 
 // Creating the file objects for each selection
 objref fileMGate    // Checkbox 0
@@ -20,8 +23,11 @@ objref fileSGate    // Checkbox 3
 objref fileINa      // Checkbox 4
 objref fileIK       // Checkbox 5
 objref fileIL       // Checkbox 6
-objref fileMPGate    // checkbox 7
+objref fileMPGate   // checkbox 7
 objref fileINaP     // Checkbox 8
+objref fileMYSA     // Checkbox 9
+objref fileFLUT     // Checkbox 10
+objref fileSTIN     // Checkbox 11
 
 // Creating the VBox for all the components
 objref saveValueToFileVBox
@@ -48,6 +54,9 @@ proc DrawSaveFileVBox(){
     xcheckbox("iL", &valueToSaveSelected[6], "inputFilePath(6)")   // checkbox to save iL
     xcheckbox("mp gate", &valueToSaveSelected[7], "inputFilePath(7)")   // checkbox to save n gate values
     xcheckbox("iNaP", &valueToSaveSelected[8], "inputFilePath(8)")   // checkbox to save iNaP
+    xcheckbox("MYSA", &valueToSaveSelected[9], "inputFilePath(9)")   // checkbox to save MYSA
+    xcheckbox("FLUT", &valueToSaveSelected[10], "inputFilePath(10)")   // checkbox to save FLUT
+    xcheckbox("STIN", &valueToSaveSelected[11], "inputFilePath(11)")   // checkbox to save STIN
 
     xbutton("Commit Selection", "commitFileSelect()")   // commit selection actually creates the file objects  
     xbutton("Close Files", "closeFiles()")  // allows the user to close the file at any point to open it and view
@@ -70,9 +79,12 @@ proc enterFileDirectory(){
     sprint(filePathIL, "%s%s", direc, "IL.csv")
     sprint(filePathMPGate, "%s%s", direc, "MPGate.csv")
     sprint(filePathINaP, "%s%s", direc, "INaP.csv")
+    sprint(filePathMYSA, "%s%s", direc, "MYSA.csv")
+    sprint(filePathFLUT, "%s%s", direc, "FLUT.csv")
+    sprint(filePathSTIN, "%s%s", direc, "STIN.csv")
 
     // check all check boxes
-    for i=0, 8 {
+    for i=0, 11 {
         valueToSaveSelected[i] = 1
     }
 
@@ -83,23 +95,18 @@ proc enterFileDirectory(){
 // Gets the file path when a user selected a value to save
 proc inputFilePath(){
     selectedValue = $1
-    if(selectedValue == 0) string_dialog("Enter path for m gate file: ", filePathMGate)
-    
+    if(selectedValue == 0) string_dialog("Enter path for m gate file: ", filePathMGate)    
     if(selectedValue == 1) string_dialog("Enter path for h gate file: ", filePathHGate)
-    
     if(selectedValue == 2) string_dialog("Enter path for voltage file: ", filePathVoltage)
-    
     if(selectedValue == 3) string_dialog("Enter path for s gate file: ", filePathSGate)
-    
     if(selectedValue == 4) string_dialog("Enter path for iNa file: ", filePathINa)
-    
     if(selectedValue == 5) string_dialog("Enter path for iK file: ", filePathIK)
-    
     if(selectedValue == 6) string_dialog("Enter path for iL file: ", filePathIL)
-
     if(selectedValue == 7) string_dialog("Enter path for mp gate file: ", filePathMPGate)
-
     if(selectedValue == 8) string_dialog("Enter path for iNaP file: ", filePathINaP)
+    if(selectedValue == 9) string_dialog("Enter path for MYSA file: ", filePathMYSA)
+    if(selectedValue == 10) string_dialog("Enter path for FLUT file: ", filePathFLUT)
+    if(selectedValue == 11) string_dialog("Enter path for STIN file: ", filePathSTIN)
 }
 
 
@@ -176,6 +183,30 @@ proc commitFileSelect(){
         // Open the file (set to append)
         fileINaP.aopen()
     }
+
+    // the MYSA was selected
+    if(valueToSaveSelected[9] == 1){
+        // Create the fileMYSA file object
+        fileMYSA = new File(filePathMYSA)
+        // Open the file (set to append)
+        fileMYSA.aopen()
+    }
+
+    // the FLUT was selected
+    if(valueToSaveSelected[10] == 1){
+        // Create the fileFLUT file object
+        fileFLUT = new File(filePathFLUT)
+        // Open the file (set to append)
+        fileFLUT.aopen()
+    }
+
+    // the STIN was selected
+    if(valueToSaveSelected[11] == 1){
+        // Create the fileSTIN file object
+        fileSTIN = new File(filePathSTIN)
+        // Open the file (set to append)
+        fileSTIN.aopen()
+    }
 }
 
 proc closeFiles(){ 
@@ -222,6 +253,21 @@ proc closeFiles(){
     if(valueToSaveSelected[8] == 1) {
         fileINaP.close()   // the iNaP was selected   
         valueToSaveSelected[8] = 0
+    }
+
+    if(valueToSaveSelected[9] == 1) {
+        fileMYSA.close()   // the MYSA was selected   
+        valueToSaveSelected[9] = 0
+    }
+
+    if(valueToSaveSelected[10] == 1) {
+        fileFLUT.close()   // the FLUT was selected   
+        valueToSaveSelected[10] = 0
+    }
+    
+    if(valueToSaveSelected[11] == 1) {
+        fileSTIN.close()   // the STIN was selected   
+        valueToSaveSelected[11] = 0
     }
 }
 

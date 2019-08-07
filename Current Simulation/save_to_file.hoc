@@ -2,22 +2,17 @@
 // then calls the respective append to file procs for each value
 proc saveValuesToFile(){
     if(valueToSaveSelected[0] == 1) appendNodeMGateToFile()
-    
     if(valueToSaveSelected[1] == 1) appendNodeHGateToFile()
-    
     if(valueToSaveSelected[2] == 1) appendNodeVoltageToFile()
-    
     if(valueToSaveSelected[3] == 1) appendNodeSGateToFile()
-
     if(valueToSaveSelected[4] == 1) appendNodeINaToFile()
-
     if(valueToSaveSelected[5] == 1) appendNodeIKToFile()
-
     if(valueToSaveSelected[6] == 1) appendNodeILToFile()
-
     if(valueToSaveSelected[7] == 1) appendNodeMPGateToFile()
-
     if(valueToSaveSelected[8] == 1) appendNodeINaPToFile()
+    if(valueToSaveSelected[9] == 1) appendMYSAToFile()
+    if(valueToSaveSelected[10] == 1) appendFLUTToFile()
+    if(valueToSaveSelected[11] == 1) appendSTINToFile()
 }
 
 // append the voltages of all nodes to file
@@ -143,3 +138,39 @@ proc appendNodeINaPToFile(){
     // put a new line at the end of the list
     fileINaP.printf("\n")
 } 
+
+proc appendMYSAToFile(){
+    // print the time
+    fileMYSA.printf("%f,", t)
+
+    for i=0, paranodes1-1 {
+        // Print the MYSA voltage to file using a comma seperator
+        fileMYSA.printf("%f,", MYSA[i].v)
+    }
+    // put a new line at the end of the list
+    fileMYSA.printf("\n")
+}
+
+proc appendFLUTToFile(){
+    // print the time
+    fileFLUT.printf("%f,", t)
+
+    for i=0, paranodes2-1 {
+        // Print the FLUT voltage to file using a comma seperator
+        fileFLUT.printf("%f,", FLUT[i].v)
+    }
+    // put a new line at the end of the list
+    fileFLUT.printf("\n")
+}
+
+proc appendSTINToFile(){
+    // print the time
+    fileSTIN.printf("%f,", t)
+
+    for i=0, axoninter-1 {
+        // Print the STIN voltage to file using a comma seperator
+        fileSTIN.printf("%f,", STIN[i].v)
+    }
+    // put a new line at the end of the list
+    fileSTIN.printf("\n")
+}
