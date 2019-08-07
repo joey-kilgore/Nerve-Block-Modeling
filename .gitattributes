@@ -1,0 +1,4 @@
+# Tell Github to recognize languages it doesn't normally
+*.mod linguist-language=NMODL
+*.hoc linguist-language=HOC
+*.ses linguist-language=HOC
