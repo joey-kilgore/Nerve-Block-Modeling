@@ -2,6 +2,7 @@ import sys
 import subprocess
 import time
 import math
+import consts
 
 def roundDownToRes(num, res):
     return res * math.floor(num/res)
@@ -21,7 +22,7 @@ for i in range(numProcesses):
     upperBound = roundDownToRes((maxBound - minBound)/numProcesses * (i+1), resolution) + minBound
     lowerBound = roundUpToRes((maxBound - minBound)/numProcesses * i, resolution) + minBound
     argList = [str(lowerBound), str(upperBound), str(resolution)]
-    proc = subprocess.Popen(['python', '"C:/Users/Joey/Desktop/Stuff/Code/Nerve-Block-Modeling/Python Scripts/RunHoc.py"'] + argList)
+    proc = subprocess.Popen(['python', consts.RUNHOC_PY] + argList)
     procs.append(proc)
 
 

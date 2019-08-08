@@ -19,8 +19,8 @@ h = neuron.hoc.HocObject()
 def hocSetup():
     global processId
     # Load NEURON with all the models and procedures normally available
-    h('nrn_load_dll("L:/Work/GithubRepos/NEURON/Current Simulation/models/nrnmech.dll")')
-    h('load_file("L:/Work/GithubRepos/NEURON/Current Simulation/CNOW_run.hoc")')
+    h('nrn_load_dll("{}")'.format(consts.NRNMECH_DLL))
+    h('load_file("{}")'.format(consts.CNOW_RUN_HOC))
     # Fiber diameter varies across each process
     setDiam = 'changeDiam(' + str(processId) + ')'
     print(setDiam)

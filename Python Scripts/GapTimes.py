@@ -13,8 +13,8 @@ print('GAP TIME TEST')
 
 h = neuron.hoc.HocObject()
 
-h('nrn_load_dll("C:/Users/Joey/Desktop/Stuff/Code/Nerve-Block-Modeling/Current Simulation/models/nrnmech.dll")')
-h('load_file("C:/Users/Joey/Desktop/Stuff/Code/Nerve-Block-Modeling/Current Simulation/CNOW_run.hoc")')
+h('nrn_load_dll("{}")'.format(consts.NRNMECH_DLL))
+h('load_file("{}")'.format(consts.CNOW_RUN_HOC))
 
 dcAmp = -600000
 freq = 10000
