@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # First email input is needed to send the text to the user
 # The text is sent by using email, and it is assumed the user has a verizon phone number
 # Note that raw_input was renamed to input in Python 3

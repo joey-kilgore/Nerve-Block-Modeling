@@ -1,5 +1,5 @@
+#!/usr/bin/env python3
 # GnabarMultiThread runs multiple simulations concurently for collecting data
-
 import sys
 import subprocess
 import time

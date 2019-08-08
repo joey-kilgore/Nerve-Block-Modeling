@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # This is the script instantiated from GnabarMultiThread.py
 import sys
 import os

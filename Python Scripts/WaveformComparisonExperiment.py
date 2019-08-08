@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # This is the script instantiated from WaveformComparisonMultiThread.py
 import sys
 import os
