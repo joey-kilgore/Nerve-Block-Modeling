@@ -5,11 +5,11 @@ import subprocess
 import time
 import math
 import os
+import consts
 
 start = time.clock()
 
-THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
-my_file = os.path.join(THIS_FOLDER, 'GnabarExperiment.py')
+my_file = os.path.join(consts.PY_SCRIPTS_FOLDER, 'GnabarExperiment.py')
 
 procs = []
 numProcesses = 5

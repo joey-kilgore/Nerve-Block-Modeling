@@ -2,13 +2,13 @@
 import sys
 import os
 import neuron
+import consts
 
 # get the process id assigned by the master script (WaveformComparisonMultiThread.py)
 processId = int(sys.argv[1])
 
 # create a file for output
-THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
-my_file = os.path.join(THIS_FOLDER, 'file'+str(processId)+'.csv')
+my_file = os.path.join(consts.PY_SCRIPTS_FOLDER, 'file'+str(processId)+'.csv')
 
 # set standard output to the new file
 sys.stdout = open(my_file, 'w')

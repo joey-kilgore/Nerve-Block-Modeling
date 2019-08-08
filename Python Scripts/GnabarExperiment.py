@@ -2,12 +2,12 @@
 import sys
 import os
 import neuron
+import consts
 
 gnabarValue = round(float(sys.argv[1]),2)
 processId = int(sys.argv[2])
 
-THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
-my_file = os.path.join(THIS_FOLDER, 'file'+str(processId)+'.csv')
+my_file = os.path.join(consts.PY_SCRIPTS_FOLDER, 'file'+str(processId)+'.csv')
 
 sys.stdout = open(my_file, 'w')
 print('Gnabar value,' + str(gnabarValue))
