@@ -17,11 +17,15 @@ begintemplate Electrode
     public getFreq
     public getDur
     public getDel
+    public getXPos
+    public getYPos
+    public getModelNum
 
     public printData    // output data
     public printDataAdvanced
 
     public electrodeModel   // the model is public knowledge
+    public modelNum
 
     external axontotal  // external variables needed
     external rhoe       //  these are used during the distance calculation
@@ -267,6 +271,11 @@ begintemplate Electrode
     func getYPos(){
         // getter for y position
         return ypos
+    }
+
+    func getModelNum(){
+        // getter for modelNum
+        return modelNum
     }
 
     proc printData(){

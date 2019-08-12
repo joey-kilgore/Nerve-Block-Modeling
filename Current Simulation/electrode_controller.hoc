@@ -134,3 +134,52 @@ proc removeElectrode(){local indexToRemove, tempElectrode, tempPrev
     availableElectrodes[indexToRemove] = nextElectrodeIndex
     nextElectrodeIndex = indexToRemove
 }
+
+proc saveElectrodeConfig(){local tempElectrodeIndex, tempIndex, tempModelNum localobj configFile, tempElectrode 
+    // saves the electrode config to config.ses which contains the commands needed
+    //  to reload the current electrode config.
+    // Warning this will reorder your electrodes if you deleted and added electrodes while
+    //  building the current electrode config.
+    // First, create the config file
+    configFile = new File("config.ses")
+    configFile.aopen()
+    configFile.printf("turnOnCustomElectrodes()\n")
+
+    // Now we will go through each electrode in the current configuration and save
+    //  commands that will recreate each electrode
+    tempElectrodeIndex = firstElectrodeIndex
+    tempIndex = 0
+    while (tempElectrodeIndex != -1) {
+        tempElectrode = electrodes[tempElectrodeIndex]
+        configFile.printf("createElectrode(%d,%f,%f)\n", tempElectrode.getModelNum(), tempElectrode.getXPos(), tempElectrode.getYPos())
+
+        // Each model will have all of its respective parameters saved
+        tempModelNum = electrodes[tempElectrodeIndex].getModelNum()
+        if(tempModelNum == 0){  // sine electrode
+            configFile.printf("electrodes[%d].electrodeModel.amp=%f\n", tempIndex, tempElectrode.electrodeModel.amp)
+            configFile.printf("electrodes[%d].electrodeModel.f=%f\n", tempIndex, tempElectrode.electrodeModel.f)
+            configFile.printf("electrodes[%d].electrodeModel.offset=%f\n", tempIndex, tempElectrode.electrodeModel.offset)
+            configFile.printf("electrodes[%d].electrodeModel.del=%f\n", tempIndex, tempElectrode.electrodeModel.del)
+            configFile.printf("electrodes[%d].electrodeModel.dur=%f\n", tempIndex, tempElectrode.electrodeModel.dur)
+        }else if(tempModelNum == 1){    // tri electrode
+            configFile.printf("electrodes[%d].electrodeModel.amp=%f\n", tempIndex, tempElectrode.electrodeModel.amp)
+            configFile.printf("electrodes[%d].electrodeModel.freq=%f\n", tempIndex, tempElectrode.electrodeModel.freq)
+            configFile.printf("electrodes[%d].electrodeModel.offset=%f\n", tempIndex, tempElectrode.electrodeModel.offset)
+            configFile.printf("electrodes[%d].electrodeModel.del=%f\n", tempIndex, tempElectrode.electrodeModel.del)
+            configFile.printf("electrodes[%d].electrodeModel.dur=%f\n", tempIndex, tempElectrode.electrodeModel.dur)
+        }else if(tempModelNum == 2 || tempModelNum == 5){    // square electrode  
+            configFile.printf("electrodes[%d].electrodeModel.del=%f\n", tempIndex, tempElectrode.electrodeModel.del)
+            configFile.printf("electrodes[%d].electrodeModel.train=%f\n", tempIndex, tempElectrode.electrodeModel.train)
+            configFile.printf("electrodes[%d].electrodeModel.cathod_dur=%f\n", tempIndex, tempElectrode.electrodeModel.cathod_dur)
+            configFile.printf("electrodes[%d].electrodeModel.postcathod_dur=%f\n", tempIndex, tempElectrode.electrodeModel.postcathod_dur)
+            configFile.printf("electrodes[%d].electrodeModel.anod_dur=%f\n", tempIndex, tempElectrode.electrodeModel.anod_dur)
+            configFile.printf("electrodes[%d].electrodeModel.postanod_dur=%f\n", tempIndex, tempElectrode.electrodeModel.postanod_dur)
+            configFile.printf("electrodes[%d].electrodeModel.high_amp=%f\n", tempIndex, tempElectrode.electrodeModel.high_amp)
+            configFile.printf("electrodes[%d].electrodeModel.low_amp=%f\n", tempIndex, tempElectrode.electrodeModel.low_amp)
+            configFile.printf("electrodes[%d].electrodeModel.freq=%f\n", tempIndex, tempElectrode.electrodeModel.freq)
+        }
+        tempElectrodeIndex = availableElectrodes[tempElectrodeIndex]
+        tempIndex = tempIndex + 1 // Move to the next electrode position
+    }
+    configFile.close()
+}
