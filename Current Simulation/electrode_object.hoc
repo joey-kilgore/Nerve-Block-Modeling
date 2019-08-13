@@ -147,7 +147,7 @@ begintemplate Electrode
             electrodeModel.amp = amplitude
         }else if(modelNum==2){  // square electrode
             electrodeModel.high_amp = amplitude
-            electrodeModel.low_amp  = amplitude
+            electrodeModel.low_amp  = -1 * amplitude
         }else if(modelNum==5){  // DC electrode
             electrodeModel.high_amp = amplitude
         }
