@@ -2,3 +2,4 @@
 *.o
 *.dll
 .vscode/settings.json
+Current*Simulation/model/x86_64/
