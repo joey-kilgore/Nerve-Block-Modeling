@@ -367,7 +367,7 @@ proc drawThreshFinder(){
     xpvalue("Stimulus amperage (nA): ", &stimAmp)
     xpvalue("Stimulus delay (ms): ", &stimDel)
     xpvalue("Stimulus duration (ms): ", &stimDur)
-    xbutton("Update stimulus values", "setStim(stimamp, stimdel, stimdur)")
+    xbutton("Update stimulus values", "setStim(stimAmp, stimDel, stimDur)")
     xpanel()
 
     xpanel("Waveform Parameters")
