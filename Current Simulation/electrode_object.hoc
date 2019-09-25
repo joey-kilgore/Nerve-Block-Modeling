@@ -161,9 +161,9 @@ begintemplate Electrode
         }else if(modelNum==1){  // tri electrode
             electrodeModel.freq = $1
         }else if(modelNum==2){  // square electrode
-            electrodeModel.cathod_dur = 1/($1*1000*2)   // half period in ms
+            electrodeModel.cathod_dur = 1/($1/1000*2)   // half period in ms
             electrodeModel.postcathod_dur = 0
-            electrodeModel.anod_dur = 1/($1*1000*2)
+            electrodeModel.anod_dur = 1/($1/1000*2)
             electrodeModel.postanod_dur = 0
         }else if(modelNum==5){  // DC electrode
             print "ERROR: CAN NOT SET FREQUENCY OF DC ELECTRODE"
