@@ -4,7 +4,7 @@
 // Declaring the stimClamp that will generate the test pulse
 objref stimClamp
 // The test pulse will be generated at node 10
-node[10] stimClamp = new IClamp(.5)
+node[0] stimClamp = new IClamp(.5)
 proc setStim(){
     // setStim(amplitude (nA), delay(ms), duration(ms))
     // setStim sets the parameters of the test stimulus

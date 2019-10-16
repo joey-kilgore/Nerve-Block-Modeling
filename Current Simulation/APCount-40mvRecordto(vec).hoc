@@ -1,4 +1,4 @@
-access node[50]
+access node[0]
 objref apc
 apc = new APCount(0.5)
 objref apvec
