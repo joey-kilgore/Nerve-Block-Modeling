@@ -498,3 +498,51 @@ func findMaxGap(){ local dcAmp, hfAmp, freq, onset, gapTime, maxGap, minGap loca
 
     return minGap
 }
+
+func findMaxCarryover(){ local onset, gapTime, maxGap, minGap localobj testAP
+    // This will find the maximum time after high frequency is turned off that still blocks an AP
+    
+    // create the electrode setup
+    turnOnCustomElectrodes()    // this experiment uses custom electrodes
+    createElectrode(0,0,1000)   // electrodes[1] is a Sine electrode
+                                //  centered at x=0 and 1mm from the axon
+    // electrode parameters
+    electrodes[0].setDel(10)
+    electrodes[0].setDur(50)
+    electrodes[0].setFreq(10000)
+    electrodes[0].setAmp(700000)
+
+    // measure the onset from the high frequency
+    setStim(0,0,0)
+    APC_reset()
+    run()                   
+    onset = APC_getCount(0) // save the number of onset spikes
+
+    // setup objects for creating and measuring APs
+    node[0] testAP = new IClamp(.5)
+    testAP.dur = 0.1
+    testAP.amp = 10
+    APC_reset()     // reset the Action Potential Counters (APCs)
+
+    // begin search
+    maxGap = 30     // the largest gap will be at most 30ms
+    minGap = -5
+    tstop = 60 + maxGap
+    while(abs(maxGap-minGap)>.1){   // keep searching down to a resolution of <.1ms
+        gapTime = (maxGap + minGap)/2   // binary search between the max and min time
+        print "Testing gap,",gapTime
+        testAP.del = 60+gapTime    // set new delay of HF
+        APC_reset()
+        run()
+        if(APC_getCount(1) == onset){    // less onset than control
+            minGap = gapTime            // increase the gap time
+        }else{                         
+            maxGap = gapTime            // otherwise decrease gap time
+        }
+    }
+
+    // clean up simulation environment
+    removeElectrode(0)
+
+    return minGap
+}
