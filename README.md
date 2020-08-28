@@ -29,3 +29,24 @@ The code here is meant to be used as reference of premade code snippets for anal
 ## Wiki
 This stores the images for the wiki pages. It is HIGHLY recommended that you check out the [wiki pages](https://github.com/joey-kilgore/Nerve-Block-Modeling/wiki) to get a better understanding of the NEURON code base. 
 
+---
+# Related Works  
+The MRG model is main model being used in this repository and was originally described in  
+C. C. McIntyre, A. G. Richardson, and W. M. Grill, “Modeling the ex- citability of mammalian nerve fibers: Influence of afterpotentials on the recovery cycle,” J. Neurophysiol., vol. 87, pp. 995–1006, 2002.  
+
+The additional frequency-dependent membrane capacitance was described in  
+Howell B, Medina L E and Grill W M 2015 Effects of frequency-dependent membrane capacitance on neural excitability J. Neural Eng. 12 056015  
+*Special thanks to Dr. Grill and Dr. Medina for providing additional code and support.*  
+
+The sensory axon model is described in  
+Gaines, J. L., Finn, K. E., Slopsema, J. P., Heyboer, L. A., &amp; Polasek, K. H. (2018). A model of motor and sensory axon activation in the median nerve using surface electrical stimulation. Journal of Computational Neuroscience, 45(1), 29-43. doi:10.1007/s10827-018-0689-5  
+*Special thanks to Dr. Polasek for providing additional code and support.*  
+
+Previous works that have utilized this code base or contributed in some form or another  
+ - Ackermann, D. M., Bhadra, N., Gerges, M., &amp; Thomas, P. J. (2011). Dynamics and sensitivity analysis of high-frequency conduction block. Journal of Neural Engineering, 8(6), 065007. doi:10.1088/1741-2560/8/6/065007  
+ - Ackermann, D., Foldes, E., Bhadra, N., &amp; Kilgore, K. (2009). Effect of Bipolar Cuff Electrode Design on Block Thresholds in High-Frequency Electrical Neural Conduction Block. IEEE Transactions on Neural Systems and Rehabilitation Engineering, 17(5), 469-477. doi:10.1109/tnsre.2009.2034069  
+ - Bhadra, N., &amp; Kilgore, K. (2004). Direct Current Electrical Conduction Block of Peripheral Nerve. IEEE Transactions on Neural Systems and Rehabilitation Engineering, 12(3), 313-324. doi:10.1109/tnsre.2004.834205  
+ - Bhadra, N., Lahowetz, E. A., Foldes, S. T., &amp; Kilgore, K. L. (2007). Simulation of high-frequency sinusoidal electrical block of mammalian myelinated axons. Journal of Computational Neuroscience, 22(3), 313-326. doi:10.1007/s10827-006-0015-5  
+ - K. L. Kilgore and N. Bhadra, "High Frequency Mammalian Nerve Conduction Block: Simulations and Experiments," 2006 International Conference of the IEEE Engineering in Medicine and Biology Society, New York, NY, 2006, pp. 4971-4974, doi: 10.1109/IEMBS.2006.259254.  
+ - Miles, J. D., Kilgore, K. L., Bhadra, N., &amp; Lahowetz, E. A. (2007). Effects of ramped amplitude waveforms on the onset response of high-frequency mammalian nerve block. Journal of Neural Engineering, 4(4), 390-398. doi:10.1088/1741-2560/4/4/005  
+(Among others that will be added...)
