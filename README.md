@@ -2,7 +2,7 @@
 
 This code utilizes the NEURON program to create simulations of High Frequency Alternating Current (HFAC) blocking action potentials. The main models here are created from the MRG model. By creating simulations, millions of tests can be run one after another continously, allowing for testing of multiple different types of waveforms, on different fiber diameters, with different electrodes. Hopefully, this will allow us to get a better insight on the potential of HFAC nerve block.  
 Please see the [WIKI](https://github.com/joey-kilgore/Nerve-Block-Modeling/wiki) for instructions on how to use this code base!  
-
+Checkout YouTube Tutorial for this repository [Electrical-Nerve-Block-Modeling-Tutorial](https://www.youtube.com/playlist?list=PL-HiS65yepm4Jo8OU-ZKYyLbT7wxt7Kjr)
 
 # Folder Structure
 ---
