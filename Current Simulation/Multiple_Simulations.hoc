@@ -546,3 +546,50 @@ func findMaxCarryover(){ local onset, gapTime, maxGap, minGap localobj testAP
 
     return minGap
 }
+
+proc findFiringFreq(){local minFreq, maxFreq, freqInc, testAmp, testFreq, numAPs localobj APCVec 
+    // find the firing frequency over a range of frequencies and a given amplitude
+    // this will use any given wave
+    // See documentation for waveform number (custom electrode configuration)
+    // findFiringFreq(minFreq,maxFreq,freqInc,amplitude,waveform)
+    minFreq = $1
+    maxFreq = $2
+    freqInc = $3
+    testAmp = $4
+
+    // set square wave
+    turnOnCustomElectrodes()
+    createElectrode($5,0,1000)   // see documentation for waveform number
+    electrodes[0].setAmp(testAmp)
+    electrodes[0].setDel(10)
+    electrodes[0].setDur(500)
+
+    // setup for runs
+    setStim(0,0,0)
+    testFreq = minFreq
+
+    print "outputs given in order"
+    print "1. stimulation frequency"
+    print "2. action potential frequency"
+    print "This was at ", testAmp, "nA"
+    // check frequencies in increments of freqInc
+    while(testFreq<=maxFreq){
+        electrodes[0].setFreq(testFreq)
+        stdinit()
+        continuerun(100)    // run first 100ms
+                            // this should allow us to reach a stable firing rate
+
+        APC_reset() // reset out AP counters
+        APCVec = new Vector()
+        apcProximal.record(APCVec)
+        continuerun(500)    // run until a total of 500ms of simulation have occurred
+        numAPs = APC_getCount(1)
+        print testFreq, ", ", (numAPs*2.5)
+        for i=0, APCVec.size()-1{
+            print APCVec.x[i]
+        }
+        testFreq += freqInc
+    }
+    removeElectrode(0)
+    turnOffCustomElectrodes()
+}
