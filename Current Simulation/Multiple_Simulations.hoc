@@ -547,7 +547,7 @@ func findMaxCarryover(){ local onset, gapTime, maxGap, minGap localobj testAP
     return minGap
 }
 
-proc findFiringFreq(){local minFreq, maxFreq, freqInc, testAmp, testFreq, numAPs localobj APCVec 
+proc findFiringFreq(){local minFreq, maxFreq, freqInc, testAmp, testFreq, numAPs, elecType localobj APCVec 
     // find the firing frequency over a range of frequencies and a given amplitude
     // this will use any given wave
     // See documentation for waveform number (custom electrode configuration)
@@ -556,10 +556,20 @@ proc findFiringFreq(){local minFreq, maxFreq, freqInc, testAmp, testFreq, numAPs
     maxFreq = $2
     freqInc = $3
     testAmp = $4
+    elecType = $5
+    interuptedWave = 0
+
+    // additional work for doing an interrupted waveform
+    // This is specifically for varying frequencies of a square wave pulse
+    //  it will have a 50us pulse that has both cathode and anode (essentially a 2kHz pulse)
+    if(elecType == 6){
+        interuptedWave = 1
+        elecType = 2
+    }
 
     // set square wave
     turnOnCustomElectrodes()
-    createElectrode($5,0,1000)   // see documentation for waveform number
+    createElectrode(elecType,0,1000)   // see documentation for waveform number
     electrodes[0].setAmp(testAmp)
     electrodes[0].setDel(10)
     electrodes[0].setDur(500)
@@ -574,7 +584,22 @@ proc findFiringFreq(){local minFreq, maxFreq, freqInc, testAmp, testFreq, numAPs
     print "This was at ", testAmp, "nA"
     // check frequencies in increments of freqInc
     while(testFreq<=maxFreq){
-        electrodes[0].setFreq(testFreq)
+        if(interuptedWave == 0){
+            // uninterupted waveforms can use the setFreq() method
+            electrodes[0].setFreq(testFreq)
+        }else{
+            // interupted waveforms need the parts of the waveform set individually
+            //      +---+               +---+
+            // -----+   +   +-----------+   +   +--------
+            //          +---+               +---+
+            // ^ This is what the waveform will look like
+            stdinit()   // reset stops a seg fault
+            electrodes[0].electrodeModel.cathod_dur = 0.05
+            electrodes[0].electrodeModel.anod_dur = 0.05
+            dur = ((1/testFreq * 1000)-0.1)
+            electrodes[0].electrodeModel.postcathod_dur = 0
+            electrodes[0].electrodeModel.postanod_dur = dur
+        }
         stdinit()
         continuerun(100)    // run first 100ms
                             // this should allow us to reach a stable firing rate
