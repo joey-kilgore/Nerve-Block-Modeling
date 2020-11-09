@@ -618,3 +618,71 @@ proc findFiringFreq(){local minFreq, maxFreq, freqInc, testAmp, testFreq, numAPs
     removeElectrode(0)
     turnOffCustomElectrodes()
 }
+
+proc onsetDCSineBipolar(){ localobj apVector1, apVector2
+    // similar to onsetDCSine except this uses two electrodes
+
+    //dcblock = -155000 //10um freq-dep two cathodic
+    dcblock = -306000   //10um freq-dep one cathodic
+    sineblock = 270000  // 10um freq-dep bipolar
+                        //  with opp polarity on left side
+
+    turnOnCustomElectrodes()
+
+    // two DC electrodes
+    //createElectrode(5,-1150,1000)
+    //electrodes[0].setDel(10)
+    createElectrode(5,-1150,1000)
+    electrodes[0].setDel(10)
+
+    // bi polar sine electrode
+    createElectrode(0,-1150,1000)
+    electrodes[1].setFreq(10000)
+    electrodes[1].setDur(100)
+    electrodes[1].setAmp(sineblock)
+    electrodes[1].oppPolarity()
+
+    createElectrode(0,1150,1000)
+    electrodes[2].setFreq(10000)
+    electrodes[2].setDur(100) 
+    electrodes[2].setAmp(sineblock)
+
+    // setup AP recordings
+    APC_connect()
+    apVector1 = new Vector()
+    apVector2 = new Vector()
+    apcDistal.record(apVector1)
+    apcProximal.record(apVector2)
+
+    for(newDur=0; newDur<=10; newDur+=2){
+        print "DC Duration,", newDur
+        for (mult=0.2; mult<=1; mult+=.2){
+            dcdur = newDur
+            dcamp = dcblock*mult
+            sineonset = 10+dcdur
+
+            // set DC params
+            electrodes[0].setDur(dcdur)
+            //electrodes[1].setDur(dcdur)
+            electrodes[0].setAmp(dcamp)
+            //electrodes[1].setAmp(dcamp)
+
+            // set KHFAC params
+            electrodes[1].setDel(sineonset)
+            electrodes[2].setDel(sineonset)
+
+            tstop = 200
+            setStim(0,0,0)
+            run()
+            print dcamp, dcdur, sineonset
+            print "Distal (left)"
+            for i=0, apVector1.size()-1{
+                print apVector1.x[i]
+            }
+            print "Proximal (right)"
+            for i=0, apVector2.size()-1{
+                print apVector2.x[i]
+            }
+        }
+    }
+}
