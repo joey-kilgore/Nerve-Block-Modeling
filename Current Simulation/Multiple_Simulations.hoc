@@ -601,13 +601,18 @@ proc findFiringFreq(){local minFreq, maxFreq, freqInc, testAmp, testFreq, numAPs
             electrodes[0].electrodeModel.postanod_dur = dur
         }
         stdinit()
-        continuerun(100)    // run first 100ms
+        //continuerun(100)    // run first 100ms
                             // this should allow us to reach a stable firing rate
+                            // optionally comment this out to record the first 100ms
+                            //  WARNING: commenting this out will mean the firing freq
+                            //  is calculated incorrectly!
 
         APC_reset() // reset out AP counters
         APCVec = new Vector()
         apcProximal.record(APCVec)
-        continuerun(500)    // run until a total of 500ms of simulation have occurred
+        //continuerun(500)    // run until a total of 500ms of simulation have occurred
+        continuerun(300)    // optionally this can be set to run only 300ms
+                            // WARNING: setting to 300ms will mess up firing freq calc
         numAPs = APC_getCount(1)
         print testFreq, ", ", (numAPs*2.5)
         for i=0, APCVec.size()-1{
