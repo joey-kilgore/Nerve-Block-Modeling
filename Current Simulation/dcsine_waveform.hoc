@@ -1,24 +1,17 @@
+// DC Sine is a combination electrode that has a DC component and a Sinusoidal component
+// optionally this can be used to combine DC and KHFAC and was used to reduce the KHFAC onset
 
 //***************************************************************
 //  variables
 //***************************************************************
-
 /*Create and initialize sections and point processes*/
 create dcsineelec
 objref dcsineClmp
-
 dcsineClmp = new IDCSineClamp() 
 
 // Sine waveform boxes
 objref dcsineBox
 dcsineBox = new VBox()
-
-
-//***************************************************************
-//  procedures
-//***************************************************************
-
-
 
 //*********************************************************************
 //  sine waveform and their handling routines
@@ -38,7 +31,6 @@ sineonset = 110
 sinedur = 90
 
 proc dcsinebox_Vbox() {
-
 	dcsineBox.intercept(1)
 	xpanel("DC Values")
     xlabel("DC VALUES")
@@ -64,8 +56,6 @@ proc dcsine_panel(){
 	dcsinestim()
 }
 
-
-
 // update dcsine parameters for the different electrode types
 proc dcsinestim(){ local i
 	// one point source or FEM
@@ -83,52 +73,47 @@ proc dcsinestim(){ local i
 }
 
 proc dcsineadvance() {
-//		position_move()
+	a = 0
+	for (i=0;i<=axontotal-1;i=i+stinnum+5) {	
+		node[a].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i]*1e-6) //mV//
+		a = a+1
+	}
 
-		a = 0
-    	for (i=0;i<=axontotal-1;i=i+stinnum+5) {	
-    		node[a].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i]*1e-6) //mV//
-    		a = a+1
-    	}
+	b=0 
+	for (i=1;i<=axontotal-1;i=i+stinnum+5) {
+		MYSA[b].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i]*1e-6) //mV//
+		b=b+2
+	}
+	
+	c=0 
+	for (i=2;i<=axontotal-1;i=i+stinnum+5) {
+		FLUT[c].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i]*1e-6) //mV//
+		c=c+2
+	}
 
-    	b=0 
-    	for (i=1;i<=axontotal-1;i=i+stinnum+5) {
-    		MYSA[b].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i]*1e-6) //mV//
-    		b=b+2
-    	}
-    	
-		c=0 
-    	for (i=2;i<=axontotal-1;i=i+stinnum+5) {
-    		FLUT[c].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i]*1e-6) //mV//
-    		c=c+2
-    	}
-
-		for (j = 0;j<=stinnum-1;j=j+1) {
-			d=j 
-			for (i=3;i<=axontotal-1;i=i+stinnum+5) {
-    			STIN[d].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i+j]*1e-6) //mV//
-				d=d+stinnum
-			}
+	for (j = 0;j<=stinnum-1;j=j+1) {
+		d=j 
+		for (i=3;i<=axontotal-1;i=i+stinnum+5) {
+			STIN[d].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i+j]*1e-6) //mV//
+			d=d+stinnum
 		}
+	}
 
-    	k=1 
-    	for (i=9;i<=axontotal-2;i=i+stinnum+5) {
-    		FLUT[k].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i]*1e-6) //mV//
-    		k=k+2
-    	}
-    	
-		l=1
-    	for (i=10;i<=axontotal-2;i=i+stinnum+5) {
-    		MYSA[l].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i]*1e-6)
-    		l=l+2
-    	}
-
+	k=1 
+	for (i=9;i<=axontotal-2;i=i+stinnum+5) {
+		FLUT[k].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i]*1e-6) //mV//
+		k=k+2
+	}
+	
+	l=1
+	for (i=10;i<=axontotal-2;i=i+stinnum+5) {
+		MYSA[l].e_extracellular(0.5)=(dcsineClmp.i*ext1.x[i]*1e-6)
+		l=l+2
+	}
 }
 
 //***************************************************************
 //  main
 //***************************************************************
-
 dcsinebox_Vbox()
 dcsinestim()
-

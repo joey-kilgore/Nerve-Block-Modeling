@@ -1,11 +1,5 @@
 // monopolar, bipolar, tripolar point source electrodes
 
-//***************************************************************
-//  variables
-//***************************************************************
-
-
-
 // *******************************************************************************************
 // Create ext1, ext2, and ext3 to store the distance of the electrode from each compartment
 // *******************************************************************************************
@@ -15,11 +9,6 @@ objref ext1, ext2,ext3
 ext1=new Vector(axontotal,0)
 ext2=new Vector(axontotal,0)
 ext3=new Vector(axontotal,0)
-
-//***************************************************************
-//  procedures
-//***************************************************************
-
 
 // *******************************************************************************************
 // Initialize all the global variables associated with the point source electrodes
@@ -107,7 +96,6 @@ proc init_point_sources() {
 	state_dcsine = 0
 }
 
-
 // change_pos updates the distance of the electrode from each compartment
 proc change_pos(){
 	for i=0,axontotal-1 {
@@ -117,18 +105,9 @@ proc change_pos(){
 	}
 }
 
-
-
 //***************************************************************
 //  main
 //***************************************************************
 
 init_point_sources()
 change_pos()
-
-
-
-
-
-
-

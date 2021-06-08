@@ -42,46 +42,44 @@ unbalbox1 = new VBox()
 
 proc tiedbox_Vbox() {
 
-		tiedbox.intercept(1)
-		xpanel("Tied onset")
-		xvalue("Pulse Train Onset(ms)","onset1",1,"tied_val()",1)
-		xvalue("Pulse Train Duration(ms)","dur1",1,"tied_val()",1)
-		xpanel()
-		tiedbox.intercept(0)
+	tiedbox.intercept(1)
+	xpanel("Tied onset")
+	xvalue("Pulse Train Onset(ms)","onset1",1,"tied_val()",1)
+	xvalue("Pulse Train Duration(ms)","dur1",1,"tied_val()",1)
+	xpanel()
+	tiedbox.intercept(0)
 }
 
 proc indebox2_Vbox() {
 
-		indebox2.intercept(1)
-		xpanel("Independent Onset")
-		xvalue("Pulse Train Onset1(ms)","onset1",1,"call_procstim()",1)
-		xvalue("Pulse Train Onset2(ms)","onset2",1,"call_procstim()",1)
+	indebox2.intercept(1)
+	xpanel("Independent Onset")
+	xvalue("Pulse Train Onset1(ms)","onset1",1,"call_procstim()",1)
+	xvalue("Pulse Train Onset2(ms)","onset2",1,"call_procstim()",1)
 
-		xvalue("Pulse Train Duration1(ms)","dur1",1,"call_procstim()",1)
-		xvalue("Pulse Train Duration2(ms)","dur2",1,"call_procstim()",1)
+	xvalue("Pulse Train Duration1(ms)","dur1",1,"call_procstim()",1)
+	xvalue("Pulse Train Duration2(ms)","dur2",1,"call_procstim()",1)
 
-		xpanel()
-		indebox2.intercept(0)
+	xpanel()
+	indebox2.intercept(0)
 }
 
 proc indebox3_Vbox() {
 
-		indebox3.intercept(1)
-		xpanel("Independent Onset")
-		xvalue("Pulse Train Onset1(ms)","onset1",1,"call_procstim()",1)
-		xvalue("Pulse Train Onset2(ms)","onset2",1,"call_procstim()",1)
-		xvalue("Pulse Train Onset3(ms)","onset3",1,"call_procstim()",1)
-		xvalue("Pulse Train Duration1(ms)","dur1",1,"call_procstim()",1)
-		xvalue("Pulse Train Duration2(ms)","dur2",1,"call_procstim()",1)
-		xvalue("Pulse Train Duration3(ms)","dur3",1,"call_procstim()",1)
-		xpanel()
-		indebox3.intercept(0)
+	indebox3.intercept(1)
+	xpanel("Independent Onset")
+	xvalue("Pulse Train Onset1(ms)","onset1",1,"call_procstim()",1)
+	xvalue("Pulse Train Onset2(ms)","onset2",1,"call_procstim()",1)
+	xvalue("Pulse Train Onset3(ms)","onset3",1,"call_procstim()",1)
+	xvalue("Pulse Train Duration1(ms)","dur1",1,"call_procstim()",1)
+	xvalue("Pulse Train Duration2(ms)","dur2",1,"call_procstim()",1)
+	xvalue("Pulse Train Duration3(ms)","dur3",1,"call_procstim()",1)
+	xpanel()
+	indebox3.intercept(0)
 }
 
 
 proc Tied_onset(){
-
-
 	// unmap and uncheck independent Vboxes
 	state_inde = 0
 	indebox2.unmap()
@@ -95,7 +93,6 @@ proc Tied_onset(){
 }
 
 proc tied_val(){
-
 	onset2 = onset1
 	onset3 = onset1
 	dur2 = dur1
@@ -107,7 +104,6 @@ proc tied_val(){
 }
 	
 proc Inde_onset(){
-
 	// unmap and uncheck tied Vboxes
 	state_tied = 0
 	tiedbox.unmap()
@@ -375,26 +371,26 @@ proc unbal_val3(){
 // Pop up window for square wave
 proc Squarewave_Vbox(){
 
-		Squarewave.intercept(1)
-		
-		xpanel("Wave Form Parameters")
-		xvalue("Cathodic Duration(ms)", "cathod_dur",1,"call_procs(1)",1)
-		xvalue("Post Cathodic Duration(ms)","postCathod_dur",1,"call_procs(1)",1)
-		xvalue("Anodic Duration(ms)", "anod_dur",1,"call_procs(1)",1)
-		xvalue("Post Anodic Duration(ms)","postAnod_dur",1,"call_procs(1)",1)
-		xpanel()
+	Squarewave.intercept(1)
+	
+	xpanel("Wave Form Parameters")
+	xvalue("Cathodic Duration(ms)", "cathod_dur",1,"call_procs(1)",1)
+	xvalue("Post Cathodic Duration(ms)","postCathod_dur",1,"call_procs(1)",1)
+	xvalue("Anodic Duration(ms)", "anod_dur",1,"call_procs(1)",1)
+	xvalue("Post Anodic Duration(ms)","postAnod_dur",1,"call_procs(1)",1)
+	xpanel()
 
-		xpanel("")
-		xcheckbox("Tied Onset/Dur",&state_tied,"Tied_onset()")
-		xcheckbox("Independent Onset/Dur",&state_inde,"Inde_onset()")
-		xpanel()
+	xpanel("")
+	xcheckbox("Tied Onset/Dur",&state_tied,"Tied_onset()")
+	xcheckbox("Independent Onset/Dur",&state_inde,"Inde_onset()")
+	xpanel()
 
-		xpanel("")
-		xcheckbox("Balanced", &state_bal, "balance_proc()", 1)
-		xcheckbox("Unbalanced",&state_unbal,"unbalance_proc()",1)
-		xpanel()
+	xpanel("")
+	xcheckbox("Balanced", &state_bal, "balance_proc()", 1)
+	xcheckbox("Unbalanced",&state_unbal,"unbalance_proc()",1)
+	xpanel()
 
-		Squarewave.intercept(0)
+	Squarewave.intercept(0)
 }
 
 proc Squarewave_proc(){
@@ -451,47 +447,47 @@ proc squarestim(){
 
 proc squareadvance() {
 
-		a=0 
-		for (i=0;i<=axontotal-1;i=i+stinnum+5) {
-		
-			node[a].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6)+ (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6) //mV//
+	a=0 
+	for (i=0;i<=axontotal-1;i=i+stinnum+5) {
+	
+		node[a].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6)+ (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6) //mV//
 
-			a = a+1
-		}
-		b=0 
-		for (i=1;i<=axontotal-1;i=i+stinnum+5) {
-			MYSA[b].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6)+ (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6) //mV//
-		
-			b=b+2
-		}
-		c=0 
-		for (i=2;i<=axontotal-1;i=i+stinnum+5) {
-			FLUT[c].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6)+ (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6) //mV//
-					c=c+2
-		}
+		a = a+1
+	}
+	b=0 
+	for (i=1;i<=axontotal-1;i=i+stinnum+5) {
+		MYSA[b].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6)+ (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6) //mV//
+	
+		b=b+2
+	}
+	c=0 
+	for (i=2;i<=axontotal-1;i=i+stinnum+5) {
+		FLUT[c].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6)+ (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6) //mV//
+				c=c+2
+	}
 
-		for (j = 0;j<=stinnum-1;j=j+1) {
-			d=j 
-			for (i=3;i<=axontotal-1;i=i+11) {
-				STIN[d].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i+j]*1e-6)+ (exIClmp2.i*ext2.x[i+j]*1e-6)+ (exIClmp3.i*ext3.x[i+j]*1e-6) //mV//
+	for (j = 0;j<=stinnum-1;j=j+1) {
+		d=j 
+		for (i=3;i<=axontotal-1;i=i+11) {
+			STIN[d].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i+j]*1e-6)+ (exIClmp2.i*ext2.x[i+j]*1e-6)+ (exIClmp3.i*ext3.x[i+j]*1e-6) //mV//
 
-				d=d+stinnum
-			}
+			d=d+stinnum
 		}
+	}
 
 
-		k=1 
-		for (i=9;i<=axontotal-2;i=i+stinnum+5) {
-			FLUT[k].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6)+ (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6) //mV//
-		
-			k=k+2
-		}
-		l=1
-		for (i=10;i<=axontotal-2;i=i+stinnum+5) {
-			MYSA[l].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6) + (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6)
-		
-			l=l+2
-		}
+	k=1 
+	for (i=9;i<=axontotal-2;i=i+stinnum+5) {
+		FLUT[k].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6)+ (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6) //mV//
+	
+		k=k+2
+	}
+	l=1
+	for (i=10;i<=axontotal-2;i=i+stinnum+5) {
+		MYSA[l].e_extracellular(0.5)=(exIClmp1.i*ext1.x[i]*1e-6) + (exIClmp2.i*ext2.x[i]*1e-6)+ (exIClmp3.i*ext3.x[i]*1e-6)
+	
+		l=l+2
+	}
 
 }
 
@@ -514,18 +510,3 @@ unbalbox3_Vbox()
 Squarewave_Vbox()
 
 squarestim()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -72,4 +72,3 @@ print total_axon_length
 objectvar scene_vector_[1]
 {doNotify()}
 print total_axon_length
-

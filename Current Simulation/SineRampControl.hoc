@@ -7,7 +7,3 @@ trajelectrode {
     traj.loc(0.5)
     traj.f = 0
 }
-
-
-
-
