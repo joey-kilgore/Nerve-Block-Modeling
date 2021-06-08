@@ -4,6 +4,8 @@ This code utilizes the NEURON program to create simulations of High Frequency Al
 Please see the [WIKI](https://github.com/joey-kilgore/Nerve-Block-Modeling/wiki) for instructions on how to use this code base!  
 Checkout YouTube Tutorial for this repository [Electrical-Nerve-Block-Modeling-Tutorial](https://www.youtube.com/playlist?list=PL-HiS65yepm4Jo8OU-ZKYyLbT7wxt7Kjr)
 
+[![Alt text](https://img.youtube.com/vi/x_7h8PEnu6I/0.jpg)](https://www.youtube.com/watch?v=x_7h8PEnu6I)
+
 # Folder Structure
 ---
 ## Current Simulation  
