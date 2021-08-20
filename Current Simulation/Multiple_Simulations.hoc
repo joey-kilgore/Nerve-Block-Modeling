@@ -627,30 +627,30 @@ proc findFiringFreq(){local minFreq, maxFreq, freqInc, testAmp, testFreq, numAPs
 proc onsetDCSineBipolar(){ localobj apVector1, apVector2
     // similar to onsetDCSine except this uses two electrodes
 
-    //dcblock = -155000 //10um freq-dep two cathodic
-    dcblock = -306000   //10um freq-dep one cathodic
-    sineblock = 270000  // 10um freq-dep bipolar
+    dcblock = -146679.69 //7.3um freq-dep two cathodic
+    //dcblock = -306000   //10um freq-dep one cathodic
+    sineblock = 384179.69  // 7.3um freq-dep bipolar
                         //  with opp polarity on left side
 
     turnOnCustomElectrodes()
 
     // two DC electrodes
-    //createElectrode(5,-1150,1000)
-    //electrodes[0].setDel(10)
-    createElectrode(5,-1150,1000)
+    createElectrode(5,-1*deltax,1000) 
     electrodes[0].setDel(10)
+    createElectrode(5,deltax,1000)
+    electrodes[1].setDel(10)
 
-    // bi polar sine electrode
-    createElectrode(0,-1150,1000)
-    electrodes[1].setFreq(10000)
-    electrodes[1].setDur(100)
-    electrodes[1].setAmp(sineblock)
-    electrodes[1].oppPolarity()
-
-    createElectrode(0,1150,1000)
+    // bi polar sine electrode set to 2xBT
+    createElectrode(0,-1*deltax,1000)
     electrodes[2].setFreq(10000)
-    electrodes[2].setDur(100) 
-    electrodes[2].setAmp(sineblock)
+    electrodes[2].setDur(100)
+    electrodes[2].setAmp(sineblock*2)
+    electrodes[2].oppPolarity()
+
+    createElectrode(0,deltax,1000)
+    electrodes[3].setFreq(10000)
+    electrodes[3].setDur(100) 
+    electrodes[3].setAmp(sineblock*2)
 
     // setup AP recordings
     APC_connect()
@@ -659,22 +659,153 @@ proc onsetDCSineBipolar(){ localobj apVector1, apVector2
     apcDistal.record(apVector1)
     apcProximal.record(apVector2)
 
-    for(newDur=0; newDur<=10; newDur+=2){
+    for(newDur=10; newDur<=100; newDur+=10){
         print "DC Duration,", newDur
-        for (mult=0.2; mult<=1; mult+=.2){
+        for (mult=0; mult<=3; mult+=.5){
             dcdur = newDur
             dcamp = dcblock*mult
             sineonset = 10+dcdur
 
             // set DC params
             electrodes[0].setDur(dcdur)
-            //electrodes[1].setDur(dcdur)
+            electrodes[1].setDur(dcdur)
             electrodes[0].setAmp(dcamp)
-            //electrodes[1].setAmp(dcamp)
+            electrodes[1].setAmp(dcamp)
+
+            // set KHFAC params
+            electrodes[2].setDel(sineonset)
+            electrodes[3].setDel(sineonset)
+
+            tstop = 200
+            setStim(0,0,0)
+            run()
+            print dcamp, dcdur, sineonset
+            print "Distal (left)"
+            for i=0, apVector1.size()-1{
+                print apVector1.x[i]
+            }
+            print "Proximal (right)"
+            for i=0, apVector2.size()-1{
+                print apVector2.x[i]
+            }
+        }
+    }
+}
+
+proc onsetDCSineAssymetryBipolar(){ localobj apVector1, apVector2
+    // similar to onsetDCSine except this uses two electrodes
+
+    dcblock = -268945.31    // 7.3um freq-dep one cathodic
+    sineblock = 384179.69   // 7.3um freq-dep bipolar
+                            //  with opp polarity on left side
+
+    turnOnCustomElectrodes()
+
+    // two DC electrodes
+    createElectrode(5,-1*deltax,1000) 
+    electrodes[0].setDel(10)
+
+    // bi polar sine electrode set to 2xBT
+    createElectrode(0,-1*deltax,1000)
+    electrodes[1].setFreq(10000)
+    electrodes[1].setDur(100)
+    electrodes[1].setAmp(sineblock*2)
+    electrodes[1].oppPolarity()
+
+    createElectrode(0,deltax,1000)
+    electrodes[2].setFreq(10000)
+    electrodes[2].setDur(100) 
+    electrodes[2].setAmp(sineblock*2)
+
+    // setup AP recordings
+    APC_connect()
+    apVector1 = new Vector()
+    apVector2 = new Vector()
+    apcDistal.record(apVector1)
+    apcProximal.record(apVector2)
+
+    for(newDur=10; newDur<=100; newDur+=10){
+        print "DC Duration,", newDur
+        for (mult=0; mult<=3; mult+=.5){
+            dcdur = newDur
+            dcamp = dcblock*mult
+            sineonset = 10+dcdur
+
+            // set DC params
+            electrodes[0].setDur(dcdur)
+            electrodes[0].setAmp(dcamp)
 
             // set KHFAC params
             electrodes[1].setDel(sineonset)
             electrodes[2].setDel(sineonset)
+
+            tstop = 200
+            setStim(0,0,0)
+            run()
+            print dcamp, dcdur, sineonset
+            print "Distal (left)"
+            for i=0, apVector1.size()-1{
+                print apVector1.x[i]
+            }
+            print "Proximal (right)"
+            for i=0, apVector2.size()-1{
+                print apVector2.x[i]
+            }
+        }
+    }
+}
+
+proc onsetBipolarDCSineBipolar(){ localobj apVector1, apVector2
+    // similar to onsetDCSine except this uses two electrodes
+
+    dcblock =  -175878.91   //7.3um freq-dep bipolar
+    sineblock = 384179.69  // 7.3um freq-dep bipolar
+                        //  with opp polarity on left side
+
+    turnOnCustomElectrodes()
+
+    // two DC electrodes
+    createElectrode(5,-1*deltax,1000) 
+    electrodes[0].setDel(10)
+    createElectrode(5,deltax,1000)
+    electrodes[1].setDel(10)
+    electrodes[1].oppPolarity()
+
+    // bi polar sine electrode set to 2xBT
+    createElectrode(0,-1*deltax,1000)
+    electrodes[2].setFreq(10000)
+    electrodes[2].setDur(100)
+    electrodes[2].setAmp(sineblock*2)
+    electrodes[2].oppPolarity()
+
+    createElectrode(0,deltax,1000)
+    electrodes[3].setFreq(10000)
+    electrodes[3].setDur(100) 
+    electrodes[3].setAmp(sineblock*2)
+
+    // setup AP recordings
+    APC_connect()
+    apVector1 = new Vector()
+    apVector2 = new Vector()
+    apcDistal.record(apVector1)
+    apcProximal.record(apVector2)
+
+    for(newDur=10; newDur<=100; newDur+=10){
+        print "DC Duration,", newDur
+        for (mult=0; mult<=3; mult+=.5){
+            dcdur = newDur
+            dcamp = dcblock*mult
+            sineonset = 10+dcdur
+
+            // set DC params
+            electrodes[0].setDur(dcdur)
+            electrodes[1].setDur(dcdur)
+            electrodes[0].setAmp(dcamp)
+            electrodes[1].setAmp(dcamp)
+
+            // set KHFAC params
+            electrodes[2].setDel(sineonset)
+            electrodes[3].setDel(sineonset)
 
             tstop = 200
             setStim(0,0,0)
