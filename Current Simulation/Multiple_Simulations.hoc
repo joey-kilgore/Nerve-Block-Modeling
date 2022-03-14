@@ -701,7 +701,7 @@ proc onsetDCSineAssymetryBipolar(){ localobj apVector1, apVector2
 
     turnOnCustomElectrodes()
 
-    // two DC electrodes
+    // one DC electrode
     createElectrode(5,-1*deltax,1000) 
     electrodes[0].setDel(10)
 
